@@ -64,15 +64,15 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 - [x] Entidade `User` (id, email, name, role: "patient" | "nutritionist")
 - [x] Entidade `Appointment` (id, patientId, nutritionistId, date, time, status: "pending" | "accepted" | "rejected" | "cancelled", observations: string opcional)
 - [x] Factory `makeUser` (name, email, role)
-- [ ] Interface `IAuthService` (login, signup, logout, onAuthStateChanged)
-- [ ] Interface `IUserRepository` (getById, create)
-- [ ] Erros de domínio: `AuthenticationError`, `ValidationError`
+- [x] Interface `IAuthService` (login, signup, logout, onAuthStateChanged)
+- [x] Interface `IUserRepository` (getById, create)
+- [x] Erros de domínio: `AuthenticationError`, `ValidationError`, `RepositoryError`
 
 #### Infraestrutura
-- [ ] Configurar Firebase (Auth + Firestore)
-- [ ] Implementar `FirebaseAuthService`
-- [ ] Implementar `FirebaseUserRepository`
-- [ ] Configurar regras de segurança básicas do Firestore
+- [x] Configurar Firebase (Auth + Firestore)
+- [x] Implementar `FirebaseAuthService`
+- [x] Implementar `FirebaseUserRepository`
+- [x] Configurar regras de segurança básicas do Firestore
 
 #### Casos de Uso
 - [ ] `RegisterPatientUseCase` (validações: email válido, senha >= 6 caracteres)
