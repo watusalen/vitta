@@ -87,27 +87,27 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 #### View
 
 ##### Pages
-- [ ] `SplashScreen.tsx` - Tela de abertura com verificação de auth
-- [ ] `LoginScreen.tsx` - Tela de login
-- [ ] `RegisterScreen.tsx` - Tela de registro de paciente
-- [ ] `patient/PatientHomeScreen.tsx` - Tela inicial do paciente
-- [ ] `nutritionist/NutritionistHomeScreen.tsx` - Tela inicial da nutricionista
+- [x] `SplashScreen.tsx` - Tela de abertura com verificação de auth
+- [x] `LoginScreen.tsx` - Tela de login
+- [x] `RegisterScreen.tsx` - Tela de registro de paciente
+- [x] `patient/PatientHomeScreen.tsx` - Tela inicial do paciente
+- [x] `nutritionist/NutritionistHomeScreen.tsx` - Tela inicial da nutricionista
 
 ##### Components
-- [ ] `LoadingIndicator.tsx` - Spinner de carregamento
-- [ ] `ErrorMessage.tsx` - Exibição de mensagens de erro
-- [ ] `Button.tsx` - Botão reutilizável com estados
+- [x] `LoadingIndicator.tsx` - Spinner de carregamento
+- [x] `ErrorMessage.tsx` - Exibição de mensagens de erro
+- [x] `Button.tsx` - Botão reutilizável com estados
 
 ##### Themes
-- [ ] `theme.ts` - Cores, fontes e espaçamentos padrão
+- [x] `theme.ts` - Cores, fontes e espaçamentos padrão
 
 ##### Navegação
-- [ ] Configurar navegação básica (redirecionar conforme perfil)
+- [x] Configurar navegação básica (redirecionar conforme perfil)
 
 #### DI & Configuração
-- [ ] Criar `di/container.ts` com fábricas básicas
-- [ ] Configurar path aliases (`@/*` → `./src/*`)
-- [ ] Configurar variáveis de ambiente (Firebase config)
+- [x] Criar `di/container.ts` com fábricas básicas
+- [x] Configurar path aliases (`@/*` → `./src/*`)
+- [x] Configurar variáveis de ambiente (Firebase config)
 
 #### Testes
 - [ ] Testes unitários: `RegisterPatientUseCase`
