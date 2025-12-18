@@ -1,35 +1,64 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import {
     View,
     Text,
-    TouchableOpacity,
     StyleSheet,
     Image,
     Alert,
+    ActivityIndicator,
+    TouchableOpacity,
+    Animated,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { colors, fonts, spacing, fontSizes, borderRadius } from "@/view/themes/theme";
-import { authUseCases } from "@/di/container";
-import useHomeViewModel from "@/viewmodel/useHomeViewModel";
+import { authUseCases, appointmentRepository, userRepository } from "@/di/container";
+import useHomeViewModel from "@/viewmodel/auth/useHomeViewModel";
+import useNutritionistHomeViewModel from "@/viewmodel/nutritionist/useNutritionistHomeViewModel";
 import { router } from "expo-router";
 import LogoutButton from "@/view/components/LogoutButton";
 import HomeCard from "@/view/components/HomeCard";
-
-// TODO: Buscar consultas confirmadas do backend
-const APPOINTMENTS = [
-    { id: "1", name: "Mariana Costa", time: "14:00" },
-    { id: "2", name: "João Pedro Alves", time: "15:00" },
-    { id: "3", name: "Camila Souza", time: "16:30" },
-];
+import EmptyStateCard from "@/view/components/EmptyStateCard";
 
 export default function NutritionistHomeScreen() {
     const insets = useSafeAreaInsets();
     const { user, logout } = useHomeViewModel(authUseCases);
+    const nutritionistId = user?.id || "";
 
-    // TODO: Buscar número de solicitações pendentes
-    const pendingCount = 2;
-    const hasAppointmentsToday = APPOINTMENTS.length > 0;
+    const {
+        todayAppointments,
+        pendingCount,
+        loading,
+        showEmptyState,
+        hasAppointmentsToday,
+    } = useNutritionistHomeViewModel(
+        appointmentRepository,
+        userRepository,
+        nutritionistId
+    );
+
+    const fadeAnim = useRef(new Animated.Value(1)).current;
+    const prevShowEmptyState = useRef(showEmptyState);
+
+    useEffect(() => {
+        if (prevShowEmptyState.current && !showEmptyState) {
+            fadeAnim.setValue(0);
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 300,
+                useNativeDriver: true,
+            }).start();
+        }
+        prevShowEmptyState.current = showEmptyState;
+    }, [showEmptyState, fadeAnim]);
+
+    function handleViewPendingRequests() {
+        console.log("Ver solicitações pendentes");
+    }
+
+    function handleViewAgenda() {
+        console.log("Ver agenda completa");
+    }
 
     async function handleLogout() {
         try {
@@ -38,6 +67,16 @@ export default function NutritionistHomeScreen() {
         } catch (error) {
             Alert.alert("Erro", "Não foi possível sair. Tente novamente.");
         }
+    }
+
+    if (loading) {
+        return (
+            <View style={[styles.container, { paddingTop: insets.top + spacing.md }]}>
+                <View style={styles.centered}>
+                    <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+            </View>
+        );
     }
 
     return (
@@ -52,66 +91,93 @@ export default function NutritionistHomeScreen() {
                 <LogoutButton onPress={handleLogout} />
             </View>
 
-            {/* CARD - SOLICITAÇÕES PENDENTES */}
-            <HomeCard
-                backgroundColor="#E7E5D9"
-                style={styles.cardSpacing}
-                onPress={() => console.log("Ver todas as solicitações")}
-            >
-                <View style={styles.cardHeaderRow}>
-                    <Text style={styles.cardTitle}>Solicitações Pendentes</Text>
-                    <View style={styles.iconCircle}>
-                        <Feather name="download" size={20} color={colors.primary} />
-                    </View>
-                </View>
-
-                <Text style={styles.pendingNumber}>{pendingCount}</Text>
-
-            </HomeCard>
-
-            {/* CARD - AGENDA CONFIRMADA ou AGENDA LIVRE */}
-            {hasAppointmentsToday ? (
-                <HomeCard
-                    backgroundColor="#E7EDED"
-                    style={styles.cardSpacing}
-                    onPress={() => console.log("Ver agenda completa")}
-                >
-                    <View style={styles.cardHeaderRow}>
-                        <Text style={styles.cardTitle}>Agenda Confirmada</Text>
+            {/* Cards */}
+            <View style={styles.cardsWrapper}>
+                {/* Card 1 - Solicitações Pendentes */}
+                <HomeCard backgroundColor={colors.primaryLight} onPress={handleViewPendingRequests}>
+                    <View style={styles.cardTopRow}>
                         <View style={styles.iconCircle}>
-                            <Feather name="calendar" size={20} color={colors.primary} />
+                            <Feather name="inbox" size={22} color={colors.primary} />
                         </View>
-                    </View>
 
-                    <View style={styles.appointmentsWrapper}>
-                        {APPOINTMENTS.map((item, index) => (
-                            <View key={item.id}>
-                                <View style={styles.appointmentRow}>
-                                    <Text style={styles.appointmentName}>{item.name}</Text>
-                                    <Text style={styles.appointmentTime}>{item.time}</Text>
-                                </View>
-                                {index < APPOINTMENTS.length - 1 && (
-                                    <View style={styles.divider} />
-                                )}
-                            </View>
-                        ))}
-                    </View>
-                </HomeCard>
-            ) : (
-                <HomeCard backgroundColor="#EAE7DD" style={[styles.cardSpacing, styles.cardFree]}>
-                    <View style={styles.freeContent}>
-                        <View style={styles.freeIconCircle}>
-                            <Text style={styles.freeIconText}>☺</Text>
-                        </View>
-                        <View style={styles.freeTextWrapper}>
-                            <Text style={styles.freeTitle}>Sua agenda está livre hoje!</Text>
-                            <Text style={styles.freeSubtitle}>
-                                Nenhuma consulta confirmada para o dia.
+                        <View style={styles.cardTextWrapper}>
+                            <Text style={styles.cardTitle}>Solicitações Pendentes</Text>
+                            <Text style={styles.cardSubtitle}>
+                                {pendingCount > 0
+                                    ? `Você tem ${pendingCount} solicitação(ões) aguardando aprovação.`
+                                    : "Nenhuma solicitação pendente no momento."}
                             </Text>
                         </View>
                     </View>
+
+                    <TouchableOpacity style={styles.primaryButton} onPress={handleViewPendingRequests}>
+                        <Text style={styles.primaryButtonText}>Ver solicitações</Text>
+                    </TouchableOpacity>
                 </HomeCard>
-            )}
+
+                {/* Card 2 - Agenda do Dia */}
+                <Animated.View style={{ opacity: fadeAnim }}>
+                    {hasAppointmentsToday ? (
+                        <HomeCard backgroundColor={colors.white} onPress={handleViewAgenda}>
+                            <View style={styles.cardTopRow}>
+                                <View style={styles.iconCircle}>
+                                    <Feather name="calendar" size={22} color={colors.primary} />
+                                </View>
+
+                                <View style={styles.cardTextWrapper}>
+                                    <Text style={styles.cardTitle}>Agenda de Hoje</Text>
+                                    <Text style={styles.cardSubtitle}>
+                                        {`Você tem ${todayAppointments.length} consulta(s) confirmada(s) hoje.`}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={styles.appointmentsWrapper}>
+                                {todayAppointments.map((item, index) => (
+                                    <View key={item.id}>
+                                        <View style={styles.appointmentRow}>
+                                            <Text style={styles.appointmentName}>{item.patientName}</Text>
+                                            <Text style={styles.appointmentTime}>{item.time}</Text>
+                                        </View>
+                                        {index < todayAppointments.length - 1 && (
+                                            <View style={styles.divider} />
+                                        )}
+                                    </View>
+                                ))}
+                            </View>
+
+                            <TouchableOpacity style={styles.secondaryButton} onPress={handleViewAgenda}>
+                                <Text style={styles.secondaryButtonText}>Ver agenda completa</Text>
+                            </TouchableOpacity>
+                        </HomeCard>
+                    ) : showEmptyState ? (
+                        <EmptyStateCard
+                            title="Sua agenda está livre hoje!"
+                            subtitle="Nenhuma consulta confirmada para o dia."
+                            icon="smile"
+                        />
+                    ) : (
+                        <HomeCard backgroundColor={colors.white} onPress={handleViewAgenda}>
+                            <View style={styles.cardTopRow}>
+                                <View style={styles.iconCircle}>
+                                    <Feather name="calendar" size={22} color={colors.primary} />
+                                </View>
+
+                                <View style={styles.cardTextWrapper}>
+                                    <Text style={styles.cardTitle}>Agenda de Hoje</Text>
+                                    <Text style={styles.cardSubtitle}>
+                                        Sua agenda está livre hoje!
+                                </Text>
+                            </View>
+                        </View>
+
+                        <TouchableOpacity style={styles.secondaryButton} onPress={handleViewAgenda}>
+                            <Text style={styles.secondaryButtonText}>Ver agenda completa</Text>
+                        </TouchableOpacity>
+                    </HomeCard>
+                    )}
+                </Animated.View>
+            </View>
         </View>
     );
 }
@@ -122,6 +188,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.surface,
         paddingHorizontal: spacing.lg,
         paddingBottom: spacing.xl,
+    },
+    centered: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     },
     header: {
         flexDirection: "row",
@@ -142,51 +213,39 @@ const styles = StyleSheet.create({
         color: colors.text,
         fontFamily: fonts.bold,
     },
-    headerIconButton: {
-        padding: spacing.xs,
+    cardsWrapper: {
+        gap: spacing.md,
     },
-    cardFree: {
-        marginBottom: spacing.md,
-    },
-    cardHeaderRow: {
+    cardTopRow: {
         flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-start",
         marginBottom: spacing.md,
+    },
+    iconCircle: {
+        width: 52,
+        height: 52,
+        borderRadius: 26,
+        backgroundColor: colors.background,
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: spacing.md,
+    },
+    cardTextWrapper: {
+        flex: 1,
     },
     cardTitle: {
         fontSize: fontSizes.lg,
+        fontFamily: fonts.bold,
         color: colors.text,
-        fontFamily: fonts.bold,
-    },
-    iconCircle: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        backgroundColor: "#D7DFD9",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    pendingNumber: {
-        fontSize: 40,
-        color: colors.primary,
-        fontFamily: fonts.bold,
-        marginTop: spacing.xs,
         marginBottom: spacing.xs,
     },
-    inlineRightButton: {
-        alignSelf: "flex-end",
-        marginTop: spacing.xs,
-    },
-    inlineRightText: {
+    cardSubtitle: {
         fontSize: fontSizes.sm,
-        color: colors.primary,
         fontFamily: fonts.regular,
+        color: colors.textSecondary,
+        lineHeight: 20,
     },
     appointmentsWrapper: {
-        marginTop: spacing.xs,
-    },
-    cardSpacing: {
         marginBottom: spacing.md,
     },
     appointmentRow: {
@@ -207,37 +266,33 @@ const styles = StyleSheet.create({
     },
     divider: {
         height: 1,
-        backgroundColor: "#D0D7D7",
+        backgroundColor: colors.inputBackground,
     },
-    freeContent: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    freeIconCircle: {
-        width: 54,
-        height: 54,
-        borderRadius: 27,
-        backgroundColor: "#D7DFD9",
+    primaryButton: {
+        marginTop: spacing.xs,
+        backgroundColor: colors.primary,
+        borderRadius: borderRadius.full,
+        height: 52,
         alignItems: "center",
         justifyContent: "center",
-        marginRight: spacing.md,
     },
-    freeIconText: {
-        fontSize: 26,
-        color: colors.primary,
-    },
-    freeTextWrapper: {
-        flex: 1,
-    },
-    freeTitle: {
+    primaryButtonText: {
+        color: colors.white,
         fontSize: fontSizes.md,
-        color: colors.text,
         fontFamily: fonts.bold,
-        marginBottom: spacing.xs,
     },
-    freeSubtitle: {
-        fontSize: fontSizes.sm,
-        color: colors.textSecondary,
-        fontFamily: fonts.regular,
+    secondaryButton: {
+        marginTop: spacing.sm,
+        borderWidth: 1,
+        borderColor: colors.primary,
+        borderRadius: borderRadius.full,
+        height: 48,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    secondaryButtonText: {
+        color: colors.primary,
+        fontSize: fontSizes.md,
+        fontFamily: fonts.bold,
     },
 });

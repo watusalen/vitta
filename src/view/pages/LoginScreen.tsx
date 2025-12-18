@@ -10,7 +10,7 @@ import {
 import { router } from "expo-router";
 import { colors, fonts, spacing, fontSizes, borderRadius } from "@/view/themes/theme";
 import TextInputField from "@/view/components/TextInputField";
-import useLoginViewModel from "@/viewmodel/useLoginViewModel";
+import useLoginViewModel from "@/viewmodel/auth/useLoginViewModel";
 import { authUseCases } from "@/di/container";
 
 export default function LoginScreen() {
@@ -33,7 +33,6 @@ export default function LoginScreen() {
     }
 
     function handleForgotPassword() {
-        // TODO: Navegar para tela de recuperação de senha
         console.log("Forgot password");
     }
 

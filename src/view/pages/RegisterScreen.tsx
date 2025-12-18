@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { colors, fonts, spacing, fontSizes, borderRadius } from "@/view/themes/theme";
 import { authUseCases } from "@/di/container";
-import useSignUpViewModel from "@/viewmodel/useSignUpViewModel";
+import useSignUpViewModel from "@/viewmodel/auth/useSignUpViewModel";
 import TextInputField from "@/view/components/TextInputField";
 import ErrorMessage from "@/view/components/ErrorMessage";
 

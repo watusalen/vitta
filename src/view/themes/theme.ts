@@ -15,7 +15,6 @@ export const colors = {
     textLight: '#E5ECEF',         // Texto principal (fundo escuro)
     textSecondary: '#8F979B',     // Texto secundário
     
-    // Status
     error: '#F44336',             // Vermelho para erros
     success: '#4CAF50',           // Verde para sucesso
     warning: '#FFC107',           // Amarelo para avisos

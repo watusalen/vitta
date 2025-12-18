@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { colors, fonts, spacing, fontSizes, borderRadius } from "@/view/themes/theme";
 import { authUseCases } from "@/di/container";
-import useHomeViewModel from "@/viewmodel/useHomeViewModel";
+import useHomeViewModel from "@/viewmodel/auth/useHomeViewModel";
 import LogoutButton from "@/view/components/LogoutButton";
 import { router } from "expo-router";
 import { Alert } from "react-native";
@@ -21,13 +21,11 @@ export default function PatientHomeScreen() {
     const { user, logout } = useHomeViewModel(authUseCases);
 
     function handleScheduleNew() {
-        // TODO: Sprint 2 - Navegar para agendamento
-        console.log("Agendar nova consulta");
+        router.push("/schedule");
     }
 
     function handleSeeAllAppointments() {
-        // TODO: Sprint 2 - Navegar para minhas consultas
-        console.log("Ver todas as consultas");
+        router.push("/my-appointments");
     }
 
     function handleNotifications() {
@@ -87,7 +85,7 @@ export default function PatientHomeScreen() {
                         <View style={styles.cardTextWrapper}>
                             <Text style={styles.cardTitle}>Minhas Consultas</Text>
                             <Text style={styles.cardSubtitle}>
-                                Próxima: 25 de Outubro às 14h com Dra. Jesseane Andrade.
+                                Veja suas consultas agendadas e acompanhe o status.
                             </Text>
                         </View>
                     </View>
