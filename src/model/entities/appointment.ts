@@ -1,3 +1,5 @@
+export type AppointmentStatus = 'pending' | 'accepted' | 'rejected' | 'cancelled';
+
 export default interface Appointment {
     id: string;
     patientId: string;
@@ -5,7 +7,7 @@ export default interface Appointment {
     date: string;
     timeStart: string;
     timeEnd: string;
-    status: 'pending' | 'accepted' | 'rejected' | 'canceled';
+    status: AppointmentStatus;
     observations?: string;
     createdAt: Date;
     updatedAt: Date;

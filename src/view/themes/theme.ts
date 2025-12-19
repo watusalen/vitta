@@ -15,17 +15,19 @@ export const colors = {
     textLight: '#E5ECEF',         // Texto principal (fundo escuro)
     textSecondary: '#8F979B',     // Texto secundário
     
-    // Status
     error: '#F44336',             // Vermelho para erros
+    errorLight: '#FFEBEE',        // Vermelho claro (backgrounds)
     success: '#4CAF50',           // Verde para sucesso
     warning: '#FFC107',           // Amarelo para avisos
     pending: '#FF9800',           // Laranja para pendente
     cancelled: '#9E9E9E',         // Cinza para cancelado
+    border: '#E0E0E0',            // Cinza para bordas
 };
 
 export const fonts = {
     regular: 'HelveticaNeue',
     medium: 'HelveticaNeue-Medium',
+    semibold: 'HelveticaNeue-Medium',
     bold: 'HelveticaNeue-Bold',
 };
 

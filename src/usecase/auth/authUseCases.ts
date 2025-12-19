@@ -1,5 +1,5 @@
 import User from "@/model/entities/user";
-import AuthValidator from "../validator/authValidator";
+import AuthValidator from "./validator/authValidator";
 import ValidationError from "@/model/errors/validationError";
 import AuthError from "@/model/errors/authError";
 import RepositoryError from "@/model/errors/repositoryError";
@@ -9,7 +9,6 @@ import { makeUser } from "@/model/factories/makeUser";
 import { IAuthUseCases } from "./iAuthUseCases";
 
 export default class AuthUseCases implements IAuthUseCases {
-
     private authService: IAuthService;
     private userRepository: IUserRepository;
 

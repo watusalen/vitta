@@ -1,165 +1,124 @@
-# Guia de Build e Desenvolvimento - Vitta
+# Build iOS - Vitta
 
 ## Pré-requisitos
 
-- Node.js 18+
-- Xcode 15+ (com Command Line Tools)
-- Conta Apple Developer
-- iPhone registrado no Apple Developer Portal
+- **Node.js** ≥ 18
+- **Xcode** ≥ 15
+- **CocoaPods** (`sudo gem install cocoapods`)
+- **Conta Apple Developer** (para dispositivo físico)
 
 ---
 
-## Comandos para Build
+## Build Rápido
 
-### 1. Mudança simples (código TS/JS)
-
-Para alterações em componentes, telas, ViewModels, estilos, etc:
+### Primeiro Build (dispositivo físico)
 
 ```bash
-npx expo run:ios --configuration Release --device
-```
-
-O Expo detecta que o código nativo já existe e só recompila o bundle JS.
-
----
-
-### 2. Adicionou dependência nativa
-
-Quando instalar pacotes que precisam de código nativo (câmera, mapas, notificações, etc):
-
-```bash
-npx expo install <nome-do-pacote>
-npx expo prebuild --clean
-npx expo run:ios --configuration Release --device
-```
-
-Exemplos de pacotes nativos:
-
-- `expo-camera`
-- `expo-notifications`
-- `expo-location`
-- `react-native-maps`
-
----
-
-### 3. Mudou configurações do app
-
-Quando alterar `app.json` (ícone, splash screen, permissões, bundle ID):
-
-```bash
-npx expo prebuild
-npx expo run:ios --configuration Release --device
-```
-
----
-
-### 4. Algo deu errado / cache bugado
-
-```bash
-npx expo run:ios --configuration Release --device --no-build-cache
-```
-
----
-
-### 5. Reset total (último recurso)
-
-```bash
-rm -rf ios node_modules
 npm install
-npx expo prebuild --clean
-npx expo run:ios --configuration Release --device
+npx expo run:ios --device
 ```
 
----
+Selecione seu dispositivo na lista e aguarde a compilação.
 
-## Modos de Build
-
-| Modo | Comando | Uso |
-|------|---------|-----|
-| Release | `--configuration Release` | App standalone, não precisa de Metro |
-| Debug | (sem flag) | Conecta ao Metro, hot reload funciona |
-
-### Quando usar cada um
-
-- **Debug**: Durante desenvolvimento ativo, para ver mudanças instantâneas
-- **Release**: Para testar versão final ou enviar para App Store
-
----
-
-## Registrar novo dispositivo
-
-1. Conecte o iPhone ao Mac via USB
-2. Abra o Finder e selecione o iPhone
-3. Clique no nome do iPhone até aparecer o UDID
-4. Copie o UDID
-5. Acesse [Apple Developer Portal](https://developer.apple.com/account/resources/devices/list)
-6. Adicione o dispositivo com o UDID
-
----
-
-## Enviar para App Store
-
-### 1. Criar app no App Store Connect
-
-1. Acesse [App Store Connect](https://appstoreconnect.apple.com)
-2. Clique em "+" e selecione "New App"
-3. Preencha: Nome, Bundle ID (`com.watusalen.vitta`), SKU
-
-### 2. Gerar Archive
+### Build Dia a Dia
 
 ```bash
-# Abra o projeto no Xcode
-open ios/vitta.xcworkspace
-
-# No Xcode:
-# 1. Selecione "Any iOS Device (arm64)" como destino
-# 2. Menu: Product > Archive
-# 3. Aguarde a compilação
+npx expo run:ios --device
 ```
-
-### 3. Enviar para TestFlight/App Store
-
-1. Após o Archive, abre o Organizer automaticamente
-2. Clique em "Distribute App"
-3. Selecione "App Store Connect"
-4. Siga o wizard até o upload
 
 ---
 
-## Troubleshooting
-
-### Erro de assinatura
-
-```bash
-rm -rf ~/Library/Developer/Xcode/DerivedData/vitta-*
-```
-
-### Pods desatualizados
-
-```bash
-cd ios
-pod install --repo-update
-cd ..
-```
-
-### Metro não conecta (Debug mode)
-
-Verifique se Mac e iPhone estão na mesma rede Wi-Fi.
-
-### App não abre no iPhone
-
-1. Acesse Ajustes > Geral > Gerenciamento de VPN e Dispositivo
-2. Encontre seu perfil de desenvolvedor
-3. Toque em Confiar
-
----
-
-## Resumo Rápido
+## Quando Usar Cada Comando
 
 | Situação | Comando |
 |----------|---------|
-| Código TS/JS | `npx expo run:ios --configuration Release --device` |
-| Nova dependência nativa | `npx expo prebuild --clean` + run |
-| Mudou app.json | `npx expo prebuild` + run |
-| Limpar cache | adicione `--no-build-cache` |
-| Reset total | `rm -rf ios node_modules` + install + prebuild + run |
+| Desenvolvimento normal | `npx expo run:ios --device` |
+| App para produção/testes | `npx expo run:ios --configuration Release --device` |
+| Simulador | `npx expo run:ios` |
+| Reconstruir após mudanças nativas | `npx expo prebuild --clean && npx expo run:ios --device` |
+> **Dica:** Use `npx expo prebuild --clean` sempre que:
+> - Alterar ícone, splash, permissões, ou arquivos nativos (Info.plist, entitlements, etc.)
+> - Atualizar dependências nativas (pacotes que usam código nativo)
+> - O app não refletir mudanças visuais (ícone, splash, etc.) mesmo após rebuild
+> Isso força o Expo a regenerar os arquivos nativos e garante que as mudanças sejam aplicadas.
+
+
+## Troubleshooting
+
+### Ícone não atualiza
+
+1. Confirme se o campo `icon` no `app.json` aponta para o novo arquivo PNG (ex: "icon": "./assets/icon.png").
+2. O arquivo deve ser quadrado (ex: 1024x1024), sem transparência.
+3. Rode:
+
+```bash
+npx expo prebuild --clean && npx expo run:ios --device
+```
+
+4. Se não funcionar, apague o app do simulador/dispositivo e instale novamente.
+5. Limpe o cache do Expo:
+
+```bash
+npx expo start -c
+```
+
+---
+
+### Firebase/Firestore: WebChannelConnection errored
+
+Esse aviso geralmente indica instabilidade de rede ou configuração incorreta do Firebase. Certifique-se de:
+- Usar as credenciais corretas do Firebase (`firebaseConfig`)
+- Ter internet estável
+- Não estar usando emulador do Firebase sem rodar o serviço local
+- O Firestore estar ativo no console do Firebase
+Se o app funcionar normalmente, pode ser apenas um aviso transitório.
+
+### Módulo não encontrado
+
+```bash
+rm -rf node_modules
+npm install
+```
+
+### Erro de Pods
+
+```bash
+cd ios && pod install --repo-update && cd ..
+```
+
+### Erro de assinatura
+
+1. Abra `ios/vitta.xcworkspace` no Xcode
+2. Selecione o target **vitta**
+3. Em **Signing & Capabilities**, selecione seu Team
+4. Marque **Automatically manage signing**
+
+### Reset completo
+
+```bash
+rm -rf node_modules ios/Pods ios/build
+npm install
+cd ios && pod install && cd ..
+npx expo run:ios --device
+```
+
+---
+
+## Registrar Novo Dispositivo
+
+1. Conecte o iPhone via USB
+2. Acesse [Apple Developer > Devices](https://developer.apple.com/account/resources/devices/list)
+3. Clique em **+** e adicione o UDID do dispositivo
+4. Atualize o provisioning profile no Xcode
+
+---
+
+## Publicar na App Store
+
+```bash
+npx expo run:ios --configuration Release --device
+```
+
+1. Abra `ios/vitta.xcworkspace` no Xcode
+2. **Product > Archive**
+3. **Distribute App > App Store Connect**

@@ -28,6 +28,8 @@ export default function RootLayout() {
         <Stack.Screen name="register" />
         <Stack.Screen name="patient-home" />
         <Stack.Screen name="nutritionist-home" />
+        <Stack.Screen name="pending-requests" />
+        <Stack.Screen name="agenda" />
       </Stack>
     </SafeAreaProvider>
   );

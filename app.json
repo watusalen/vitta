@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "vitta",
+    "name": "Vitta",
     "slug": "vitta",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/view/assets/images/icon.png",
+    "icon": "./src/view/assets/images/image.png",
     "scheme": "vitta",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -20,11 +20,12 @@
         "monochromeImage": "./src/view/assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.watusalen.vitta"
     },
     "web": {
       "output": "static",
-      "favicon": "./src/view/assets/images/favicon.png"
+      "favicon": "./src/view/assets/images/image.png"
     },
     "plugins": [
       "expo-router",

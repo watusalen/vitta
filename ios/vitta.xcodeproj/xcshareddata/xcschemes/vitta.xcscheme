@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "vitta.app"
-               BlueprintName = "vitta"
-               ReferencedContainer = "container:vitta.xcodeproj">
+               BuildableName = "Vitta.app"
+               BlueprintName = "Vitta"
+               ReferencedContainer = "container:Vitta.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "vittaTests.xctest"
-               BlueprintName = "vittaTests"
-               ReferencedContainer = "container:vitta.xcodeproj">
+               BuildableName = "VittaTests.xctest"
+               BlueprintName = "VittaTests"
+               ReferencedContainer = "container:Vitta.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "vitta.app"
-            BlueprintName = "vitta"
-            ReferencedContainer = "container:vitta.xcodeproj">
+            BuildableName = "Vitta.app"
+            BlueprintName = "Vitta"
+            ReferencedContainer = "container:Vitta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "vitta.app"
-            BlueprintName = "vitta"
-            ReferencedContainer = "container:vitta.xcodeproj">
+            BuildableName = "Vitta.app"
+            BlueprintName = "Vitta"
+            ReferencedContainer = "container:Vitta.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

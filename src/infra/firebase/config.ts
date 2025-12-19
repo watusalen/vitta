@@ -1,6 +1,6 @@
 import { initializeApp, FirebaseApp } from "firebase/app";
 import { initializeAuth, getAuth } from "firebase/auth";
-// @ts-ignore - Firebase não exporta tipagem do método, mas ele existe
+// @ts-ignore
 import { getReactNativePersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
@@ -21,13 +21,13 @@ function buildAuth(appInstance: FirebaseApp) {
       require("@react-native-async-storage/async-storage").default;
 
     return initializeAuth(appInstance, {
-      // @ts-ignore Firebase não fornece tipagem aqui, mas funciona
+      // @ts-ignore
       persistence: getReactNativePersistence(AsyncStorage),
     });
   } catch (err) {
     console.warn(
       "[firebase/auth] Não foi possível configurar persistência. " +
-        "Instale @react-native-async-storage/async-storage para manter o login."
+      "Instale @react-native-async-storage/async-storage para manter o login."
     );
 
     return getAuth(appInstance);

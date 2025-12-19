@@ -21,6 +21,7 @@ describe('AuthUseCases', () => {
     mockUserRepository = {
       getUserByID: jest.fn(),
       createUser: jest.fn(),
+      getByRole: jest.fn(),
     };
 
     authUseCases = new AuthUseCases(mockAuthService, mockUserRepository);

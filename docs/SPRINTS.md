@@ -61,12 +61,12 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 ### Entregas
 
 #### Domínio (Model)
-- [x] Entidade `User` (id, email, name, role: "patient" | "nutritionist")
-- [x] Entidade `Appointment` (id, patientId, nutritionistId, date, time, status: "pending" | "accepted" | "rejected" | "cancelled", observations: string opcional)
+- [x] Entidade `User` (id, email, name, role: "patient" | "nutritionist", createdAt)
+- [x] Entidade `Appointment` (id, patientId, nutritionistId, date, timeStart, timeEnd, status, observations?, createdAt, updatedAt)
 - [x] Factory `makeUser` (name, email, role)
 - [x] Interface `IAuthService` (login, signup, logout, onAuthStateChanged)
-- [x] Interface `IUserRepository` (getById, create)
-- [x] Erros de domínio: `AuthenticationError`, `ValidationError`, `RepositoryError`
+- [x] Interface `IUserRepository` (createUser, getUserByID, getByRole)
+- [x] Erros de domínio: `AuthError`, `ValidationError`, `RepositoryError`
 
 #### Infraestrutura
 - [x] Configurar Firebase (Auth + Firestore)
@@ -76,8 +76,8 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 
 #### Casos de Uso
 - [x] `AuthUseCases` (login, signUp, logout, onAuthStateChanged)
-  - Validações via `AuthValidator` (email válido, senha >= 6 caracteres)
-  - Busca dados completos do usuário no Firestore após autenticação
+  - [x] Validações via `AuthValidator` (email válido, senha >= 6 caracteres)
+  - [x] Busca dados completos do usuário no Firestore após autenticação
 
 #### ViewModel
 - [x] `useHomeViewModel` (state: user, error, loading; actions: logout)
@@ -87,19 +87,19 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 #### View
 
 ##### Pages
-- [x] `SplashScreen.tsx` - Tela de abertura com verificação de auth
-- [x] `LoginScreen.tsx` - Tela de login
-- [x] `RegisterScreen.tsx` - Tela de registro de paciente
-- [x] `patient/PatientHomeScreen.tsx` - Tela inicial do paciente
-- [x] `nutritionist/NutritionistHomeScreen.tsx` - Tela inicial da nutricionista
+- [x] `SplashScreen.tsx`
+- [x] `LoginScreen.tsx`
+- [x] `RegisterScreen.tsx`
+- [x] `patient/PatientHomeScreen.tsx`
+- [x] `nutritionist/NutritionistHomeScreen.tsx`
 
 ##### Components
-- [x] `LoadingIndicator.tsx` - Spinner de carregamento
-- [x] `ErrorMessage.tsx` - Exibição de mensagens de erro
-- [x] `Button.tsx` - Botão reutilizável com estados
+- [x] `LoadingIndicator.tsx`
+- [x] `ErrorMessage.tsx`
+- [x] `Button.tsx`
 
 ##### Themes
-- [x] `theme.ts` - Cores, fontes e espaçamentos padrão
+- [x] `theme.ts`
 
 ##### Navegação
 - [x] Configurar navegação básica (redirecionar conforme perfil)
@@ -126,18 +126,18 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 
 ### Critérios de Aceitação
 
-- Paciente consegue se registrar com nome, email e senha
-- Paciente e nutricionista fazem login com credenciais válidas
-- Sistema diferencia perfis e redireciona corretamente
-- Nutricionista já existe no Firebase (cadastrada manualmente)
-- Mensagens de erro são exibidas de forma amigável
-- Loading é mostrado durante operações assíncronas  
+- [x] Paciente consegue se registrar com nome, email e senha
+- [x] Paciente e nutricionista fazem login com credenciais válidas
+- [x] Sistema diferencia perfis e redireciona corretamente
+- [x] Nutricionista já existe no Firebase (cadastrada manualmente)
+- [x] Mensagens de erro são exibidas de forma amigável
+- [x] Loading é mostrado durante operações assíncronas  
 
 ### Notas Técnicas
 
-- Nutricionista deve ser pré-cadastrada manualmente no Firebase Console com `role: "nutritionist"`
-- Validar email no lado cliente e servidor (Firebase já valida)
-- Senha mínima de 6 caracteres (regra do Firebase)
+- [x] Nutricionista deve ser pré-cadastrada manualmente no Firebase Console com `role: "nutritionist"`
+- [x] Validar email no lado cliente e servidor (Firebase já valida)
+- [x] Senha mínima de 6 caracteres (regra do Firebase)
 
 ---
 
@@ -148,76 +148,78 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 
 ### Histórias de Usuário Relacionadas
 
-- [ ] [P02](./HUP.md) - Paciente: Visualizar dias e horários disponíveis
-- [ ] [P03](./HUP.md) - Paciente: Solicitar consulta em dia e horário específicos
-- [ ] [P04](./HUP.md) - Paciente: Acompanhar status das solicitações
-- [ ] [P05](./HUP.md) - Paciente: Ver lista de consultas futuras
+- [x] [P02](./HUP.md) - Paciente: Visualizar dias e horários disponíveis
+- [x] [P03](./HUP.md) - Paciente: Solicitar consulta em dia e horário específicos
+- [x] [P04](./HUP.md) - Paciente: Acompanhar status das solicitações
+- [x] [P05](./HUP.md) - Paciente: Ver lista de consultas futuras
 
 ### Entregas
 
 #### Domínio (Model)
-- [ ] Interface `IAppointmentRepository` (create, getById, listByPatient, listByDate, updateStatus)
-- [ ] Factory `makeAppointment` (patientId, nutritionistId, date, timeStart, timeEnd, observations?)
-- [ ] Factory `makeTimeSlot` (date, timeStart, timeEnd, available)
-- [ ] Tipo `AppointmentStatus` (union: pending | accepted | rejected | cancelled)
+- [x] Interface `IAppointmentRepository` (createAppointment, getAppointmentByID, listAppointmentsByPatient, listAppointmentsByNutritionist, listAppointmentsByDate, updateAppointmentStatus)
+- [x] Factory `makeAppointment` (patientId, nutritionistId, date, timeStart, timeEnd, observations?)
+- [x] Factory `makeTimeSlot` (date, timeStart, timeEnd, available)
+- [x] Tipo `AppointmentStatus` (union: pending | accepted | rejected | cancelled)
 
 #### Infraestrutura
-- [ ] Implementar `FirebaseAppointmentRepository`
-- [ ] Coleção Firestore: `appointments`
-- [ ] Índices necessários (Firestore):
-  - Composto: `patientId` + `date` + `status`
-  - Composto: `nutritionistId` + `date` + `status`
+- [x] Implementar `FirebaseAppointmentRepository`
+- [x] Coleção Firestore: `appointments`
+- [x] Índices necessários (Firestore):
+  - [x] Composto: `patientId` + `date` + `status`
+  - [x] Composto: `nutritionistId` + `date` + `status`
 
 #### Casos de Uso
-- [ ] `GetAvailableTimeSlotsUseCase` (hardcoded: Seg-Sex, 9-16h, slots 2h)
-  - Slots: 9-11h, 11-13h, 13-15h, 14-16h
-  - Filtrar fins de semana
-  - Filtrar horários já ocupados (consultas aceitas)
-- [ ] `RequestAppointmentUseCase` (validar slot disponível + capturar observações opcionais do paciente + criar)
-- [ ] `ListPatientAppointmentsUseCase` (buscar por patientId, ordenar por data)
-- [ ] `GetAppointmentDetailsUseCase` (buscar por id)
+- [x] `GetAvailableTimeSlotsUseCase` (hardcoded: Seg-Sex, 9-16h, slots 2h)
+  - [x] Slots: 9-11h, 11-13h, 13-15h, 14-16h
+  - [x] Filtrar fins de semana
+  - [x] Filtrar horários já ocupados (consultas aceitas)
+- [x] `RequestAppointmentUseCase` (validar slot disponível + capturar observações opcionais do paciente + criar)
+- [x] `ListPatientAppointmentsUseCase` (buscar por patientId, ordenar por data)
+- [x] `GetAppointmentDetailsUseCase` (buscar por id)
 
 #### ViewModel
-- [ ] `ScheduleViewModel` (availableSlots, selectedDate, selectedTime, loading)
-- [ ] `MyAppointmentsViewModel` (appointments list, loading, refresh)
-- [ ] `AppointmentDetailsViewModel` (appointment, loading)
-- [ ] Hooks correspondentes para as Views
+- [x] `useScheduleViewModel` (availableSlots, selectedDate, selectedTime, observations, loading)
+- [x] `useMyAppointmentsViewModel` (appointments list, loading, refresh)
+- [x] `useAppointmentDetailsViewModel` (appointment, loading)
+- [x] Hooks correspondentes para as Views
 
 #### View
-- [ ] Tela: `ScheduleScreen.tsx` (calendário + seleção de horário)
-  - Integrar `react-native-calendars`
-  - Marcar dias úteis disponíveis
-  - Listar slots do dia selecionado
-  - Text input opcional para observações (capturadas do paciente)
-  - Botão "Solicitar Consulta"
-- [ ] Tela: `MyAppointmentsScreen.tsx` (lista de consultas)
-  - Cards com status colorido
-  - Pull-to-refresh
-  - Navegação para detalhes
-- [ ] Tela: `AppointmentDetailsScreen.tsx` (visualização paciente)
-  - Badge de status
-  - Data/horário formatados
-  - Nome da nutricionista
-- [ ] Componentes: `AppointmentCard`, `TimeSlotCard`, `StatusBadge`
+- [x] Tela: `ScheduleScreen.tsx` (calendário + seleção de horário)
+  - [x] Integrar `react-native-calendars`
+  - [x] Marcar dias úteis disponíveis
+  - [x] Listar slots do dia selecionado
+  - [x] Text input opcional para observações (capturadas do paciente)
+  - [x] Botão "Solicitar Consulta"
+- [x] Tela: `MyAppointmentsScreen.tsx` (lista de consultas)
+  - [x] Cards com status colorido
+  - [x] Pull-to-refresh
+  - [x] Navegação para detalhes
+- [x] Tela: `AppointmentDetailsScreen.tsx` (visualização paciente)
+  - [x] Badge de status
+  - [x] Data/horário formatados
+  - [x] Nome da nutricionista
+- [x] Componentes: `AppointmentCard`, `TimePill`, `StatusBadge`, `ScreenHeader`, `EmptyStateCard`, `InfoRow`
 
 #### Testes
-- [ ] Testes: `GetAvailableTimeSlotsUseCase` (fins de semana, slots ocupados)
-- [ ] Testes: `RequestAppointmentUseCase` (validações)
-- [ ] Testes: ViewModels
+- [x] Testes: `GetAvailableTimeSlotsUseCase` (fins de semana, slots ocupados)
+- [x] Testes: `RequestAppointmentUseCase` (validações)
+- [x] Testes: ViewModels
 
 ### Critérios de Aceitação
 
-- Paciente vê calendário mensal com dias úteis disponíveis
-- Fins de semana aparecem desabilitados
-- Ao clicar em dia, vê slots: 9-11h, 11-13h, 13-15h, 14-16h
-- Horários ocupados não aparecem na lista
-- Paciente seleciona horário e solicita consulta
-- Consulta criada com status "pending"
-- Paciente vê lista de suas consultas com status colorido
-- Atualização em tempo real (Firebase listeners)### Notas Técnicas
-- Usar `react-native-calendars` para calendário
-- Formatar datas em português: "10 de dezembro de 2025"
-- Cores de status: pending (laranja), accepted (verde), rejected (vermelho), cancelled (cinza)
+- [x] Paciente vê calendário mensal com dias úteis disponíveis
+- [x] Fins de semana aparecem desabilitados
+- [x] Ao clicar em dia, vê slots: 9-11h, 11-13h, 13-15h, 14-16h
+- [x] Horários ocupados não aparecem na lista
+- [x] Paciente seleciona horário e solicita consulta
+- [x] Consulta criada com status "pending"
+- [x] Paciente vê lista de suas consultas com status colorido
+- [x] Atualização em tempo real (Firebase listeners)
+
+### Notas Técnicas
+- [x] Usar `react-native-calendars` para calendário
+- [x] Formatar datas em português: "10 de dezembro de 2025"
+- [x] Cores de status: pending (laranja), accepted (verde), rejected (vermelho), cancelled (cinza)
 
 ---
 

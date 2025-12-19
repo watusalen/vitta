@@ -1,5 +1,5 @@
 module.exports = {
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   testMatch: [
     '**/tests/unit/**/*.test.ts?(x)',
@@ -27,8 +27,6 @@ module.exports = {
     'src/**/*.{ts,tsx}',
     '!src/**/*.d.ts',
     '!src/view/**',
-    '!src/viewmodel/**',
-    '!src/infra/**',
     '!tests/**',
     '!src/app/**',
     '!src/di/**',

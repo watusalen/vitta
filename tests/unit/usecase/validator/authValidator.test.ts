@@ -1,4 +1,4 @@
-import AuthValidator from '../../../../src/usecase/validator/authValidator';
+import AuthValidator from '../../../../src/usecase/auth/validator/authValidator';
 import ValidationError from '../../../../src/model/errors/validationError';
 
 describe('AuthValidator', () => {

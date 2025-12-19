@@ -38,11 +38,11 @@ describe('Appointment Entity Interface', () => {
     });
 
     it('should support all status types', () => {
-      const statuses: ('pending' | 'accepted' | 'rejected' | 'canceled')[] = [
+      const statuses: ('pending' | 'accepted' | 'rejected' | 'cancelled')[] = [
         'pending',
         'accepted',
         'rejected',
-        'canceled',
+        'cancelled',
       ];
 
       statuses.forEach((status) => {
