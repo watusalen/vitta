@@ -9,4 +9,5 @@ export interface IAppointmentRepository {
     listAcceptedByDateRange(startDate: string, endDate: string, nutritionistId: string): Promise<Appointment[]>;
     updateStatus(id: string, status: AppointmentStatus): Promise<void>;
     onPatientAppointmentsChange(patientId: string, callback: (appointments: Appointment[]) => void): () => void;
+    onNutritionistPendingChange(nutritionistId: string, callback: (appointments: Appointment[]) => void): () => void;
 }
