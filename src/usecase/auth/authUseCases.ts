@@ -9,7 +9,6 @@ import { makeUser } from "@/model/factories/makeUser";
 import { IAuthUseCases } from "./iAuthUseCases";
 
 export default class AuthUseCases implements IAuthUseCases {
-
     private authService: IAuthService;
     private userRepository: IUserRepository;
 

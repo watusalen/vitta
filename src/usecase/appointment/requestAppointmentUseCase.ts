@@ -4,9 +4,6 @@ import { makeAppointment } from "@/model/factories/makeAppointment";
 import { isWeekday, AVAILABLE_TIME_SLOTS, formatDateToISO } from "@/model/factories/makeTimeSlot";
 import ValidationError from "@/model/errors/validationError";
 
-/**
- * Input para solicitar uma consulta
- */
 export interface RequestAppointmentInput {
     patientId: string;
     nutritionistId: string;
@@ -16,28 +13,10 @@ export interface RequestAppointmentInput {
     observations?: string;
 }
 
-/**
- * Interface para o caso de uso de solicitar consulta
- */
 export interface IRequestAppointmentUseCase {
-    /**
-     * Solicita uma nova consulta
-     * @param input - Dados da solicitação
-     * @returns Appointment criado com status 'pending'
-     */
     execute(input: RequestAppointmentInput): Promise<Appointment>;
 }
 
-/**
- * Caso de uso para solicitar uma consulta
- * 
- * Regras de negócio:
- * - Data deve ser um dia útil (Segunda a Sexta)
- * - Horário deve ser um slot válido
- * - Data não pode ser no passado
- * - Slot não pode estar ocupado por consulta aceita
- * - Consulta é criada com status 'pending'
- */
 export default class RequestAppointmentUseCase implements IRequestAppointmentUseCase {
     private appointmentRepository: IAppointmentRepository;
 
@@ -46,12 +25,10 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
     }
 
     async execute(input: RequestAppointmentInput): Promise<Appointment> {
-        // Validar data é dia útil
         if (!isWeekday(input.date)) {
             throw new ValidationError('Consultas só podem ser agendadas de segunda a sexta-feira.');
         }
 
-        // Validar data não é no passado
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const inputDate = new Date(input.date);
@@ -61,7 +38,6 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             throw new ValidationError('Não é possível agendar consultas em datas passadas.');
         }
 
-        // Validar slot de horário é válido
         const isValidSlot = AVAILABLE_TIME_SLOTS.some(
             slot => slot.timeStart === input.timeStart && slot.timeEnd === input.timeEnd
         );
@@ -70,7 +46,6 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             throw new ValidationError('Horário selecionado não está disponível.');
         }
 
-        // Verificar se slot já está ocupado por consulta aceita
         const dateStr = formatDateToISO(input.date);
         const isOccupied = await this.isSlotOccupied(
             dateStr,
@@ -83,7 +58,17 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             throw new ValidationError('Este horário já está ocupado. Por favor, escolha outro.');
         }
 
-        // Criar appointment
+        const hasPendingRequest = await this.patientHasPendingRequest(
+            input.patientId,
+            dateStr,
+            input.timeStart,
+            input.timeEnd
+        );
+
+        if (hasPendingRequest) {
+            throw new ValidationError('Você já tem uma solicitação pendente para este horário.');
+        }
+
         const appointment = makeAppointment({
             patientId: input.patientId,
             nutritionistId: input.nutritionistId,
@@ -93,15 +78,11 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             observations: input.observations,
         });
 
-        // Persistir no repositório
         await this.appointmentRepository.create(appointment);
 
         return appointment;
     }
 
-    /**
-     * Verifica se um slot está ocupado por uma consulta aceita
-     */
     private async isSlotOccupied(
         date: string,
         timeStart: string,
@@ -113,6 +94,23 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
         return appointments.some(
             appt =>
                 appt.status === 'accepted' &&
+                appt.timeStart === timeStart &&
+                appt.timeEnd === timeEnd
+        );
+    }
+
+    private async patientHasPendingRequest(
+        patientId: string,
+        date: string,
+        timeStart: string,
+        timeEnd: string
+    ): Promise<boolean> {
+        const patientAppointments = await this.appointmentRepository.listByPatient(patientId);
+
+        return patientAppointments.some(
+            appt =>
+                appt.status === 'pending' &&
+                appt.date === date &&
                 appt.timeStart === timeStart &&
                 appt.timeEnd === timeEnd
         );
