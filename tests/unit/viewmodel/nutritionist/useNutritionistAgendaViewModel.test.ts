@@ -1,7 +1,7 @@
 import { renderHook, act, waitFor } from '@testing-library/react';
 import useNutritionistAgendaViewModel from '@/viewmodel/nutritionist/useNutritionistAgendaViewModel';
-import { IListNutritionistAgendaUseCase, AgendaByDate } from '@/usecase/appointment/listNutritionistAgendaUseCase';
-import { IUserRepository } from '@/model/repositories/iUserRepository';
+import { IListNutritionistAgendaUseCase, AgendaByDate } from '@/usecase/appointment/list/iListNutritionistAgendaUseCase';
+import { IGetUserByIdUseCase } from '@/usecase/user/iGetUserByIdUseCase';
 import Appointment from '@/model/entities/appointment';
 import RepositoryError from '@/model/errors/repositoryError';
 
@@ -20,24 +20,22 @@ const createMockAppointment = (id: string, date: string, timeStart: string = '09
 
 describe('useNutritionistAgendaViewModel', () => {
     let mockUseCase: IListNutritionistAgendaUseCase;
-    let mockUserRepository: IUserRepository;
+    let mockGetUserByIdUseCase: IGetUserByIdUseCase;
 
     beforeEach(() => {
         mockUseCase = {
-            execute: jest.fn().mockResolvedValue([]),
-            executeByDate: jest.fn().mockResolvedValue([]),
+            listAgenda: jest.fn().mockResolvedValue([]),
+            listAcceptedByDate: jest.fn().mockResolvedValue([]),
         };
 
-        mockUserRepository = {
-            createUser: jest.fn(),
-            getUserByID: jest.fn().mockResolvedValue({ 
-                id: 'patient-1', 
-                name: 'João Silva', 
-                email: 'joao@test.com', 
-                role: 'patient', 
-                createdAt: new Date() 
+        mockGetUserByIdUseCase = {
+            getById: jest.fn().mockResolvedValue({
+                id: 'patient-1',
+                name: 'João Silva',
+                email: 'joao@test.com',
+                role: 'patient',
+                createdAt: new Date(),
             }),
-            getByRole: jest.fn(),
         };
     });
 
@@ -46,10 +44,10 @@ describe('useNutritionistAgendaViewModel', () => {
     });
 
     it('deve iniciar com loading true', () => {
-        (mockUseCase.execute as jest.Mock).mockImplementation(() => new Promise(() => {}));
+        (mockUseCase.listAgenda as jest.Mock).mockImplementation(() => new Promise(() => {}));
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         expect(result.current.loading).toBe(true);
@@ -63,10 +61,10 @@ describe('useNutritionistAgendaViewModel', () => {
             },
         ];
 
-        (mockUseCase.execute as jest.Mock).mockResolvedValue(agendaData);
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue(agendaData);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => {
@@ -82,11 +80,11 @@ describe('useNutritionistAgendaViewModel', () => {
             createMockAppointment('appt-2', '2025-01-20', '11:00'),
         ];
 
-        (mockUseCase.execute as jest.Mock).mockResolvedValue([]);
-        (mockUseCase.executeByDate as jest.Mock).mockResolvedValue(appointments);
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue(appointments);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -102,10 +100,10 @@ describe('useNutritionistAgendaViewModel', () => {
     });
 
     it('deve alterar filtro', async () => {
-        (mockUseCase.execute as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -118,10 +116,10 @@ describe('useNutritionistAgendaViewModel', () => {
     });
 
     it('deve fazer refresh', async () => {
-        (mockUseCase.execute as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -130,14 +128,14 @@ describe('useNutritionistAgendaViewModel', () => {
             await result.current.refresh();
         });
 
-        expect(mockUseCase.execute).toHaveBeenCalledTimes(2); // inicial + refresh
+        expect(mockUseCase.listAgenda).toHaveBeenCalledTimes(2); // inicial + refresh
     });
 
     it('deve tratar erro ao carregar agenda', async () => {
-        (mockUseCase.execute as jest.Mock).mockRejectedValue(new RepositoryError('Erro de conexão'));
+        (mockUseCase.listAgenda as jest.Mock).mockRejectedValue(new RepositoryError('Erro de conexão'));
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => {
@@ -148,12 +146,12 @@ describe('useNutritionistAgendaViewModel', () => {
     });
 
     it('deve tentar novamente após erro com retry', async () => {
-        (mockUseCase.execute as jest.Mock)
+        (mockUseCase.listAgenda as jest.Mock)
             .mockRejectedValueOnce(new RepositoryError('Erro'))
             .mockResolvedValueOnce([]);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -174,10 +172,10 @@ describe('useNutritionistAgendaViewModel', () => {
             { date: '2025-01-25', appointments: [createMockAppointment('appt-3', '2025-01-25')] },
         ];
 
-        (mockUseCase.execute as jest.Mock).mockResolvedValue(agendaData);
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue(agendaData);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -189,11 +187,11 @@ describe('useNutritionistAgendaViewModel', () => {
     });
 
     it('deve retornar array vazio quando selecionar data sem consultas', async () => {
-        (mockUseCase.execute as jest.Mock).mockResolvedValue([]);
-        (mockUseCase.executeByDate as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => expect(result.current.loading).toBe(false));
@@ -206,11 +204,11 @@ describe('useNutritionistAgendaViewModel', () => {
     });
 
     it('deve formatar selectedDateFormatted quando data selecionada', async () => {
-        (mockUseCase.execute as jest.Mock).mockResolvedValue([]);
-        (mockUseCase.executeByDate as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
-            useNutritionistAgendaViewModel(mockUseCase, mockUserRepository, 'nutri-1')
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
         );
 
         await waitFor(() => expect(result.current.loading).toBe(false));

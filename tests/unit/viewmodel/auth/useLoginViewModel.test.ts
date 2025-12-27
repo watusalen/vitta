@@ -14,6 +14,7 @@ describe('useLoginViewModel', () => {
             login: jest.fn(),
             signUp: jest.fn(),
             logout: jest.fn(),
+            resetPassword: jest.fn(),
             onAuthStateChanged: jest.fn().mockReturnValue(jest.fn()),
         };
     });
@@ -31,8 +32,11 @@ describe('useLoginViewModel', () => {
 
         expect(result.current.user).toBeNull();
         expect(result.current.error).toBeNull();
+        expect(result.current.emailError).toBeNull();
+        expect(result.current.passwordError).toBeNull();
+        expect(result.current.resetLoading).toBe(false);
+        expect(result.current.resetSuccess).toBeNull();
         expect(result.current.loading).toBe(false);
-        expect(result.current.isAuthenticated).toBe(false);
     });
 
     it('deve fazer login com sucesso', async () => {
@@ -45,7 +49,6 @@ describe('useLoginViewModel', () => {
         });
 
         expect(result.current.user).toEqual(mockUser);
-        expect(result.current.isAuthenticated).toBe(true);
         expect(result.current.error).toBeNull();
         expect(result.current.loading).toBe(false);
     });
@@ -80,7 +83,7 @@ describe('useLoginViewModel', () => {
             await result.current.login('invalid', 'password123');
         });
 
-        expect(result.current.error).toBe('Email inválido');
+        expect(result.current.emailError).toBe('Email inválido');
         expect(result.current.user).toBeNull();
     });
 

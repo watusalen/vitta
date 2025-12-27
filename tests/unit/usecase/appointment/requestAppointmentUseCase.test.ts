@@ -1,4 +1,4 @@
-import RequestAppointmentUseCase from '../../../../src/usecase/appointment/requestAppointmentUseCase';
+import RequestAppointmentUseCase from '../../../../src/usecase/appointment/request/requestAppointmentUseCase';
 import { IAppointmentRepository } from '../../../../src/model/repositories/iAppointmentRepository';
 import Appointment from '../../../../src/model/entities/appointment';
 import ValidationError from '../../../../src/model/errors/validationError';
@@ -67,7 +67,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute(validInput);
+            const appointment = await useCase.requestAppointment(validInput);
 
             expect(appointment.status).toBe('pending');
         });
@@ -76,7 +76,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute(validInput);
+            const appointment = await useCase.requestAppointment(validInput);
 
             expect(appointment.patientId).toBe('patient-123');
             expect(appointment.nutritionistId).toBe('nutri-1');
@@ -86,7 +86,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute(validInput);
+            const appointment = await useCase.requestAppointment(validInput);
 
             expect(appointment.timeStart).toBe('09:00');
             expect(appointment.timeEnd).toBe('11:00');
@@ -96,7 +96,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 observations: 'Primeira consulta - tenho alergia a lactose',
             });
@@ -108,7 +108,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute(validInput);
+            const appointment = await useCase.requestAppointment(validInput);
 
             expect(mockRepo.create).toHaveBeenCalledTimes(1);
             expect(mockRepo.create).toHaveBeenCalledWith(appointment);
@@ -118,7 +118,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute(validInput);
+            const appointment = await useCase.requestAppointment(validInput);
 
             expect(appointment.id).toBeDefined();
             expect(appointment.id.length).toBeGreaterThan(0);
@@ -129,7 +129,7 @@ describe('RequestAppointmentUseCase', () => {
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
             const before = new Date();
-            const appointment = await useCase.execute(validInput);
+            const appointment = await useCase.requestAppointment(validInput);
             const after = new Date();
 
             expect(appointment.createdAt.getTime()).toBeGreaterThanOrEqual(before.getTime());
@@ -146,11 +146,11 @@ describe('RequestAppointmentUseCase', () => {
             const saturday = createLocalDate(2025, 12, 20);
 
             await expect(
-                useCase.execute({ ...validInput, date: saturday })
+                useCase.requestAppointment({ ...validInput, date: saturday })
             ).rejects.toThrow(ValidationError);
 
             await expect(
-                useCase.execute({ ...validInput, date: saturday })
+                useCase.requestAppointment({ ...validInput, date: saturday })
             ).rejects.toThrow('Consultas só podem ser agendadas de segunda a sexta-feira.');
         });
 
@@ -162,7 +162,7 @@ describe('RequestAppointmentUseCase', () => {
             const sunday = createLocalDate(2025, 12, 21);
 
             await expect(
-                useCase.execute({ ...validInput, date: sunday })
+                useCase.requestAppointment({ ...validInput, date: sunday })
             ).rejects.toThrow(ValidationError);
         });
 
@@ -179,7 +179,7 @@ describe('RequestAppointmentUseCase', () => {
             }
 
             await expect(
-                useCase.execute({ ...validInput, date: pastDate })
+                useCase.requestAppointment({ ...validInput, date: pastDate })
             ).rejects.toThrow('Não é possível agendar consultas em datas passadas.');
         });
 
@@ -191,12 +191,12 @@ describe('RequestAppointmentUseCase', () => {
             
             // Se hoje é dia útil, deve aceitar
             if (today.getDay() !== 0 && today.getDay() !== 6) {
-                const appointment = await useCase.execute({ ...validInput, date: today });
+                const appointment = await useCase.requestAppointment({ ...validInput, date: today });
                 expect(appointment).toBeDefined();
             } else {
                 // Se é fim de semana, deve rejeitar
                 await expect(
-                    useCase.execute({ ...validInput, date: today })
+                    useCase.requestAppointment({ ...validInput, date: today })
                 ).rejects.toThrow(ValidationError);
             }
         });
@@ -208,7 +208,7 @@ describe('RequestAppointmentUseCase', () => {
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
             await expect(
-                useCase.execute({
+                useCase.requestAppointment({
                     ...validInput,
                     timeStart: '10:00',
                     timeEnd: '12:00',
@@ -220,7 +220,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 timeStart: '09:00',
                 timeEnd: '11:00',
@@ -233,7 +233,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 timeStart: '11:00',
                 timeEnd: '13:00',
@@ -246,7 +246,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 timeStart: '13:00',
                 timeEnd: '15:00',
@@ -259,7 +259,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 timeStart: '14:00',
                 timeEnd: '16:00',
@@ -281,7 +281,7 @@ describe('RequestAppointmentUseCase', () => {
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
             await expect(
-                useCase.execute({
+                useCase.requestAppointment({
                     ...validInput,
                     date: futureDate,
                     timeStart: '09:00',
@@ -290,7 +290,7 @@ describe('RequestAppointmentUseCase', () => {
             ).rejects.toThrow('Este horário já está ocupado. Por favor, escolha outro.');
         });
 
-        it('should allow booking when slot has pending appointment', async () => {
+        it('should throw ValidationError when slot has pending appointment', async () => {
             const futureDate = createFutureWeekday();
             const dateStr = futureDate.toISOString().split('T')[0];
 
@@ -300,15 +300,14 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository(existingAppointments);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            // Pending não bloqueia - múltiplas solicitações podem existir
-            const appointment = await useCase.execute({
-                ...validInput,
-                date: futureDate,
-                timeStart: '09:00',
-                timeEnd: '11:00',
-            });
-
-            expect(appointment).toBeDefined();
+            await expect(
+                useCase.requestAppointment({
+                    ...validInput,
+                    date: futureDate,
+                    timeStart: '09:00',
+                    timeEnd: '11:00',
+                })
+            ).rejects.toThrow('Este horário já está ocupado. Por favor, escolha outro.');
         });
 
         it('should allow booking when slot has rejected appointment', async () => {
@@ -321,7 +320,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository(existingAppointments);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 date: futureDate,
                 timeStart: '09:00',
@@ -341,7 +340,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository(existingAppointments);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 date: futureDate,
                 timeStart: '09:00',
@@ -361,7 +360,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository(existingAppointments);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 date: futureDate,
                 timeStart: '11:00',
@@ -393,7 +392,7 @@ describe('RequestAppointmentUseCase', () => {
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
             await expect(
-                useCase.execute({
+                useCase.requestAppointment({
                     ...validInput,
                     date: futureDate,
                     timeStart: '09:00',
@@ -401,13 +400,13 @@ describe('RequestAppointmentUseCase', () => {
                 })
             ).rejects.toThrow(ValidationError);
             await expect(
-                useCase.execute({
+                useCase.requestAppointment({
                     ...validInput,
                     date: futureDate,
                     timeStart: '09:00',
                     timeEnd: '11:00',
                 })
-            ).rejects.toThrow('Você já tem uma solicitação pendente para este horário.');
+            ).rejects.toThrow('Você já tem uma solicitação registrada para este horário.');
         });
 
         it('should allow request when patient has pending request for different slot', async () => {
@@ -429,7 +428,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([], [patientPendingAppointment]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 date: futureDate,
                 timeStart: '09:00',
@@ -464,7 +463,7 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([], [patientPendingAppointment]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
+            const appointment = await useCase.requestAppointment({
                 ...validInput,
                 date: futureDate,
                 timeStart: '09:00',
@@ -474,7 +473,7 @@ describe('RequestAppointmentUseCase', () => {
             expect(appointment).toBeDefined();
         });
 
-        it('should allow request when patient has accepted/cancelled/rejected request for same slot', async () => {
+        it('should throw ValidationError when patient has cancelled request for same slot', async () => {
             const futureDate = createFutureWeekday();
             const dateStr = futureDate.toISOString().split('T')[0];
 
@@ -493,14 +492,14 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([], [patientCancelledAppointment]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            const appointment = await useCase.execute({
-                ...validInput,
-                date: futureDate,
-                timeStart: '09:00',
-                timeEnd: '11:00',
-            });
-
-            expect(appointment).toBeDefined();
+            await expect(
+                useCase.requestAppointment({
+                    ...validInput,
+                    date: futureDate,
+                    timeStart: '09:00',
+                    timeEnd: '11:00',
+                })
+            ).rejects.toThrow('Você já tem uma solicitação registrada para este horário.');
         });
     });
 });

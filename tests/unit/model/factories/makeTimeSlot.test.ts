@@ -1,10 +1,10 @@
-import { 
-    makeTimeSlot, 
-    AVAILABLE_TIME_SLOTS, 
+import { makeTimeSlot } from '../../../../src/model/factories/makeTimeSlot';
+import {
+    AVAILABLE_TIME_SLOTS,
     AVAILABLE_WEEKDAYS,
     isWeekday,
-    formatDateToISO 
-} from '../../../../src/model/factories/makeTimeSlot';
+    formatDateToISO
+} from '../../../../src/model/utils/timeSlotUtils';
 import TimeSlot from '../../../../src/model/entities/timeSlot';
 
 describe('makeTimeSlot Factory', () => {

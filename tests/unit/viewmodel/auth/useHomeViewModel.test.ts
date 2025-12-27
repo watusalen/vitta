@@ -12,6 +12,7 @@ describe('useHomeViewModel', () => {
             login: jest.fn(),
             signUp: jest.fn(),
             logout: jest.fn(),
+            resetPassword: jest.fn(),
             onAuthStateChanged: jest.fn().mockReturnValue(jest.fn()),
         };
     });

@@ -9,7 +9,7 @@ import {
 
 jest.mock('firebase/auth');
 jest.mock('@/infra/firebase/config', () => ({
-    auth: {},
+    getAuthInstance: jest.fn(() => ({})),
 }));
 
 const mockSignIn = signInWithEmailAndPassword as jest.Mock;
@@ -100,7 +100,7 @@ describe('FirebaseAuthService', () => {
 
             await expect(service.signup('existing@email.com', 'password')).rejects.toThrow(AuthError);
             await expect(service.signup('existing@email.com', 'password')).rejects.toThrow(
-                'Essa conta já existe ou alguma das credenciais está incorreta.'
+                'Essa conta já existe.'
             );
         });
     });

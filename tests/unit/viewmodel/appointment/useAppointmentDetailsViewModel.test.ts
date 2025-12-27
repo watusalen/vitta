@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import useAppointmentDetailsViewModel from '@/viewmodel/appointment/useAppointmentDetailsViewModel';
-import { IGetAppointmentDetailsUseCase } from '@/usecase/appointment/getAppointmentDetailsUseCase';
+import { IGetAppointmentDetailsUseCase } from '@/usecase/appointment/details/iGetAppointmentDetailsUseCase';
 import RepositoryError from '@/model/errors/repositoryError';
 import Appointment from '@/model/entities/appointment';
 
@@ -9,7 +9,7 @@ describe('useAppointmentDetailsViewModel', () => {
 
     beforeEach(() => {
         mockGetAppointmentDetailsUseCase = {
-            execute: jest.fn(),
+            getById: jest.fn(),
         };
     });
 
@@ -38,7 +38,7 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve carregar detalhes da consulta', async () => {
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockResolvedValue(mockAppointment);
+        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockResolvedValue(mockAppointment);
 
         const { result } = renderHook(() =>
             useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
@@ -55,7 +55,7 @@ describe('useAppointmentDetailsViewModel', () => {
 
     it('deve setar loading durante carregamento', async () => {
         let resolveLoad: (value: Appointment) => void;
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockImplementation(() =>
+        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockImplementation(() =>
             new Promise((resolve) => {
                 resolveLoad = resolve;
             })
@@ -79,7 +79,7 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve setar notFound quando consulta não existe', async () => {
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockResolvedValue(null);
+        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockResolvedValue(null);
 
         const { result } = renderHook(() =>
             useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
@@ -94,7 +94,7 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve tratar RepositoryError', async () => {
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockRejectedValue(
+        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockRejectedValue(
             new RepositoryError('Erro ao carregar')
         );
 
@@ -111,7 +111,7 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve tratar erro genérico', async () => {
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockRejectedValue(new Error('Unknown'));
+        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockRejectedValue(new Error('Unknown'));
 
         const { result } = renderHook(() =>
             useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
@@ -124,44 +124,8 @@ describe('useAppointmentDetailsViewModel', () => {
         expect(result.current.error).toBe('Erro ao carregar detalhes da consulta.');
     });
 
-    it('deve recarregar consulta com reload', async () => {
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockResolvedValue(mockAppointment);
-
-        const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
-        );
-
-        await act(async () => {
-            await result.current.loadAppointment('appt-123');
-        });
-
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockResolvedValue({
-            ...mockAppointment,
-            status: 'accepted',
-        });
-
-        await act(async () => {
-            await result.current.reload();
-        });
-
-        expect(result.current.appointment?.status).toBe('accepted');
-        expect(mockGetAppointmentDetailsUseCase.execute).toHaveBeenCalledTimes(2);
-    });
-
-    it('não deve recarregar se não houver currentId', async () => {
-        const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
-        );
-
-        await act(async () => {
-            await result.current.reload();
-        });
-
-        expect(mockGetAppointmentDetailsUseCase.execute).not.toHaveBeenCalled();
-    });
-
     it('deve limpar erro', async () => {
-        (mockGetAppointmentDetailsUseCase.execute as jest.Mock).mockRejectedValue(
+        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockRejectedValue(
             new RepositoryError('Erro')
         );
 

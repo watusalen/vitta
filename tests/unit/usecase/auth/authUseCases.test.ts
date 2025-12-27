@@ -4,6 +4,7 @@ import { IUserRepository } from '@/model/repositories/iUserRepository';
 import User from '@/model/entities/user';
 import AuthError from '@/model/errors/authError';
 import ValidationError from '@/model/errors/validationError';
+import RepositoryError from '@/model/errors/repositoryError';
 
 describe('AuthUseCases', () => {
   let authUseCases: AuthUseCases;
@@ -15,6 +16,7 @@ describe('AuthUseCases', () => {
       login: jest.fn(),
       signup: jest.fn(),
       logout: jest.fn(),
+      resetPassword: jest.fn(),
       onAuthStateChanged: jest.fn(),
     };
 
@@ -86,6 +88,29 @@ describe('AuthUseCases', () => {
         authUseCases.login('joao@example.com', 'password123')
       ).rejects.toThrow(AuthError);
     });
+
+    it('should throw RepositoryError when repository fails', async () => {
+      mockAuthService.login.mockResolvedValueOnce({
+        id: 'user-1',
+        name: 'João',
+        email: 'joao@example.com',
+        role: 'patient',
+        createdAt: new Date(),
+      });
+      mockUserRepository.getUserByID.mockRejectedValueOnce(new RepositoryError('Erro'));
+
+      await expect(
+        authUseCases.login('joao@example.com', 'password123')
+      ).rejects.toThrow(RepositoryError);
+    });
+
+    it('should throw generic error when unexpected failure happens', async () => {
+      mockAuthService.login.mockRejectedValueOnce(new Error('Unexpected'));
+
+      await expect(
+        authUseCases.login('joao@example.com', 'password123')
+      ).rejects.toThrow('Erro interno no login');
+    });
   });
 
   describe('SignUp', () => {
@@ -145,6 +170,29 @@ describe('AuthUseCases', () => {
         authUseCases.signUp('João', 'joao@example.com', 'password123')
       ).rejects.toThrow(AuthError);
     });
+
+    it('should throw RepositoryError when repository fails', async () => {
+      mockAuthService.signup.mockResolvedValueOnce({
+        id: 'user-1',
+        name: 'João',
+        email: 'joao@example.com',
+        role: 'patient',
+        createdAt: new Date(),
+      });
+      mockUserRepository.createUser.mockRejectedValueOnce(new RepositoryError('Erro'));
+
+      await expect(
+        authUseCases.signUp('João', 'joao@example.com', 'password123')
+      ).rejects.toThrow(RepositoryError);
+    });
+
+    it('should throw generic error when unexpected failure happens', async () => {
+      mockAuthService.signup.mockRejectedValueOnce(new Error('Unexpected'));
+
+      await expect(
+        authUseCases.signUp('João', 'joao@example.com', 'password123')
+      ).rejects.toThrow('Erro interno no registro');
+    });
   });
 
   describe('Logout', () => {
@@ -162,6 +210,40 @@ describe('AuthUseCases', () => {
       );
 
       await expect(authUseCases.logout()).rejects.toThrow(AuthError);
+    });
+
+    it('should throw generic error when logout fails unexpectedly', async () => {
+      mockAuthService.logout.mockRejectedValueOnce(new Error('Unexpected'));
+
+      await expect(authUseCases.logout()).rejects.toThrow('Erro interno no logout');
+    });
+  });
+
+  describe('ResetPassword', () => {
+    it('should call resetPassword successfully', async () => {
+      mockAuthService.resetPassword.mockResolvedValueOnce(undefined);
+
+      await authUseCases.resetPassword('joao@example.com');
+
+      expect(mockAuthService.resetPassword).toHaveBeenCalledWith('joao@example.com');
+    });
+
+    it('should throw ValidationError on invalid email', async () => {
+      await expect(authUseCases.resetPassword('invalid')).rejects.toThrow(ValidationError);
+    });
+
+    it('should throw AuthError when resetPassword fails', async () => {
+      mockAuthService.resetPassword.mockRejectedValueOnce(new AuthError('Erro'));
+
+      await expect(authUseCases.resetPassword('joao@example.com')).rejects.toThrow(AuthError);
+    });
+
+    it('should throw generic error when resetPassword fails unexpectedly', async () => {
+      mockAuthService.resetPassword.mockRejectedValueOnce(new Error('Unexpected'));
+
+      await expect(authUseCases.resetPassword('joao@example.com')).rejects.toThrow(
+        'Erro interno ao enviar email de recuperação'
+      );
     });
   });
 
@@ -196,6 +278,39 @@ describe('AuthUseCases', () => {
 
       mockAuthService.onAuthStateChanged.mockImplementationOnce((cb) => {
         cb(null);
+        return () => {};
+      });
+
+      authUseCases.onAuthStateChanged(listener);
+
+      setTimeout(() => {
+        expect(listener).toHaveBeenCalledWith(null);
+        done();
+      }, 0);
+    });
+
+    it('should call listener with null on repository error', (done) => {
+      const listener = jest.fn();
+
+      mockUserRepository.getUserByID.mockRejectedValueOnce(new Error('Erro'));
+      mockAuthService.onAuthStateChanged.mockImplementationOnce((cb) => {
+        cb({ id: 'user-1' } as User);
+        return () => {};
+      });
+
+      authUseCases.onAuthStateChanged(listener);
+
+      setTimeout(() => {
+        expect(listener).toHaveBeenCalledWith(null);
+        done();
+      }, 0);
+    });
+
+    it('should call listener with null when authUser has no id', (done) => {
+      const listener = jest.fn();
+
+      mockAuthService.onAuthStateChanged.mockImplementationOnce((cb) => {
+        cb({} as User);
         return () => {};
       });
 

@@ -30,6 +30,7 @@ module.exports = {
     '!tests/**',
     '!src/app/**',
     '!src/di/**',
+    '!src/infra/firebase/config.ts',
   ],
   coverageThreshold: {
     global: {

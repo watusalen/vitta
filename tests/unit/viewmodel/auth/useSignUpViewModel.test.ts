@@ -14,6 +14,7 @@ describe('useSignUpViewModel', () => {
             login: jest.fn(),
             signUp: jest.fn(),
             logout: jest.fn(),
+            resetPassword: jest.fn(),
             onAuthStateChanged: jest.fn().mockReturnValue(jest.fn()),
         };
     });
@@ -31,8 +32,11 @@ describe('useSignUpViewModel', () => {
 
         expect(result.current.user).toBeNull();
         expect(result.current.error).toBeNull();
+        expect(result.current.nameError).toBeNull();
+        expect(result.current.emailError).toBeNull();
+        expect(result.current.passwordError).toBeNull();
+        expect(result.current.confirmPasswordError).toBeNull();
         expect(result.current.loading).toBe(false);
-        expect(result.current.isRegistered).toBe(false);
     });
 
     it('deve fazer signup com sucesso', async () => {
@@ -41,11 +45,10 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         await act(async () => {
-            await result.current.signUp('John Doe', 'john@email.com', 'password123');
+            await result.current.signUp('John Doe', 'john@email.com', 'password123', 'password123');
         });
 
         expect(result.current.user).toEqual(mockUser);
-        expect(result.current.isRegistered).toBe(true);
         expect(result.current.error).toBeNull();
         expect(result.current.loading).toBe(false);
         expect(mockAuthUseCases.signUp).toHaveBeenCalledWith('John Doe', 'john@email.com', 'password123');
@@ -60,7 +63,7 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         act(() => {
-            result.current.signUp('John Doe', 'john@email.com', 'password123');
+            result.current.signUp('John Doe', 'john@email.com', 'password123', 'password123');
         });
 
         expect(result.current.loading).toBe(true);
@@ -78,12 +81,11 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         await act(async () => {
-            await result.current.signUp('John', 'invalid', 'password123');
+            await result.current.signUp('John', 'invalid', 'password123', 'password123');
         });
 
-        expect(result.current.error).toBe('Email inválido');
+        expect(result.current.emailError).toBe('Email inválido');
         expect(result.current.user).toBeNull();
-        expect(result.current.isRegistered).toBe(false);
     });
 
     it('deve tratar AuthError', async () => {
@@ -92,10 +94,10 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         await act(async () => {
-            await result.current.signUp('John', 'existing@email.com', 'password');
+            await result.current.signUp('John', 'existing@email.com', 'password', 'password');
         });
 
-        expect(result.current.error).toBe('Conta já existe');
+        expect(result.current.emailError).toBe('Conta já existe');
     });
 
     it('deve tratar RepositoryError', async () => {
@@ -104,7 +106,7 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         await act(async () => {
-            await result.current.signUp('John', 'john@email.com', 'password');
+            await result.current.signUp('John', 'john@email.com', 'password', 'password');
         });
 
         expect(result.current.error).toBe('Erro ao salvar');
@@ -116,7 +118,7 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         await act(async () => {
-            await result.current.signUp('John', 'john@email.com', 'password');
+            await result.current.signUp('John', 'john@email.com', 'password', 'password');
         });
 
         expect(result.current.error).toBe('Algo deu errado');
@@ -128,7 +130,7 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         await act(async () => {
-            await result.current.signUp('John', 'john@email.com', 'password');
+            await result.current.signUp('John', 'john@email.com', 'password', 'password');
         });
 
         expect(result.current.error).toBe('Erro desconhecido ao criar conta');
@@ -140,15 +142,16 @@ describe('useSignUpViewModel', () => {
         const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
 
         await act(async () => {
-            await result.current.signUp('John', 'john@email.com', 'password');
+            await result.current.signUp('John', 'john@email.com', 'password', 'password');
         });
 
-        expect(result.current.error).not.toBeNull();
+        expect(result.current.emailError).not.toBeNull();
 
         act(() => {
             result.current.clearError();
         });
 
         expect(result.current.error).toBeNull();
+        expect(result.current.emailError).toBeNull();
     });
 });

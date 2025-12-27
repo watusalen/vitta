@@ -1,4 +1,5 @@
-import ListPendingAppointmentsUseCase, { IListPendingAppointmentsUseCase } from '@/usecase/appointment/listPendingAppointmentsUseCase';
+import ListPendingAppointmentsUseCase from '@/usecase/appointment/list/listPendingAppointmentsUseCase';
+import { IListPendingAppointmentsUseCase } from '@/usecase/appointment/list/iListPendingAppointmentsUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
 
@@ -40,7 +41,7 @@ describe('ListPendingAppointmentsUseCase', () => {
         useCase = new ListPendingAppointmentsUseCase(mockRepository);
     });
 
-    describe('execute', () => {
+    describe('listPendingByNutritionist', () => {
         it('should return pending appointments for nutritionist', async () => {
             const pendingAppointments = [
                 createMockAppointment('appt-1', '2025-01-20', '09:00'),
@@ -49,7 +50,7 @@ describe('ListPendingAppointmentsUseCase', () => {
 
             (mockRepository.listByStatus as jest.Mock).mockResolvedValue(pendingAppointments);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listPendingByNutritionist('nutri-1');
 
             expect(mockRepository.listByStatus).toHaveBeenCalledWith('pending', 'nutri-1');
             expect(result).toHaveLength(2);
@@ -58,7 +59,7 @@ describe('ListPendingAppointmentsUseCase', () => {
         it('should return empty array when no pending appointments', async () => {
             (mockRepository.listByStatus as jest.Mock).mockResolvedValue([]);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listPendingByNutritionist('nutri-1');
 
             expect(result).toHaveLength(0);
         });
@@ -72,7 +73,7 @@ describe('ListPendingAppointmentsUseCase', () => {
 
             (mockRepository.listByStatus as jest.Mock).mockResolvedValue(pendingAppointments);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listPendingByNutritionist('nutri-1');
 
             expect(result[0].date).toBe('2025-01-20');
             expect(result[1].date).toBe('2025-01-22');
@@ -88,7 +89,7 @@ describe('ListPendingAppointmentsUseCase', () => {
 
             (mockRepository.listByStatus as jest.Mock).mockResolvedValue(pendingAppointments);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listPendingByNutritionist('nutri-1');
 
             expect(result[0].timeStart).toBe('09:00');
             expect(result[1].timeStart).toBe('11:00');

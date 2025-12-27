@@ -1,4 +1,5 @@
-import AcceptAppointmentUseCase, { IAcceptAppointmentUseCase } from '@/usecase/appointment/acceptAppointmentUseCase';
+import AcceptAppointmentUseCase from '@/usecase/appointment/status/acceptAppointmentUseCase';
+import { IAcceptAppointmentUseCase } from '@/usecase/appointment/status/iAcceptAppointmentUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
 import ValidationError from '@/model/errors/validationError';
@@ -55,10 +56,11 @@ describe('AcceptAppointmentUseCase', () => {
             
             (mockRepository.getById as jest.Mock)
                 .mockResolvedValueOnce(appointment)
+                .mockResolvedValueOnce(appointment)
                 .mockResolvedValueOnce({ ...appointment, status: 'accepted' });
             (mockRepository.listByDate as jest.Mock).mockResolvedValue([appointment]);
 
-            const result = await useCase.execute('appt-1');
+            const result = await useCase.acceptAppointment('appt-1');
 
             expect(result.status).toBe('accepted');
             expect(mockRepository.updateStatus).toHaveBeenCalledWith('appt-1', 'accepted');
@@ -72,6 +74,7 @@ describe('AcceptAppointmentUseCase', () => {
 
             (mockRepository.getById as jest.Mock)
                 .mockResolvedValueOnce(mainAppointment)
+                .mockResolvedValueOnce(mainAppointment)
                 .mockResolvedValueOnce({ ...mainAppointment, status: 'accepted' });
             (mockRepository.listByDate as jest.Mock).mockResolvedValue([
                 mainAppointment,
@@ -80,11 +83,11 @@ describe('AcceptAppointmentUseCase', () => {
                 differentSlot,
             ]);
 
-            await useCase.execute('appt-1');
+            await useCase.acceptAppointment('appt-1');
 
             // Deve ter cancelado as duas conflitantes
-            expect(updatedStatuses.get('appt-2')).toBe('cancelled');
-            expect(updatedStatuses.get('appt-3')).toBe('cancelled');
+            expect(updatedStatuses.get('appt-2')).toBe('rejected');
+            expect(updatedStatuses.get('appt-3')).toBe('rejected');
             
             // Não deve ter mexido na de outro horário
             expect(updatedStatuses.has('appt-4')).toBe(false);
@@ -99,10 +102,11 @@ describe('AcceptAppointmentUseCase', () => {
 
             (mockRepository.getById as jest.Mock)
                 .mockResolvedValueOnce(mainAppointment)
+                .mockResolvedValueOnce(mainAppointment)
                 .mockResolvedValueOnce({ ...mainAppointment, status: 'accepted' });
             (mockRepository.listByDate as jest.Mock).mockResolvedValue([mainAppointment, differentSlot]);
 
-            await useCase.execute('appt-1');
+            await useCase.acceptAppointment('appt-1');
 
             expect(updatedStatuses.has('appt-2')).toBe(false);
         });
@@ -112,30 +116,30 @@ describe('AcceptAppointmentUseCase', () => {
         it('should throw ValidationError if appointment not found', async () => {
             (mockRepository.getById as jest.Mock).mockResolvedValue(null);
 
-            await expect(useCase.execute('non-existent')).rejects.toThrow(ValidationError);
-            await expect(useCase.execute('non-existent')).rejects.toThrow('Consulta não encontrada.');
+            await expect(useCase.acceptAppointment('non-existent')).rejects.toThrow(ValidationError);
+            await expect(useCase.acceptAppointment('non-existent')).rejects.toThrow('Consulta não encontrada.');
         });
 
         it('should throw ValidationError if appointment is not pending', async () => {
             const accepted = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'accepted');
             (mockRepository.getById as jest.Mock).mockResolvedValue(accepted);
 
-            await expect(useCase.execute('appt-1')).rejects.toThrow(ValidationError);
-            await expect(useCase.execute('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow(ValidationError);
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
         });
 
         it('should throw ValidationError if appointment is rejected', async () => {
             const rejected = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'rejected');
             (mockRepository.getById as jest.Mock).mockResolvedValue(rejected);
 
-            await expect(useCase.execute('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
         });
 
         it('should throw ValidationError if appointment is cancelled', async () => {
             const cancelled = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'cancelled');
             (mockRepository.getById as jest.Mock).mockResolvedValue(cancelled);
 
-            await expect(useCase.execute('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
         });
 
         it('should throw ValidationError if slot already has accepted appointment', async () => {
@@ -145,8 +149,8 @@ describe('AcceptAppointmentUseCase', () => {
             (mockRepository.getById as jest.Mock).mockResolvedValue(pending);
             (mockRepository.listByDate as jest.Mock).mockResolvedValue([pending, alreadyAccepted]);
 
-            await expect(useCase.execute('appt-1')).rejects.toThrow(ValidationError);
-            await expect(useCase.execute('appt-1')).rejects.toThrow('Já existe uma consulta aceita neste horário.');
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow(ValidationError);
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Já existe uma consulta aceita neste horário.');
         });
     });
 
@@ -156,10 +160,11 @@ describe('AcceptAppointmentUseCase', () => {
 
             (mockRepository.getById as jest.Mock)
                 .mockResolvedValueOnce(appointment)
+                .mockResolvedValueOnce(appointment)
                 .mockResolvedValueOnce({ ...appointment, status: 'accepted' });
             (mockRepository.listByDate as jest.Mock).mockResolvedValue([appointment]);
 
-            const result = await useCase.execute('appt-1');
+            const result = await useCase.acceptAppointment('appt-1');
 
             expect(result.status).toBe('accepted');
             expect(mockRepository.updateStatus).toHaveBeenCalledTimes(1);
@@ -172,10 +177,11 @@ describe('AcceptAppointmentUseCase', () => {
 
             (mockRepository.getById as jest.Mock)
                 .mockResolvedValueOnce(pending)
+                .mockResolvedValueOnce(pending)
                 .mockResolvedValueOnce({ ...pending, status: 'accepted' });
             (mockRepository.listByDate as jest.Mock).mockResolvedValue([pending, cancelled, rejected]);
 
-            await useCase.execute('appt-1');
+            await useCase.acceptAppointment('appt-1');
 
             // Só deve ter atualizado a principal
             expect(mockRepository.updateStatus).toHaveBeenCalledTimes(1);

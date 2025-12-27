@@ -1,4 +1,5 @@
-import ListNutritionistAgendaUseCase, { IListNutritionistAgendaUseCase } from '@/usecase/appointment/listNutritionistAgendaUseCase';
+import ListNutritionistAgendaUseCase from '@/usecase/appointment/list/listNutritionistAgendaUseCase';
+import { IListNutritionistAgendaUseCase } from '@/usecase/appointment/list/iListNutritionistAgendaUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
 
@@ -40,7 +41,7 @@ describe('ListNutritionistAgendaUseCase', () => {
         useCase = new ListNutritionistAgendaUseCase(mockRepository);
     });
 
-    describe('execute', () => {
+    describe('listAgenda', () => {
         it('should return appointments grouped by date', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-20', '09:00'),
@@ -50,7 +51,7 @@ describe('ListNutritionistAgendaUseCase', () => {
 
             (mockRepository.listAcceptedByDateRange as jest.Mock).mockResolvedValue(appointments);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listAgenda('nutri-1');
 
             expect(result).toHaveLength(2); // 2 datas diferentes
             expect(result[0].date).toBe('2025-01-20');
@@ -62,7 +63,7 @@ describe('ListNutritionistAgendaUseCase', () => {
         it('should return empty array when no accepted appointments', async () => {
             (mockRepository.listAcceptedByDateRange as jest.Mock).mockResolvedValue([]);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listAgenda('nutri-1');
 
             expect(result).toHaveLength(0);
         });
@@ -76,7 +77,7 @@ describe('ListNutritionistAgendaUseCase', () => {
 
             (mockRepository.listAcceptedByDateRange as jest.Mock).mockResolvedValue(appointments);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listAgenda('nutri-1');
 
             expect(result[0].appointments[0].timeStart).toBe('09:00');
             expect(result[0].appointments[1].timeStart).toBe('11:00');
@@ -92,7 +93,7 @@ describe('ListNutritionistAgendaUseCase', () => {
 
             (mockRepository.listAcceptedByDateRange as jest.Mock).mockResolvedValue(appointments);
 
-            const result = await useCase.execute('nutri-1');
+            const result = await useCase.listAgenda('nutri-1');
 
             expect(result[0].date).toBe('2025-01-20');
             expect(result[1].date).toBe('2025-01-22');
@@ -105,7 +106,7 @@ describe('ListNutritionistAgendaUseCase', () => {
             const startDate = new Date(2025, 0, 15);
             const endDate = new Date(2025, 0, 20);
 
-            await useCase.execute('nutri-1', startDate, endDate);
+            await useCase.listAgenda('nutri-1', startDate, endDate);
 
             expect(mockRepository.listAcceptedByDateRange).toHaveBeenCalledWith(
                 '2025-01-15',
@@ -115,7 +116,7 @@ describe('ListNutritionistAgendaUseCase', () => {
         });
     });
 
-    describe('executeByDate', () => {
+    describe('listAcceptedByDate', () => {
         it('should return only accepted appointments for specific date', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-20', '09:00', 'accepted'),
@@ -125,10 +126,10 @@ describe('ListNutritionistAgendaUseCase', () => {
 
             (mockRepository.listByDate as jest.Mock).mockResolvedValue(appointments);
 
-            const result = await useCase.executeByDate('nutri-1', new Date(2025, 0, 20, 12, 0, 0));
+            const result = await useCase.listAcceptedByDate('nutri-1', new Date(2025, 0, 20, 12, 0, 0));
 
             expect(result).toHaveLength(2);
-            expect(result.every(a => a.status === 'accepted')).toBe(true);
+            expect(result.every((appt: Appointment) => appt.status === 'accepted')).toBe(true);
         });
 
         it('should sort appointments by time', async () => {
@@ -139,7 +140,7 @@ describe('ListNutritionistAgendaUseCase', () => {
 
             (mockRepository.listByDate as jest.Mock).mockResolvedValue(appointments);
 
-            const result = await useCase.executeByDate('nutri-1', new Date(2025, 0, 20));
+            const result = await useCase.listAcceptedByDate('nutri-1', new Date(2025, 0, 20));
 
             expect(result[0].timeStart).toBe('09:00');
             expect(result[1].timeStart).toBe('14:00');
@@ -152,7 +153,7 @@ describe('ListNutritionistAgendaUseCase', () => {
 
             (mockRepository.listByDate as jest.Mock).mockResolvedValue(appointments);
 
-            const result = await useCase.executeByDate('nutri-1', new Date(2025, 0, 20));
+            const result = await useCase.listAcceptedByDate('nutri-1', new Date(2025, 0, 20));
 
             expect(result).toHaveLength(0);
         });
