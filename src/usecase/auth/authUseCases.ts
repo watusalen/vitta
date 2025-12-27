@@ -64,13 +64,26 @@ export default class AuthUseCases implements IAuthUseCases {
         }
     }
 
+    async resetPassword(email: string): Promise<void> {
+        AuthValidator.validateResetPassword(email);
+
+        try {
+            await this.authService.resetPassword(email);
+        } catch (error) {
+            if (error instanceof AuthError || error instanceof ValidationError) {
+                throw error;
+            }
+            throw new Error('Erro interno ao enviar email de recuperação');
+        }
+    }
+
     onAuthStateChanged(callback: (user: User | null) => void): () => void {
         return this.authService.onAuthStateChanged(async (authUser) => {
             if (authUser && authUser.id) {
                 try {
                     const fullUser = await this.userRepository.getUserByID(authUser.id);
                     callback(fullUser);
-                } catch (error) {
+                } catch {
                     callback(null);
                 }
             } else {

@@ -29,6 +29,16 @@ export default class AuthValidator {
         }
     }
 
+    static validateResetPassword(email: string): void {
+        if (!email || email.trim().length === 0) {
+            throw new ValidationError("Email é obrigatório");
+        }
+
+        if (!this.isValidEmail(email)) {
+            throw new ValidationError("Email inválido");
+        }
+    }
+
     private static isValidEmail(email: string): boolean {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
