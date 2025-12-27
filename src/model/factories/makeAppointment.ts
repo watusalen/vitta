@@ -1,4 +1,5 @@
 import Appointment, { AppointmentStatus } from "../entities/appointment";
+import { generateId } from "../utils/idUtils";
 
 interface CreateAppointmentInput {
     id?: string;
@@ -11,18 +12,11 @@ interface CreateAppointmentInput {
     observations?: string;
 }
 
-function generateId(): string {
-    if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
-        return globalThis.crypto.randomUUID();
-    }
-    return `appt-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-}
-
 export function makeAppointment(input: CreateAppointmentInput): Appointment {
     const now = new Date();
 
     return {
-        id: input.id ?? generateId(),
+        id: input.id ?? generateId('appt'),
         patientId: input.patientId,
         nutritionistId: input.nutritionistId,
         date: input.date,

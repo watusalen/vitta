@@ -1,5 +1,1 @@
-export default class RepositoryError extends Error {
-    constructor(message: string) {
-        super(message);
-    }
-}
+export default class RepositoryError extends Error {}
