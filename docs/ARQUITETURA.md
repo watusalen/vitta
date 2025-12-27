@@ -25,23 +25,26 @@ Este guia deve ser seguido por todos os desenvolvedores e agentes que contribuí
 
 ---
 
-## 2. Padrão MVVM no Projeto
+## 2. Padrão MVVM no Projeto (Sofisticado)
 
-Adotamos o padrão **MVVM simplificado** com camadas claras e independentes:
+Adotamos o **MVVM Sofisticado** com camadas claras e independentes:
 
 ### **View (React Native)**
-- Vive em `src/view` (pages + components); o `src/app` usa apenas o Expo Router para mapear rotas para as páginas.
-- Renderiza UI e captura eventos do usuário.
-- Observa estados expostos pela ViewModel (não contém regra de negócio).
+- `src/app` usa Expo Router para roteamento.
+- `src/view` contém páginas e componentes de UI.
+- A View recebe apenas **state** e **actions** da ViewModel.
+- Não acessa Use Cases, serviços ou repositórios diretamente.
 
 ### **ViewModel**
-- Intermediária entre View e Domínio.
+- Intermediária entre View e Use Cases.
 - Gerencia estado da UI (loading, erros, dados) e expõe comandos.
-- Depende de **Use Cases** via injeção de dependência (construtor/fábricas), não de infra.
+- Depende apenas de **interfaces de Use Cases** (injeção via DI).
+- Não contém regras de negócio.
 
 ### **Use Case**
 - Vive em `src/usecase`.
-- Implementa regras de negócio e orquestra fluxo entre entidades e interfaces de serviços.
+- Contém interfaces e implementações.
+- Implementa regras de negócio e orquestra o fluxo entre entidades e interfaces de serviços.
 - Independente de UI e de implementações concretas (infra).
 
 ### **Model (Domínio)**
@@ -54,20 +57,22 @@ Adotamos o padrão **MVVM simplificado** com camadas claras e independentes:
 - Não vaza detalhes de tecnologia para o domínio.
 
 ### **Dependency Injection (DI)**
-- Fábricas/containers para montar dependências e entregá-las a Use Cases e ViewModels.
+- `src/di` monta dependências.
+- View consome **hooks de ViewModel já injetados** (ex.: factories/containers) sem acessar Use Cases.
 
 ### Princípio Central:
-> A **ViewModel** e os **Use Cases** dependem de **interfaces de domínio**, nunca de implementações concretas. A injeção é feita via construtor/fábricas.
+> A **ViewModel** depende apenas de **interfaces de Use Cases**, e a View só conhece **state/actions**. As dependências são injetadas via DI.
 
 ---
 
 ## 3. Estrutura de Pastas
 
-O código do projeto está organizado no diretório `/src`, utilizando **Expo Router** apenas para roteamento. As páginas reais ficam em `src/view`.
+O código do projeto está organizado no diretório `/src`. O **Expo Router** fica em `src/app`
+para rotas, e as páginas/componentes ficam em `src/view`.
 
 ```
 src/
-├─ app/                      # Expo Router - rotas, sem regra de negócio
+├─ app/                      # Expo Router - rotas (sem regra de negócio)
 │  ├─ _layout.tsx
 │  └─ (arquivos de rota)     # mapeiam para páginas em src/view/pages
 ├─ view/                     # UI (páginas e componentes)
@@ -76,20 +81,21 @@ src/
 │  │   └─ nutritionist/
 │  ├─ components/
 │  └─ themes/
-├─ viewmodel/                # ViewModels (classes + hooks)
-├─ usecase/                  # Casos de uso / regras de negócio
+├─ viewmodel/                # ViewModels (hooks)
+├─ usecase/                  # Use Cases (interfaces + implementações)
 ├─ model/                    # Domínio (puro)
 │  ├─ entities/
-│  ├─ factories/             # Factories para criação de entidades
-│  ├─ services/              # Contratos/Interfaces (ex.: providers)
-│  ├─ repositories/          # Persistência (ex.: repositórios)
+│  ├─ factories/
+│  ├─ services/
+│  ├─ repositories/
 │  └─ errors/
 ├─ infra/                    # Implementações concretas
 │  ├─ firebase/
 │  ├─ notifications/
 │  └─ calendar/
 ├─ di/                       # Injeção de dependências
-│  └─ container.ts           # Fábricas de Use Cases e ViewModels
+│  ├─ container.ts
+│  └─ viewmodelContainer.ts  # Fábricas de ViewModels
 └─ tests/
   ├─ unit/
   │   ├─ model/

@@ -230,53 +230,53 @@ As integrações complexas (notificações push e calendário nativo) serão imp
 
 ### Histórias de Usuário Relacionadas
 
-- [ ] [N01](./HUN.md) - Nutricionista: Visualizar solicitações de consulta pendentes
-- [ ] [N02](./HUN.md) - Nutricionista: Aceitar solicitação de consulta
-- [ ] [N03](./HUN.md) - Nutricionista: Recusar solicitação de consulta
-- [ ] [N04](./HUN.md) - Nutricionista: Visualizar agenda de consultas confirmadas
-- [ ] [S01](./HUS.md) - Sistema: Evitar conflito de horários
-- [ ] [S02](./HUS.md) - Sistema: Atualizar status em tempo real
+- [x] [N01](./HUN.md) - Nutricionista: Visualizar solicitações de consulta pendentes
+- [x] [N02](./HUN.md) - Nutricionista: Aceitar solicitação de consulta
+- [x] [N03](./HUN.md) - Nutricionista: Recusar solicitação de consulta
+- [x] [N04](./HUN.md) - Nutricionista: Visualizar agenda de consultas confirmadas
+- [x] [S01](./HUS.md) - Sistema: Evitar conflito de horários
+- [x] [S02](./HUS.md) - Sistema: Atualizar status em tempo real
 
 ### Entregas
 
 #### Casos de Uso
-- [ ] `ListPendingAppointmentsUseCase` (filtrar status, ordenar por data)
-- [ ] `AcceptAppointmentUseCase` (validar conflito + atualizar status)
-- [ ] `RejectAppointmentUseCase` (atualizar status para "rejected")
-- [ ] `ListNutritionistAgendaUseCase` (filtrar status "accepted", agrupar por data)
-- [ ] `CheckAppointmentConflictUseCase` (verificar mesmo horário/data)
+- [x] `ListPendingAppointmentsUseCase` (filtrar status, ordenar por data)
+- [x] `AcceptAppointmentUseCase` (validar conflito + atualizar status)
+- [x] `RejectAppointmentUseCase` (atualizar status para "rejected")
+- [x] `ListNutritionistAgendaUseCase` (filtrar status "accepted", agrupar por data)
+- [x] `CheckAppointmentConflictUseCase` (verificar mesmo horário/data)
 
 #### ViewModel
-- [ ] `PendingRequestsViewModel` (pendingList, accept, reject, loading)
-- [ ] `NutritionistAgendaViewModel` (appointments, selectedDate, filter)
-- [ ] `NutritionistAppointmentDetailsViewModel` (appointment, actions)
-- [ ] Hooks correspondentes para as Views
+- [x] `PendingRequestsViewModel` (pendingList, accept, reject, loading)
+- [x] `NutritionistAgendaViewModel` (appointments, selectedDate, filter)
+- [x] `NutritionistAppointmentDetailsViewModel` (appointment, actions)
+- [x] Hooks correspondentes para as Views
 
 #### View
-- [ ] Tela: `PendingRequestsScreen.tsx`
+- [x] Tela: `PendingRequestsScreen.tsx`
   - Lista de solicitações pendentes
   - Botões inline: Aceitar (verde) / Recusar (vermelho)
   - Pull-to-refresh
   - Atualização em tempo real
-- [ ] Tela: `AgendaScreen.tsx`
+- [x] Tela: `AgendaScreen.tsx`
   - Calendário com consultas aceitas
   - Dias com consulta marcados (verde)
   - Lista de consultas do dia selecionado
   - Filtros: Todos, Esta Semana, Hoje
-- [ ] Tela: `NutritionistAppointmentDetailsScreen.tsx`
+- [x] Tela: `NutritionistAppointmentDetailsScreen.tsx`
   - Detalhes completos
   - Ações: Aceitar, Recusar (se pendente)
   - Aviso de conflito de horário
 
 #### Regras de Negócio
-- [ ] Validação: não permitir 2 consultas aceitas no mesmo dia/horário
-- [ ] Alert/modal quando houver conflito
-- [ ] Atualização de status notifica paciente via Firebase (listeners)
+- [x] Validação: não permitir 2 consultas aceitas no mesmo dia/horário
+- [x] Alert/modal quando houver conflito
+- [x] Atualização de status notifica paciente via Firebase (listeners)
 
 #### Testes
-- [ ] Testes: `AcceptAppointmentUseCase` (conflito de horário)
-- [ ] Testes: `CheckAppointmentConflictUseCase`
-- [ ] Testes: ViewModels
+- [x] Testes: `AcceptAppointmentUseCase` (conflito de horário)
+- [x] Testes: `CheckAppointmentConflictUseCase`
+- [x] Testes: ViewModels
 
 ### Critérios de Aceitação
 
