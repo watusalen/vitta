@@ -21,6 +21,10 @@ type TextInputFieldProps = {
     secureTextEntry?: boolean;
     keyboardType?: KeyboardTypeOptions;
     autoCapitalize?: "none" | "sentences" | "words" | "characters";
+    error?: string;
+    hasError?: boolean;
+    autoComplete?: "email" | "password" | "name" | "username" | "off";
+    textContentType?: "emailAddress" | "password" | "name" | "username";
 };
 
 export default function TextInputField({
@@ -32,19 +36,25 @@ export default function TextInputField({
     secureTextEntry = false,
     keyboardType = "default",
     autoCapitalize = "sentences",
+    error,
+    hasError = false,
+    autoComplete,
+    textContentType,
 }: TextInputFieldProps) {
     const [showPassword, setShowPassword] = useState(false);
+    const showError = Boolean(error) || hasError;
+    const iconColor = showError ? colors.error : colors.primary;
 
     const isPassword = secureTextEntry;
     const passwordAutoCapitalize = isPassword ? "none" : autoCapitalize;
-    const passwordAutoComplete = isPassword ? "password" : undefined;
-    const passwordTextContentType = isPassword ? "password" : undefined;
+    const passwordAutoComplete = isPassword ? "password" : autoComplete;
+    const passwordTextContentType = isPassword ? "password" : textContentType;
 
     return (
         <View style={styles.fieldWrapper}>
             <Text style={styles.label}>{label}</Text>
-            <View style={styles.inputContainer}>
-                <Feather name={icon} size={20} color={colors.primary} style={styles.leftIcon} />
+            <View style={[styles.inputContainer, showError && styles.inputContainerError]}>
+                <Feather name={icon} size={20} color={iconColor} style={styles.leftIcon} />
                 <TextInput
                     style={styles.input}
                     placeholder={placeholder}
@@ -57,21 +67,27 @@ export default function TextInputField({
                     autoComplete={passwordAutoComplete}
                     textContentType={passwordTextContentType}
                     autoCorrect={!isPassword}
-                    importantForAutofill={isPassword ? "no" : undefined}
+                    importantForAutofill="yes"
                 />
-                {isPassword && (
-                    <TouchableOpacity
-                        onPress={() => setShowPassword((prev) => !prev)}
-                        style={styles.rightIconButton}
-                    >
-                        <Feather
-                            name={showPassword ? "eye-off" : "eye"}
-                            size={20}
-                            color={colors.primary}
-                        />
-                    </TouchableOpacity>
-                )}
+                <View style={styles.rightIcons}>
+                    {showError && (
+                        <Feather name="alert-circle" size={18} color={colors.error} />
+                    )}
+                    {isPassword && (
+                        <TouchableOpacity
+                            onPress={() => setShowPassword((prev) => !prev)}
+                            style={styles.rightIconButton}
+                        >
+                            <Feather
+                                name={showPassword ? "eye-off" : "eye"}
+                                size={20}
+                                color={iconColor}
+                            />
+                        </TouchableOpacity>
+                    )}
+                </View>
             </View>
+            {!!error && <Text style={styles.errorText}>{error}</Text>}
         </View>
     );
 }
@@ -81,7 +97,7 @@ const styles = StyleSheet.create({
         marginBottom: spacing.xs,
     },
     label: {
-        fontSize: fontSizes.sm + 2,
+        fontSize: fontSizes.smMd,
         color: colors.text,
         marginBottom: spacing.sm,
         fontFamily: fonts.regular,
@@ -94,6 +110,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.md,
         height: 60,
     },
+    inputContainerError: {
+        borderWidth: 1,
+        borderColor: colors.error,
+    },
     leftIcon: {
         marginRight: spacing.sm + 4,
     },
@@ -103,7 +123,18 @@ const styles = StyleSheet.create({
         color: colors.text,
         fontFamily: fonts.regular,
     },
+    rightIcons: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing.sm,
+    },
     rightIconButton: {
-        marginLeft: spacing.sm + 4,
+        marginLeft: spacing.xs,
+    },
+    errorText: {
+        marginTop: spacing.xs,
+        color: colors.error,
+        fontSize: fontSizes.smMd,
+        fontFamily: fonts.regular,
     },
 });

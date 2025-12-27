@@ -1,29 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
 import { colors, fonts, spacing, fontSizes, borderRadius } from '@/view/themes/theme';
 import LoadingIndicator from '@/view/components/LoadingIndicator';
-import { authUseCases } from '@/di/container';
+import { useAuthHomeViewModel } from '@/di/container';
+import useRedirectEffect from '@/view/hooks/useRedirectEffect';
 
 export default function SplashScreen() {
-    useEffect(() => {
-        const unsubscribe = authUseCases.onAuthStateChanged((user) => {
-            setTimeout(() => {
-                if (user) {
-                    if (user.role === 'nutritionist') {
-                        router.replace('/nutritionist-home');
-                    } else {
-                        router.replace('/patient-home');
-                    }
-                } else {
-                    router.replace('/login');
-                }
-            }, 1500);
-        });
+    const { loading, startupRedirect } = useAuthHomeViewModel();
+    const [delayedRedirect, setDelayedRedirect] = useState<string | null>(null);
 
-        return () => unsubscribe();
-    }, []);
+    useEffect(() => {
+        if (loading) return;
+
+        const timer = setTimeout(() => {
+            setDelayedRedirect(startupRedirect);
+        }, 1500);
+
+        return () => clearTimeout(timer);
+    }, [startupRedirect, loading]);
+
+    useRedirectEffect(delayedRedirect);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -65,7 +62,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: fontSizes.xxl,
-        fontFamily: fonts.medium,
+        fontFamily: fonts.bold,
         color: colors.text,
         marginTop: spacing.sm,
     },

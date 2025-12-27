@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { colors, fonts, spacing, fontSizes, borderRadius } from "@/view/themes/theme";
+import { colors, fonts, spacing, fontSizes } from "@/view/themes/theme";
 
 type Props = {
     icon: keyof typeof Feather.glyphMap;
@@ -42,13 +42,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: fontSizes.lg - 2,
+        fontSize: fontSizes.mdLg,
         fontFamily: fonts.bold,
         color: colors.text,
         marginBottom: spacing.xs,
     },
     subtitle: {
-        fontSize: fontSizes.md - 1,
+        fontSize: fontSizes.md,
         fontFamily: fonts.regular,
         color: colors.textSecondary,
     },

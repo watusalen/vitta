@@ -1,38 +1,42 @@
 import React from "react";
 import { View, StyleSheet, FlatList, ActivityIndicator, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
 
 import { colors, fonts, spacing, fontSizes } from "@/view/themes/theme";
 import ScreenHeader from "@/view/components/ScreenHeader";
 import AppointmentCard from "@/view/components/AppointmentCard";
-import useMyAppointmentsViewModel from "@/viewmodel/appointment/useMyAppointmentsViewModel";
-import useHomeViewModel from "@/viewmodel/auth/useHomeViewModel";
-import { authUseCases, listPatientAppointmentsUseCase } from "@/di/container";
+import AlertModal from "@/view/components/AlertModal";
+import { useAuthHomeViewModel, usePatientAppointmentsViewModel } from "@/di/container";
+import useRedirectEffect from "@/view/hooks/useRedirectEffect";
 
 export default function MyAppointmentsScreen() {
     const insets = useSafeAreaInsets();
-    const { user } = useHomeViewModel(authUseCases);
+    const { user, unauthenticatedRedirect } = useAuthHomeViewModel();
     const patientId = user?.id || "";
 
-    const { appointments, loading, refreshing, refresh } = useMyAppointmentsViewModel(
-        listPatientAppointmentsUseCase,
-        patientId
-    );
+    const {
+        appointments,
+        loading: appointmentsLoading,
+        refreshing,
+        error,
+        navigationRoute,
+        navigationMethod,
+        refresh,
+        clearError,
+        loadAppointments,
+        openAppointment,
+        goBack,
+        clearNavigation,
+    } = usePatientAppointmentsViewModel(patientId);
 
-    function handlePressItem(id: string) {
-        router.push(`/appointment/${id}`);
-    }
-
-    function handleBack() {
-        router.replace("/patient-home");
-    }
+    useRedirectEffect(unauthenticatedRedirect);
+    useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}>
-            <ScreenHeader title="Minhas Consultas" onBack={handleBack} />
+            <ScreenHeader title="Minhas Consultas" onBack={goBack} />
 
-            {loading && !refreshing ? (
+            {appointmentsLoading && !refreshing ? (
                 <View style={styles.centered}>
                     <ActivityIndicator size="large" color={colors.primary} />
                 </View>
@@ -53,11 +57,22 @@ export default function MyAppointmentsScreen() {
                             date={item.date}
                             timeStart={item.timeStart}
                             status={item.status}
-                            onPress={() => handlePressItem(item.id)}
+                            onPress={() => openAppointment(item.id)}
                         />
                     )}
                 />
             )}
+            <AlertModal
+                visible={!!error}
+                variant="error"
+                title="Erro"
+                message={error ?? undefined}
+                confirmText="Tentar novamente"
+                onConfirm={() => {
+                    clearError();
+                    loadAppointments();
+                }}
+            />
         </View>
     );
 }

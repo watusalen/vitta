@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         borderRadius: borderRadius.full,
     },
     text: {
-        fontSize: fontSizes.sm + 2,
+        fontSize: fontSizes.smMd,
         fontFamily: fonts.bold,
     },
 });

@@ -10,16 +10,15 @@ export const colors = {
     inputBackground: '#E4E4DC',   // Fundo dos inputs
     white: '#FFFFFF',             // Branco puro
     
-    // Textos
     text: '#394247',              // Texto principal (fundo claro)
     textLight: '#E5ECEF',         // Texto principal (fundo escuro)
     textSecondary: '#8F979B',     // Texto secundário
     
-    error: '#F44336',             // Vermelho para erros
+    error: '#cf2e23ff',             // Vermelho para erros
     errorLight: '#FFEBEE',        // Vermelho claro (backgrounds)
     success: '#4CAF50',           // Verde para sucesso
     warning: '#FFC107',           // Amarelo para avisos
-    pending: '#FF9800',           // Laranja para pendente
+    pending: '#e38d0cff',           // Laranja para pendente
     cancelled: '#9E9E9E',         // Cinza para cancelado
     border: '#E0E0E0',            // Cinza para bordas
 };
@@ -41,11 +40,17 @@ export const spacing = {
 };
 
 export const fontSizes = {
+    xs: 10,
     sm: 12,
+    smMd: 14,
     md: 16,
-    lg: 20,
+    mdLg: 18,
+    lg: 19,
+    lgMd: 22,
     xl: 24,
+    xl2: 28,
     xxl: 32,
+    xxxl: 40,
 };
 
 export const borderRadius = {

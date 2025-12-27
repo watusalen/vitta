@@ -1,0 +1,3 @@
+import NutritionistAppointmentDetailsScreen from "@/view/pages/nutritionist/NutritionistAppointmentDetailsScreen";
+
+export default NutritionistAppointmentDetailsScreen;

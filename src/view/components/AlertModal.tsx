@@ -3,79 +3,58 @@ import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { colors, fonts, spacing, fontSizes, borderRadius } from "@/view/themes/theme";
 
-type Variant = "accept" | "reject";
+type Variant = "info" | "success" | "error" | "warning";
 
 type Props = {
   visible: boolean;
-  variant: Variant;
+  variant?: Variant;
   title: string;
-  subtitle?: string;
+  message?: string;
   confirmText?: string;
-  cancelText?: string;
-  loading?: boolean;
   onConfirm: () => void;
-  onClose: () => void;
 };
 
-export default function ConfirmActionModal({
+const variantConfig: Record<Variant, { icon: string; accent: string }> = {
+  info: { icon: "info", accent: colors.primary },
+  success: { icon: "check", accent: colors.primary },
+  error: { icon: "x", accent: colors.error },
+  warning: { icon: "alert-triangle", accent: colors.warning ?? colors.error },
+};
+
+export default function AlertModal({
   visible,
-  variant,
+  variant = "info",
   title,
-  subtitle,
-  confirmText,
-  cancelText = "Cancelar",
-  loading = false,
+  message,
+  confirmText = "OK",
   onConfirm,
-  onClose,
 }: Props) {
-  const isReject = variant === "reject";
-
-  const iconName = isReject ? "x" : "check";
-  const accent = isReject ? colors.error : colors.primary;
-
-  const confirmLabel =
-    confirmText ?? (isReject ? "Recusar" : "Aceitar");
+  const { icon, accent } = variantConfig[variant];
 
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
+      onRequestClose={onConfirm}
     >
       <View style={styles.backdrop}>
         <View style={styles.card}>
           <View style={[styles.iconCircle, { backgroundColor: withAlpha(accent, 0.12) }]}>
-            <Feather name={iconName} size={22} color={accent} />
+            <Feather name={icon as any} size={22} color={accent} />
           </View>
 
           <Text style={styles.title}>{title}</Text>
 
-          {!!subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          {!!message && <Text style={styles.subtitle}>{message}</Text>}
 
-          <View style={styles.actions}>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnGhost]}
-              onPress={onClose}
-              disabled={loading}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.btnGhostText}>{cancelText}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.btn,
-                { backgroundColor: accent },
-                loading && styles.btnDisabled,
-              ]}
-              onPress={onConfirm}
-              disabled={loading}
-              activeOpacity={0.9}
-            >
-              <Text style={styles.btnText}>{confirmLabel}</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={[styles.btn, { backgroundColor: accent }]}
+            onPress={onConfirm}
+            activeOpacity={0.9}
+          >
+            <Text style={styles.btnText}>{confirmText}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -83,7 +62,6 @@ export default function ConfirmActionModal({
 }
 
 function withAlpha(hexColor: string, alpha: number) {
-  // aceita "#RRGGBB"
   const hex = hexColor.replace("#", "");
   if (hex.length !== 6) return "rgba(0,0,0,0.08)";
   const r = parseInt(hex.slice(0, 2), 16);
@@ -143,39 +121,17 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
 
-  actions: {
-    width: "100%",
-    flexDirection: "row",
-    gap: spacing.sm,
-  },
-
   btn: {
-    flex: 1,
+    width: "100%",
     height: 52,
     borderRadius: borderRadius.full,
     alignItems: "center",
     justifyContent: "center",
   },
 
-  btnGhost: {
-    backgroundColor: colors.inputBackground,
-    borderWidth: 1,
-    borderColor: "rgba(0,0,0,0.06)",
-  },
-
-  btnGhostText: {
-    fontSize: fontSizes.md,
-    fontFamily: fonts.medium,
-    color: colors.text,
-  },
-
   btnText: {
     fontSize: fontSizes.md,
     fontFamily: fonts.bold,
     color: colors.background,
-  },
-
-  btnDisabled: {
-    opacity: 0.7,
   },
 });

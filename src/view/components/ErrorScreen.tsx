@@ -21,7 +21,6 @@ export default function ErrorScreen({ message, onRetry }: Props) {
 
                 {onRetry && (
                     <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-                        <Feather name="refresh-cw" size={18} color="#fff" />
                         <Text style={styles.retryButtonText}>Tentar novamente</Text>
                     </TouchableOpacity>
                 )}

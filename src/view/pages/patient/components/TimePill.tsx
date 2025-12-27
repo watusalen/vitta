@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    fontSize: fontSizes.md - 1,
+    fontSize: fontSizes.smMd,
     fontFamily: fonts.medium,
     color: colors.text,
   },
