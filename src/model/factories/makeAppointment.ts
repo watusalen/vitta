@@ -9,7 +9,8 @@ interface CreateAppointmentInput {
     timeStart: string;
     timeEnd: string;
     status?: AppointmentStatus;
-    observations?: string;
+    calendarEventIdPatient?: string;
+    calendarEventIdNutritionist?: string;
 }
 
 export function makeAppointment(input: CreateAppointmentInput): Appointment {
@@ -23,7 +24,8 @@ export function makeAppointment(input: CreateAppointmentInput): Appointment {
         timeStart: input.timeStart,
         timeEnd: input.timeEnd,
         status: input.status ?? 'pending',
-        observations: input.observations,
+        calendarEventIdPatient: input.calendarEventIdPatient,
+        calendarEventIdNutritionist: input.calendarEventIdNutritionist,
         createdAt: now,
         updatedAt: now,
     };

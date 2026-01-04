@@ -62,6 +62,14 @@ describe('FirebaseAuthService', () => {
             await expect(service.login('test@email.com', 'wrong')).rejects.toThrow(AuthError);
             await expect(service.login('test@email.com', 'wrong')).rejects.toThrow('Credenciais inválidas.');
         });
+
+        it('deve informar email não cadastrado quando usuário não existe', async () => {
+            const error = Object.assign(new Error('User not found'), { code: 'auth/user-not-found' });
+            mockSignIn.mockRejectedValue(error);
+
+            await expect(service.login('naoexiste@email.com', 'senha')).rejects.toThrow(AuthError);
+            await expect(service.login('naoexiste@email.com', 'senha')).rejects.toThrow('Email não cadastrado.');
+        });
     });
 
     describe('signup', () => {

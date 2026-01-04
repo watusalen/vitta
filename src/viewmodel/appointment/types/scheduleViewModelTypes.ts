@@ -6,7 +6,6 @@ export interface ScheduleState {
     selectedDate: Date | null;
     availableSlots: TimeSlot[];
     selectedSlot: TimeSlot | null;
-    observations: string;
     loading: boolean;
     submitting: boolean;
     error: string | null;
@@ -23,7 +22,6 @@ export interface ScheduleState {
 export interface ScheduleActions {
     selectDate: (date: Date, nutritionistId: string, patientId?: string) => Promise<void>;
     selectSlot: (slot: TimeSlot) => void;
-    setObservations: (text: string) => void;
     requestAppointment: (patientId: string, nutritionistId: string) => Promise<Appointment | null>;
     submitAppointment: (patientId: string) => Promise<Appointment | null>;
     loadMonthAvailability: (

@@ -7,11 +7,13 @@ import RepositoryError from '@/model/errors/repositoryError';
 import TimeSlot from '@/model/entities/timeSlot';
 import Appointment from '@/model/entities/appointment';
 import { IGetNutritionistUseCase } from '@/usecase/user/iGetNutritionistUseCase';
+import { IAppointmentPushNotificationUseCase } from '@/usecase/notifications/iAppointmentPushNotificationUseCase';
 
 describe('useScheduleViewModel', () => {
     let mockGetAvailableTimeSlotsUseCase: IGetAvailableTimeSlotsUseCase;
     let mockRequestAppointmentUseCase: IRequestAppointmentUseCase;
     let mockGetNutritionistUseCase: IGetNutritionistUseCase;
+    let mockAppointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase;
 
     beforeEach(() => {
         mockGetAvailableTimeSlotsUseCase = {
@@ -25,6 +27,9 @@ describe('useScheduleViewModel', () => {
         };
         mockGetNutritionistUseCase = {
             getNutritionist: jest.fn(),
+        };
+        mockAppointmentPushNotificationUseCase = {
+            notify: jest.fn(),
         };
     });
 
@@ -47,13 +52,12 @@ describe('useScheduleViewModel', () => {
 
     it('deve inicializar com estado padrão', () => {
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         expect(result.current.selectedDate).toBeNull();
         expect(result.current.availableSlots).toEqual([]);
         expect(result.current.selectedSlot).toBeNull();
-        expect(result.current.observations).toBe('');
         expect(result.current.loading).toBe(false);
         expect(result.current.submitting).toBe(false);
         expect(result.current.error).toBeNull();
@@ -64,7 +68,7 @@ describe('useScheduleViewModel', () => {
         (mockGetAvailableTimeSlotsUseCase.listAvailableSlots as jest.Mock).mockResolvedValue(mockSlots);
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         const testDate = new Date('2024-01-15');
@@ -82,7 +86,7 @@ describe('useScheduleViewModel', () => {
         (mockGetAvailableTimeSlotsUseCase.listAvailableSlots as jest.Mock).mockRejectedValue(new RepositoryError('Erro ao carregar'));
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         await act(async () => {
@@ -95,7 +99,7 @@ describe('useScheduleViewModel', () => {
 
     it('deve selecionar slot', () => {
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         act(() => {
@@ -105,21 +109,9 @@ describe('useScheduleViewModel', () => {
         expect(result.current.selectedSlot).toEqual(mockSlots[0]);
     });
 
-    it('deve definir observations', () => {
-        const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
-        );
-
-        act(() => {
-            result.current.setObservations('Minhas observações');
-        });
-
-        expect(result.current.observations).toBe('Minhas observações');
-    });
-
     it('deve retornar erro quando solicitar consulta sem data/slot', async () => {
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         await act(async () => {
@@ -135,7 +127,7 @@ describe('useScheduleViewModel', () => {
         (mockRequestAppointmentUseCase.requestAppointment as jest.Mock).mockResolvedValue(mockAppointment);
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         await act(async () => {
@@ -144,7 +136,6 @@ describe('useScheduleViewModel', () => {
 
         act(() => {
             result.current.selectSlot(mockSlots[0]);
-            result.current.setObservations('Teste');
         });
 
         await act(async () => {
@@ -154,7 +145,6 @@ describe('useScheduleViewModel', () => {
 
         expect(result.current.successMessage).toBe('Consulta solicitada com sucesso! Aguarde a confirmação da nutricionista.');
         expect(result.current.selectedSlot).toBeNull();
-        expect(result.current.observations).toBe('');
     });
 
     it('deve tratar ValidationError ao solicitar consulta', async () => {
@@ -162,7 +152,7 @@ describe('useScheduleViewModel', () => {
         (mockRequestAppointmentUseCase.requestAppointment as jest.Mock).mockRejectedValue(new ValidationError('Horário indisponível'));
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         await act(async () => {
@@ -189,7 +179,7 @@ describe('useScheduleViewModel', () => {
         (mockGetAvailableTimeSlotsUseCase.listAvailableSlotsForRange as jest.Mock).mockResolvedValue(mockSlotsMap);
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         await act(async () => {
@@ -202,7 +192,7 @@ describe('useScheduleViewModel', () => {
 
     it('deve limpar erro', () => {
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         act(() => {
@@ -214,7 +204,7 @@ describe('useScheduleViewModel', () => {
 
     it('deve limpar mensagem de sucesso', () => {
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         act(() => {
@@ -237,6 +227,7 @@ describe('useScheduleViewModel', () => {
             useScheduleViewModel(
                 mockGetAvailableTimeSlotsUseCase,
                 mockRequestAppointmentUseCase,
+                mockAppointmentPushNotificationUseCase,
                 mockGetNutritionistUseCase
             )
         );
@@ -257,6 +248,7 @@ describe('useScheduleViewModel', () => {
             useScheduleViewModel(
                 mockGetAvailableTimeSlotsUseCase,
                 mockRequestAppointmentUseCase,
+                mockAppointmentPushNotificationUseCase,
                 mockGetNutritionistUseCase
             )
         );
@@ -277,6 +269,7 @@ describe('useScheduleViewModel', () => {
             useScheduleViewModel(
                 mockGetAvailableTimeSlotsUseCase,
                 mockRequestAppointmentUseCase,
+                mockAppointmentPushNotificationUseCase,
                 mockGetNutritionistUseCase
             )
         );
@@ -294,7 +287,7 @@ describe('useScheduleViewModel', () => {
 
     it('deve navegar para trás', () => {
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         act(() => {
@@ -310,7 +303,7 @@ describe('useScheduleViewModel', () => {
         (mockRequestAppointmentUseCase.requestAppointment as jest.Mock).mockResolvedValue(mockAppointment);
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         await act(async () => {
@@ -334,7 +327,7 @@ describe('useScheduleViewModel', () => {
 
     it('deve limpar navegação', () => {
         const { result } = renderHook(() =>
-            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase)
+            useScheduleViewModel(mockGetAvailableTimeSlotsUseCase, mockRequestAppointmentUseCase, mockAppointmentPushNotificationUseCase)
         );
 
         act(() => {

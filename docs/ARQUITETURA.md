@@ -140,7 +140,6 @@ export function makeAppointment(input: CreateAppointmentInput): Appointment {
     timeStart: input.timeStart,
     timeEnd: input.timeEnd,
     status: 'pending',
-    observations: input.observations ?? null,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

@@ -4,6 +4,8 @@ import AcceptAppointmentUseCase from "@/usecase/appointment/status/acceptAppoint
 import RejectAppointmentUseCase from "@/usecase/appointment/status/rejectAppointmentUseCase";
 import ListPendingAppointmentsUseCase from "@/usecase/appointment/list/listPendingAppointmentsUseCase";
 import GetUserByIdUseCase from "@/usecase/user/getUserByIdUseCase";
+import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
+import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import usePendingRequestsViewModel from "@/viewmodel/nutritionist/usePendingRequestsViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository, flushPromises } from "./helpers/inMemoryStores";
 
@@ -57,6 +59,13 @@ describe("Pending requests integration", () => {
         const acceptUseCase = new AcceptAppointmentUseCase(appointmentRepository);
         const rejectUseCase = new RejectAppointmentUseCase(appointmentRepository);
         const getUserById = new GetUserByIdUseCase(userRepository);
+        const calendarSyncUseCase: jest.Mocked<IAppointmentCalendarSyncUseCase> = {
+            syncAccepted: jest.fn(),
+            syncCancelledOrRejected: jest.fn(),
+        };
+        const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
+            notify: jest.fn(),
+        };
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
@@ -64,6 +73,8 @@ describe("Pending requests integration", () => {
                 acceptUseCase,
                 rejectUseCase,
                 getUserById,
+                calendarSyncUseCase,
+                appointmentPushNotification,
                 nutritionistId
             )
         );

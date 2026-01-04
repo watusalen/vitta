@@ -10,9 +10,20 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.watusalen.vitta"
+      "bundleIdentifier": "com.watusalen.vitta",
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "O Vitta precisa acessar o seu calendário para organizar suas consultas e enviar lembretes."
+      }
     },
     "android": {
+      "permissions": [
+        "READ_CALENDAR",
+        "WRITE_CALENDAR",
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR",
+        "POST_NOTIFICATIONS",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#E3EAE5",
         "foregroundImage": "./src/view/assets/images/android-icon-foreground.png",
@@ -30,9 +41,23 @@
     "plugins": [
       "expo-router",
       [
+        "expo-calendar",
+        {
+          "calendarPermission": "O Vitta precisa acessar o seu calendário para organizar suas consultas e enviar lembretes."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#587766",
+          "defaultChannel": "appointments",
+          "enableBackgroundRemoteNotifications": true
+        }
+      ],
+      [
         "expo-splash-screen",
         {
-          "image": "./src/view/assets/images/splash-icon.png",
+          "image": "./src/view/assets/images/image.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
@@ -45,6 +70,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "3398e274-2f3c-43fd-9ef3-2e003c9a81e7"
+      }
+    },
+    "owner": "vitta"
   }
 }

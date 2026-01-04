@@ -20,23 +20,6 @@ describe('Appointment Entity Interface', () => {
       expect(appointment.status).toBe('pending');
     });
 
-    it('should support optional observations', () => {
-      const appointment: Appointment = {
-        id: 'apt-1',
-        patientId: 'patient-1',
-        nutritionistId: 'nutri-1',
-        date: '2025-12-25',
-        timeStart: '14:30',
-        timeEnd: '15:30',
-        status: 'pending',
-        observations: 'Alergia a glúten',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      expect(appointment.observations).toBe('Alergia a glúten');
-    });
-
     it('should support all status types', () => {
       const statuses: ('pending' | 'accepted' | 'rejected' | 'cancelled')[] = [
         'pending',

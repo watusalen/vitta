@@ -18,7 +18,9 @@ yarn-debug.*
 yarn-error.*
 .DS_Store
 *.pem
+*firebase-adminsdk*.json
 local.properties
 *.tsbuildinfoexpo-env.d.ts
 firestore*
 expo-env.d.ts
+supabase/.temp/

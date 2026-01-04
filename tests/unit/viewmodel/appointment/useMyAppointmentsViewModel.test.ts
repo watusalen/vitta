@@ -1,16 +1,22 @@
 import { renderHook, act } from '@testing-library/react';
 import useMyAppointmentsViewModel from '@/viewmodel/appointment/useMyAppointmentsViewModel';
 import { IListPatientAppointmentsUseCase } from '@/usecase/appointment/list/iListPatientAppointmentsUseCase';
+import { IAppointmentCalendarSyncUseCase } from '@/usecase/calendar/iAppointmentCalendarSyncUseCase';
 import RepositoryError from '@/model/errors/repositoryError';
 import Appointment from '@/model/entities/appointment';
 
 describe('useMyAppointmentsViewModel', () => {
     let mockListPatientAppointmentsUseCase: IListPatientAppointmentsUseCase;
+    let mockCalendarSyncUseCase: IAppointmentCalendarSyncUseCase;
 
     beforeEach(() => {
         mockListPatientAppointmentsUseCase = {
             listByPatient: jest.fn(),
             subscribeToPatientAppointments: jest.fn(() => jest.fn()),
+        };
+        mockCalendarSyncUseCase = {
+            syncAccepted: jest.fn(),
+            syncCancelledOrRejected: jest.fn(),
         };
     });
 
@@ -43,7 +49,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         expect(result.current.loading).toBe(true);
@@ -54,7 +60,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue(mockAppointments);
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -69,7 +75,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
 
         renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         expect(mockListPatientAppointmentsUseCase.subscribeToPatientAppointments).toHaveBeenCalledWith(
@@ -82,7 +88,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue(mockAppointments);
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -97,7 +103,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockRejectedValue(new RepositoryError('Erro'));
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -117,7 +123,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockRejectedValue(new RepositoryError('Erro de conexão'));
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -131,7 +137,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockRejectedValue(new Error('Unknown'));
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -147,7 +153,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.subscribeToPatientAppointments as jest.Mock).mockReturnValue(mockUnsubscribe);
 
         const { unmount } = renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -163,7 +169,7 @@ describe('useMyAppointmentsViewModel', () => {
         (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
 
         renderHook(() =>
-            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, '')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, '')
         );
 
         await act(async () => {

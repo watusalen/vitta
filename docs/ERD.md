@@ -25,7 +25,6 @@ Objetivo: consolidar entidades, atributos e relacionamentos usados nas sprints. 
 - `timeStart`: string (`HH:mm`)
 - `timeEnd`: string (`HH:mm`)
 - `status`: "pending" | "accepted" | "rejected" | "cancelled"
-- `observations`: string (opcional)
 - `createdAt`: timestamp
 - `updatedAt`: timestamp
 
@@ -66,10 +65,7 @@ Objetivo: consolidar entidades, atributos e relacionamentos usados nas sprints. 
   "timeStart": "09:00",
   "timeEnd": "11:00",
   "status": "pending",
-  "observations": "Paciente prefere manhã",
   "createdAt": "2025-12-01T12:00:00Z",
   "updatedAt": "2025-12-01T12:00:00Z"
 }
 ```
-
-> **Nota:** Campo `observations` é opcional; pode ser omitido se o paciente não fornecer observações adicionais.

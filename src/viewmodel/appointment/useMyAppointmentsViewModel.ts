@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Appointment from "@/model/entities/appointment";
 import { IListPatientAppointmentsUseCase } from "@/usecase/appointment/list/iListPatientAppointmentsUseCase";
 import RepositoryError from "@/model/errors/repositoryError";
+import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 
 export interface MyAppointmentsState {
     appointments: Appointment[];
@@ -23,6 +24,7 @@ export interface MyAppointmentsActions {
 
 export default function useMyAppointmentsViewModel(
     listPatientAppointmentsUseCase: IListPatientAppointmentsUseCase,
+    calendarSyncUseCase: IAppointmentCalendarSyncUseCase,
     patientId: string
 ): MyAppointmentsState & MyAppointmentsActions {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -31,10 +33,39 @@ export default function useMyAppointmentsViewModel(
     const [error, setError] = useState<string | null>(null);
     const [navigationRoute, setNavigationRoute] = useState<string | null>(null);
     const [navigationMethod, setNavigationMethod] = useState<"replace" | "push">("replace");
+    const syncInFlightRef = useRef(new Set<string>());
 
-    const filterVisibleAppointments = useCallback((items: Appointment[]): Appointment[] => {
-        return items.filter(appt => appt.status !== 'cancelled');
-    }, []);
+    const syncAppointmentCalendar = useCallback(async (appointment: Appointment): Promise<void> => {
+        const key = appointment.id;
+        if (syncInFlightRef.current.has(key)) {
+            return;
+        }
+
+        if (appointment.status === "accepted") {
+            if (appointment.calendarEventIdPatient) {
+                return;
+            }
+            syncInFlightRef.current.add(key);
+            try {
+                await calendarSyncUseCase.syncAccepted(appointment, "patient");
+            } finally {
+                syncInFlightRef.current.delete(key);
+            }
+            return;
+        }
+
+        if (appointment.status === "cancelled" || appointment.status === "rejected") {
+            if (!appointment.calendarEventIdPatient) {
+                return;
+            }
+            syncInFlightRef.current.add(key);
+            try {
+                await calendarSyncUseCase.syncCancelledOrRejected(appointment, "patient");
+            } finally {
+                syncInFlightRef.current.delete(key);
+            }
+        }
+    }, [calendarSyncUseCase]);
 
     const loadAppointments = useCallback(async (): Promise<void> => {
         if (!patientId) return;
@@ -43,7 +74,7 @@ export default function useMyAppointmentsViewModel(
 
         try {
             const result = await listPatientAppointmentsUseCase.listByPatient(patientId);
-            setAppointments(filterVisibleAppointments(result));
+            setAppointments(result);
         } catch (err) {
             if (err instanceof RepositoryError) {
                 setError(err.message);
@@ -54,7 +85,7 @@ export default function useMyAppointmentsViewModel(
             setLoading(false);
             setRefreshing(false);
         }
-    }, [patientId, listPatientAppointmentsUseCase, filterVisibleAppointments]);
+    }, [patientId, listPatientAppointmentsUseCase]);
 
     const refresh = useCallback(async (): Promise<void> => {
         setRefreshing(true);
@@ -90,12 +121,15 @@ export default function useMyAppointmentsViewModel(
         const unsubscribe = listPatientAppointmentsUseCase.subscribeToPatientAppointments(
             patientId,
             (updatedAppointments) => {
-                setAppointments(filterVisibleAppointments(updatedAppointments));
+                setAppointments(updatedAppointments);
+                updatedAppointments.forEach((appointment) => {
+                    void syncAppointmentCalendar(appointment);
+                });
             }
         );
 
         return () => unsubscribe();
-    }, [patientId, listPatientAppointmentsUseCase, filterVisibleAppointments]);
+    }, [patientId, listPatientAppointmentsUseCase, syncAppointmentCalendar]);
 
     return {
         appointments,

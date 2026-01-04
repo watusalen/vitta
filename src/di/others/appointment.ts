@@ -12,10 +12,16 @@ import RejectAppointmentUseCase from "@/usecase/appointment/status/rejectAppoint
 import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectAppointmentUseCase";
 import CancelAppointmentUseCase from "@/usecase/appointment/status/cancelAppointmentUseCase";
 import { ICancelAppointmentUseCase } from "@/usecase/appointment/status/iCancelAppointmentUseCase";
+import ReactivateAppointmentUseCase from "@/usecase/appointment/status/reactivateAppointmentUseCase";
+import { IReactivateAppointmentUseCase } from "@/usecase/appointment/status/iReactivateAppointmentUseCase";
+import ResolveAppointmentConflictUseCase from "@/usecase/appointment/status/resolveAppointmentConflictUseCase";
+import { IResolveAppointmentConflictUseCase } from "@/usecase/appointment/status/iResolveAppointmentConflictUseCase";
 import ListNutritionistAgendaUseCase from "@/usecase/appointment/list/listNutritionistAgendaUseCase";
 import { IListNutritionistAgendaUseCase } from "@/usecase/appointment/list/iListNutritionistAgendaUseCase";
 import ListPendingAppointmentsUseCase from "@/usecase/appointment/list/listPendingAppointmentsUseCase";
 import { IListPendingAppointmentsUseCase } from "@/usecase/appointment/list/iListPendingAppointmentsUseCase";
+import ListAppointmentConflictsUseCase from "@/usecase/appointment/list/listAppointmentConflictsUseCase";
+import { IListAppointmentConflictsUseCase } from "@/usecase/appointment/list/iListAppointmentConflictsUseCase";
 import { getAppointmentRepository, getInitError } from "@/di/others/base";
 
 let availableTimeSlotsUseCase: IGetAvailableTimeSlotsUseCase | null = null;
@@ -25,8 +31,11 @@ let appointmentDetailsUseCase: IGetAppointmentDetailsUseCase | null = null;
 let acceptUseCase: IAcceptAppointmentUseCase | null = null;
 let rejectUseCase: IRejectAppointmentUseCase | null = null;
 let cancelUseCase: ICancelAppointmentUseCase | null = null;
+let reactivateUseCase: IReactivateAppointmentUseCase | null = null;
+let resolveConflictUseCase: IResolveAppointmentConflictUseCase | null = null;
 let nutritionistAgendaUseCase: IListNutritionistAgendaUseCase | null = null;
 let pendingAppointmentsUseCase: IListPendingAppointmentsUseCase | null = null;
+let listConflictsUseCase: IListAppointmentConflictsUseCase | null = null;
 let initError: Error | null = null;
 
 function initAppointmentUseCases() {
@@ -38,8 +47,11 @@ function initAppointmentUseCases() {
     acceptUseCase &&
     rejectUseCase &&
     cancelUseCase &&
+    reactivateUseCase &&
+    resolveConflictUseCase &&
     nutritionistAgendaUseCase &&
-    pendingAppointmentsUseCase
+    pendingAppointmentsUseCase &&
+    listConflictsUseCase
   ) {
     return;
   }
@@ -60,8 +72,11 @@ function initAppointmentUseCases() {
     acceptUseCase = new AcceptAppointmentUseCase(repository);
     rejectUseCase = new RejectAppointmentUseCase(repository);
     cancelUseCase = new CancelAppointmentUseCase(repository);
+    reactivateUseCase = new ReactivateAppointmentUseCase(repository);
+    resolveConflictUseCase = new ResolveAppointmentConflictUseCase(repository);
     nutritionistAgendaUseCase = new ListNutritionistAgendaUseCase(repository);
     pendingAppointmentsUseCase = new ListPendingAppointmentsUseCase(repository);
+    listConflictsUseCase = new ListAppointmentConflictsUseCase(repository);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : "Erro desconhecido ao inicializar appointment";
     console.error("Erro fatal ao inicializar dependências:", errorMessage);
@@ -141,6 +156,30 @@ function getListPendingAppointmentsUseCase() {
   return pendingAppointmentsUseCase;
 }
 
+function getReactivateAppointmentUseCase() {
+  initAppointmentUseCases();
+  if (!reactivateUseCase) {
+    throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
+  }
+  return reactivateUseCase;
+}
+
+function getResolveAppointmentConflictUseCase() {
+  initAppointmentUseCases();
+  if (!resolveConflictUseCase) {
+    throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
+  }
+  return resolveConflictUseCase;
+}
+
+function getListAppointmentConflictsUseCase() {
+  initAppointmentUseCases();
+  if (!listConflictsUseCase) {
+    throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
+  }
+  return listConflictsUseCase;
+}
+
 export {
   getAvailableTimeSlotsUseCase,
   getRequestAppointmentUseCase,
@@ -149,6 +188,9 @@ export {
   getAcceptAppointmentUseCase,
   getRejectAppointmentUseCase,
   getCancelAppointmentUseCase,
+  getReactivateAppointmentUseCase,
+  getResolveAppointmentConflictUseCase,
   getListNutritionistAgendaUseCase,
   getListPendingAppointmentsUseCase,
+  getListAppointmentConflictsUseCase,
 };

@@ -3,6 +3,7 @@ import { initializeAuth, getAuth, Auth } from "firebase/auth";
 // @ts-ignore
 import { getReactNativePersistence } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
+import { getPublicEnv } from "@/infra/env/publicEnv";
 
 type FirebaseConfig = {
   apiKey: string;
@@ -20,12 +21,12 @@ let initError: Error | null = null;
 
 function getFirebaseConfig(): FirebaseConfig {
   const config = {
-    apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+    apiKey: getPublicEnv("EXPO_PUBLIC_FIREBASE_API_KEY"),
+    authDomain: getPublicEnv("EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN"),
+    projectId: getPublicEnv("EXPO_PUBLIC_FIREBASE_PROJECT_ID"),
+    storageBucket: getPublicEnv("EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET"),
+    messagingSenderId: getPublicEnv("EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"),
+    appId: getPublicEnv("EXPO_PUBLIC_FIREBASE_APP_ID"),
   };
 
   const missing = Object.entries(config)

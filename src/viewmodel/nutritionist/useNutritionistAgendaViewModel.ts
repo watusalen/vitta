@@ -72,7 +72,6 @@ export default function useNutritionistAgendaViewModel(
 
     const selectDate = useCallback(async (date: Date): Promise<void> => {
         setSelectedDate(date);
-        setSelectedDateAppointments([]);
         setError(null);
         setSelectedDateLoading(true);
 

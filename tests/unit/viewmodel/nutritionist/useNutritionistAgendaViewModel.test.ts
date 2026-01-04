@@ -26,6 +26,7 @@ describe('useNutritionistAgendaViewModel', () => {
         mockUseCase = {
             listAgenda: jest.fn().mockResolvedValue([]),
             listAcceptedByDate: jest.fn().mockResolvedValue([]),
+            subscribeToNutritionistAppointments: jest.fn(() => () => {}),
         };
 
         mockGetUserByIdUseCase = {

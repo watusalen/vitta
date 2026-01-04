@@ -17,7 +17,7 @@ import useRedirectEffect from "@/view/hooks/useRedirectEffect";
 export default function AppointmentDetailsScreen() {
     const insets = useSafeAreaInsets();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const { unauthenticatedRedirect } = useAuthHomeViewModel();
+    const { unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
 
     const {
         appointment,
@@ -48,6 +48,7 @@ export default function AppointmentDetailsScreen() {
     }, [id, loadAppointment]);
 
     useRedirectEffect(unauthenticatedRedirect);
+    useRedirectEffect(calendarPermissionRedirect);
 
     function handleCancel() {
         setCancelModalOpen(true);

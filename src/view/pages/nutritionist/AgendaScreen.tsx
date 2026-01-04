@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import { colors, spacing } from "@/view/themes/theme";
 import { useAuthHomeViewModel, useNutritionistAgendaViewModel } from "@/di/container";
 import ScreenHeader from "@/view/components/ScreenHeader";
@@ -14,7 +15,7 @@ import AgendaAppointments from "@/view/pages/nutritionist/components/AgendaAppoi
 
 export default function AgendaScreen() {
     const insets = useSafeAreaInsets();
-    const { user, unauthenticatedRedirect } = useAuthHomeViewModel();
+    const { user, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
     const nutritionistId = user?.id || "";
 
     const {
@@ -45,7 +46,20 @@ export default function AgendaScreen() {
     }
 
     useRedirectEffect(unauthenticatedRedirect);
+    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
+
+    useFocusEffect(
+        useCallback(() => {
+            refresh();
+        }, [refresh])
+    );
+
+    useEffect(() => {
+        if (nutritionistId) {
+            refresh();
+        }
+    }, [nutritionistId, refresh]);
 
     const filters = [
         { key: "today", label: "Hoje" },

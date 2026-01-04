@@ -70,7 +70,6 @@ describe('FirebaseAppointmentRepository', () => {
         timeStart: '09:00',
         timeEnd: '11:00',
         status: 'pending',
-        observations: 'Test observation',
         createdAt: new Date('2024-01-10'),
         updatedAt: new Date('2024-01-10'),
         ...overrides,
@@ -84,15 +83,6 @@ describe('FirebaseAppointmentRepository', () => {
 
             await expect(repository.create(appointment)).resolves.toBeUndefined();
             expect(mockDoc).toHaveBeenCalledWith({}, 'appointments', 'appt-123');
-            expect(mockSetDoc).toHaveBeenCalled();
-        });
-
-        it('deve criar agendamento sem observations', async () => {
-            mockSetDoc.mockResolvedValue(undefined);
-
-            const appointment = createMockAppointment({ observations: undefined });
-
-            await expect(repository.create(appointment)).resolves.toBeUndefined();
             expect(mockSetDoc).toHaveBeenCalled();
         });
 
@@ -118,7 +108,6 @@ describe('FirebaseAppointmentRepository', () => {
                     timeStart: '09:00',
                     timeEnd: '11:00',
                     status: 'pending',
-                    observations: 'Test',
                     createdAt: mockTimestamp,
                     updatedAt: mockTimestamp,
                 }),

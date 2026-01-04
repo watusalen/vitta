@@ -34,12 +34,8 @@ export default function AgendaAppointments({
         );
     }
 
-    if (loading) {
-        return (
-            <View style={styles.centered}>
-                <ActivityIndicator size="large" color={colors.primary} />
-            </View>
-        );
+    if (loading && !refreshing) {
+        return <View />;
     }
 
     return (

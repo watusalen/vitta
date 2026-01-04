@@ -5,17 +5,17 @@ import ValidationError from "@/model/errors/validationError";
 import RepositoryError from "@/model/errors/repositoryError";
 import { IRequestAppointmentUseCase, RequestAppointmentInput } from "@/usecase/appointment/request/iRequestAppointmentUseCase";
 import TimeSlot from "@/model/entities/timeSlot";
+import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 
 type Params = {
     requestAppointmentUseCase: IRequestAppointmentUseCase;
+    appointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase;
     selectedDate: Date | null;
     selectedSlot: TimeSlot | null;
-    observations: string;
     nutritionist: User | null;
     nutritionistLoading: boolean;
     onError: (message: string | null) => void;
     onClearSelection: () => void;
-    onClearObservations: () => void;
     onRefreshDate: (date: Date, nutritionistId: string, patientId?: string) => Promise<void>;
 };
 
@@ -33,14 +33,13 @@ type SubmissionActions = {
 
 export default function useScheduleSubmission({
     requestAppointmentUseCase,
+    appointmentPushNotificationUseCase,
     selectedDate,
     selectedSlot,
-    observations,
     nutritionist,
     nutritionistLoading,
     onError,
     onClearSelection,
-    onClearObservations,
     onRefreshDate,
 }: Params): SubmissionState & SubmissionActions {
     const [submitting, setSubmitting] = useState(false);
@@ -66,15 +65,18 @@ export default function useScheduleSubmission({
                 date: selectedDate,
                 timeStart: selectedSlot.timeStart,
                 timeEnd: selectedSlot.timeEnd,
-                observations: observations.trim() || undefined,
             };
 
             const appointment = await requestAppointmentUseCase.requestAppointment(input);
+            try {
+                await appointmentPushNotificationUseCase.notify(appointment, "requested", "nutritionist");
+            } catch (error) {
+                console.warn("Falha ao enviar notificacao de solicitacao:", error);
+            }
 
             setSuccessMessage("Consulta solicitada com sucesso! Aguarde a confirmação da nutricionista.");
             setSuccessRedirect("/my-appointments");
             onClearSelection();
-            onClearObservations();
 
             await onRefreshDate(selectedDate, nutritionistId, patientId);
             return appointment;
@@ -91,8 +93,8 @@ export default function useScheduleSubmission({
     }, [
         selectedDate,
         selectedSlot,
-        observations,
         requestAppointmentUseCase,
+        appointmentPushNotificationUseCase,
         onError,
         onClearSelection,
         onRefreshDate,

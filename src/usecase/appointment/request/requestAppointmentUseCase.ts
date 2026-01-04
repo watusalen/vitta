@@ -47,7 +47,6 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             date: dateStr,
             timeStart: input.timeStart,
             timeEnd: input.timeEnd,
-            observations: input.observations,
         });
     }
 
@@ -115,7 +114,7 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             if (appt.date !== date || appt.timeStart !== timeStart || appt.timeEnd !== timeEnd) {
                 return false;
             }
-            return appt.status === 'pending' || appt.status === 'cancelled' || !appt.status;
+            return appt.status === 'pending' || !appt.status;
         });
     }
 }

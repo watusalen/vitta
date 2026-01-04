@@ -191,7 +191,7 @@ export default class GetAvailableTimeSlotsUseCase implements IGetAvailableTimeSl
     }
 
     private isBlockedForPatient(status: Appointment['status']): boolean {
-        return status === 'pending' || status === 'cancelled';
+        return status === 'pending';
     }
 
     private isDateInPast(date: Date): boolean {

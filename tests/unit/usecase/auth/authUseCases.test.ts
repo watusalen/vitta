@@ -24,6 +24,9 @@ describe('AuthUseCases', () => {
       getUserByID: jest.fn(),
       createUser: jest.fn(),
       getByRole: jest.fn(),
+      addPushToken: jest.fn(),
+      removePushToken: jest.fn(),
+      getPushTokens: jest.fn(),
     };
 
     authUseCases = new AuthUseCases(mockAuthService, mockUserRepository);

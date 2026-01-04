@@ -16,7 +16,7 @@ import { colors, spacing } from "@/view/themes/theme";
 export default function NutritionistAppointmentDetailsScreen() {
     const insets = useSafeAreaInsets();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const { unauthenticatedRedirect } = useAuthHomeViewModel();
+    const { unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
 
     const {
         appointment,
@@ -28,16 +28,25 @@ export default function NutritionistAppointmentDetailsScreen() {
         notFound,
         canHandle,
         canCancel,
+        canReactivate,
+        conflictAlertOpen,
+        conflictMessage,
+        navigationRoute,
+        navigationMethod,
         loadAppointment,
         acceptAppointment,
         rejectAppointment,
         cancelAppointment,
+        reactivateAppointment,
         clearError,
         clearSuccess,
+        dismissConflictAlert,
+        resolveConflict,
+        clearNavigation,
     } = useNutritionistAppointmentDetailsViewModel();
 
     const [confirmOpen, setConfirmOpen] = useState(false);
-    const [confirmVariant, setConfirmVariant] = useState<"accept" | "reject" | "cancel">("accept");
+    const [confirmVariant, setConfirmVariant] = useState<"accept" | "reject" | "cancel" | "reactivate">("accept");
     const retry = useCallback(() => {
         if (id) {
             clearError();
@@ -50,6 +59,8 @@ export default function NutritionistAppointmentDetailsScreen() {
     }, [id, loadAppointment]);
 
     useRedirectEffect(unauthenticatedRedirect);
+    useRedirectEffect(calendarPermissionRedirect);
+    useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     const alertState = useAppointmentDetailsAlerts({
         error,
@@ -59,7 +70,7 @@ export default function NutritionistAppointmentDetailsScreen() {
         clearSuccess,
     });
 
-    function handleAction(variant: "accept" | "reject" | "cancel") {
+    function handleAction(variant: "accept" | "reject" | "cancel" | "reactivate") {
         setConfirmVariant(variant);
         setConfirmOpen(true);
     }
@@ -94,11 +105,13 @@ export default function NutritionistAppointmentDetailsScreen() {
             <NutritionistAppointmentDetailsActionBar
                 canHandle={!!canHandle}
                 canCancel={!!canCancel}
+                canReactivate={!!canReactivate}
                 processing={processing}
                 confirmVariant={confirmVariant}
                 onAccept={() => handleAction("accept")}
                 onReject={() => handleAction("reject")}
                 onCancel={() => handleAction("cancel")}
+                onReactivate={() => handleAction("reactivate")}
             />
 
             <NutritionistAppointmentDetailsModals
@@ -108,13 +121,21 @@ export default function NutritionistAppointmentDetailsScreen() {
                 patientName={patientName || "Paciente"}
                 appointmentDate={appointment.date}
                 appointmentTime={appointment.timeStart}
+                conflictOpen={conflictAlertOpen}
+                conflictMessage={conflictMessage}
                 alertState={alertState}
                 onCloseConfirm={() => setConfirmOpen(false)}
+                onCloseConflict={dismissConflictAlert}
+                onResolveConflict={() => {
+                    if (!id) return;
+                    resolveConflict(id);
+                }}
                 onConfirm={() => {
                     if (!id) return;
                     if (confirmVariant === "accept") acceptAppointment(id);
                     else if (confirmVariant === "reject") rejectAppointment(id);
-                    else cancelAppointment(id);
+                    else if (confirmVariant === "cancel") cancelAppointment(id);
+                    else reactivateAppointment(id);
                     setConfirmOpen(false);
                 }}
             />

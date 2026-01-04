@@ -14,9 +14,12 @@ const createMockRepository = (
     listByDate: jest.fn().mockResolvedValue(existingAppointments),
     listByStatus: jest.fn(),
     listAcceptedByDateRange: jest.fn(),
+    listAgendaByDateRange: jest.fn(),
     updateStatus: jest.fn(),
+    updateCalendarEventIds: jest.fn(),
     onPatientAppointmentsChange: jest.fn(() => () => {}),
     onNutritionistPendingChange: jest.fn(() => () => {}),
+    onNutritionistAppointmentsChange: jest.fn(() => () => {}),
 });
 
 // Helper para criar datas locais
@@ -90,18 +93,6 @@ describe('RequestAppointmentUseCase', () => {
 
             expect(appointment.timeStart).toBe('09:00');
             expect(appointment.timeEnd).toBe('11:00');
-        });
-
-        it('should include observations when provided', async () => {
-            const mockRepo = createMockRepository([]);
-            const useCase = new RequestAppointmentUseCase(mockRepo);
-
-            const appointment = await useCase.requestAppointment({
-                ...validInput,
-                observations: 'Primeira consulta - tenho alergia a lactose',
-            });
-
-            expect(appointment.observations).toBe('Primeira consulta - tenho alergia a lactose');
         });
 
         it('should call repository.create with appointment', async () => {
@@ -188,13 +179,26 @@ describe('RequestAppointmentUseCase', () => {
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
             const today = new Date();
-            
-            // Se hoje é dia útil, deve aceitar
-            if (today.getDay() !== 0 && today.getDay() !== 6) {
-                const appointment = await useCase.requestAppointment({ ...validInput, date: today });
-                expect(appointment).toBeDefined();
+            const isWeekday = today.getDay() !== 0 && today.getDay() !== 6;
+
+            if (isWeekday) {
+                jest.useFakeTimers();
+                jest.setSystemTime(new Date(
+                    today.getFullYear(),
+                    today.getMonth(),
+                    today.getDate(),
+                    8,
+                    0,
+                    0
+                ));
+
+                try {
+                    const appointment = await useCase.requestAppointment({ ...validInput, date: today });
+                    expect(appointment).toBeDefined();
+                } finally {
+                    jest.useRealTimers();
+                }
             } else {
-                // Se é fim de semana, deve rejeitar
                 await expect(
                     useCase.requestAppointment({ ...validInput, date: today })
                 ).rejects.toThrow(ValidationError);
@@ -473,7 +477,7 @@ describe('RequestAppointmentUseCase', () => {
             expect(appointment).toBeDefined();
         });
 
-        it('should throw ValidationError when patient has cancelled request for same slot', async () => {
+        it('should allow request when patient has cancelled request for same slot', async () => {
             const futureDate = createFutureWeekday();
             const dateStr = futureDate.toISOString().split('T')[0];
 
@@ -492,14 +496,15 @@ describe('RequestAppointmentUseCase', () => {
             const mockRepo = createMockRepository([], [patientCancelledAppointment]);
             const useCase = new RequestAppointmentUseCase(mockRepo);
 
-            await expect(
-                useCase.requestAppointment({
-                    ...validInput,
-                    date: futureDate,
-                    timeStart: '09:00',
-                    timeEnd: '11:00',
-                })
-            ).rejects.toThrow('Você já tem uma solicitação registrada para este horário.');
+            const appointment = await useCase.requestAppointment({
+                ...validInput,
+                date: futureDate,
+                timeStart: '09:00',
+                timeEnd: '11:00',
+            });
+
+            expect(appointment).toBeDefined();
+            expect(appointment.status).toBe('pending');
         });
     });
 });

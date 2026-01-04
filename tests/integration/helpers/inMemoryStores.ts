@@ -69,6 +69,7 @@ export class InMemoryAuthService implements IAuthService {
 
 export class InMemoryUserRepository implements IUserRepository {
     private usersById = new Map<string, User>();
+    private pushTokensByUser = new Map<string, Set<string>>();
 
     async createUser(user: User): Promise<void> {
         this.usersById.set(user.id, user);
@@ -81,17 +82,37 @@ export class InMemoryUserRepository implements IUserRepository {
     async getByRole(role: "patient" | "nutritionist"): Promise<User[]> {
         return Array.from(this.usersById.values()).filter((user) => user.role === role);
     }
+
+    async addPushToken(userId: string, token: string): Promise<void> {
+        const current = this.pushTokensByUser.get(userId) ?? new Set<string>();
+        current.add(token);
+        this.pushTokensByUser.set(userId, current);
+    }
+
+    async removePushToken(userId: string, token: string): Promise<void> {
+        const current = this.pushTokensByUser.get(userId);
+        if (!current) return;
+        current.delete(token);
+    }
+
+    async getPushTokens(userId: string): Promise<string[]> {
+        const current = this.pushTokensByUser.get(userId);
+        if (!current) return [];
+        return Array.from(current);
+    }
 }
 
 export class InMemoryAppointmentRepository implements IAppointmentRepository {
     private appointments: Appointment[] = [];
     private patientSubscribers = new Map<string, Set<PatientSubscriber>>();
     private nutritionistPendingSubscribers = new Map<string, Set<NutritionistSubscriber>>();
+    private nutritionistSubscribers = new Map<string, Set<NutritionistSubscriber>>();
 
     async create(appointment: Appointment): Promise<void> {
         this.appointments.push(appointment);
         this.notifyPatient(appointment.patientId);
         this.notifyNutritionistPending(appointment.nutritionistId);
+        this.notifyNutritionist(appointment.nutritionistId);
     }
 
     async getById(id: string): Promise<Appointment | null> {
@@ -130,6 +151,18 @@ export class InMemoryAppointmentRepository implements IAppointmentRepository {
         });
     }
 
+    async listAgendaByDateRange(
+        startDate: string,
+        endDate: string,
+        nutritionistId: string
+    ): Promise<Appointment[]> {
+        return this.appointments.filter((appt) => {
+            if (appt.nutritionistId !== nutritionistId) return false;
+            if (appt.status !== "accepted" && appt.status !== "cancelled") return false;
+            return appt.date >= startDate && appt.date <= endDate;
+        });
+    }
+
     async updateStatus(id: string, status: AppointmentStatus): Promise<void> {
         const appointment = this.appointments.find((appt) => appt.id === id);
         if (!appointment) return;
@@ -137,6 +170,23 @@ export class InMemoryAppointmentRepository implements IAppointmentRepository {
         appointment.updatedAt = new Date();
         this.notifyPatient(appointment.patientId);
         this.notifyNutritionistPending(appointment.nutritionistId);
+        this.notifyNutritionist(appointment.nutritionistId);
+    }
+
+    async updateCalendarEventIds(
+        id: string,
+        data: { calendarEventIdPatient?: string | null; calendarEventIdNutritionist?: string | null }
+    ): Promise<void> {
+        const appointment = this.appointments.find((appt) => appt.id === id);
+        if (!appointment) return;
+
+        if ("calendarEventIdPatient" in data) {
+            appointment.calendarEventIdPatient = data.calendarEventIdPatient ?? undefined;
+        }
+        if ("calendarEventIdNutritionist" in data) {
+            appointment.calendarEventIdNutritionist = data.calendarEventIdNutritionist ?? undefined;
+        }
+        appointment.updatedAt = new Date();
     }
 
     onPatientAppointmentsChange(
@@ -166,6 +216,20 @@ export class InMemoryAppointmentRepository implements IAppointmentRepository {
         };
     }
 
+    onNutritionistAppointmentsChange(
+        nutritionistId: string,
+        callback: (appointments: Appointment[]) => void
+    ): () => void {
+        const subscribers =
+            this.nutritionistSubscribers.get(nutritionistId) ?? new Set<NutritionistSubscriber>();
+        subscribers.add(callback);
+        this.nutritionistSubscribers.set(nutritionistId, subscribers);
+        callback(this.appointments.filter((appt) => appt.nutritionistId === nutritionistId));
+        return () => {
+            subscribers.delete(callback);
+        };
+    }
+
     private notifyPatient(patientId: string): void {
         const subscribers = this.patientSubscribers.get(patientId);
         if (!subscribers) return;
@@ -183,6 +247,15 @@ export class InMemoryAppointmentRepository implements IAppointmentRepository {
         );
         for (const callback of subscribers) {
             callback(pending);
+        }
+    }
+
+    private notifyNutritionist(nutritionistId: string): void {
+        const subscribers = this.nutritionistSubscribers.get(nutritionistId);
+        if (!subscribers) return;
+        const current = this.appointments.filter((appt) => appt.nutritionistId === nutritionistId);
+        for (const callback of subscribers) {
+            callback(current);
         }
     }
 }

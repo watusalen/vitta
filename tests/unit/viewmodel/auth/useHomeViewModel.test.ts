@@ -1,11 +1,17 @@
 import { renderHook, act } from '@testing-library/react';
 import useHomeViewModel from '@/viewmodel/auth/useHomeViewModel';
 import { IAuthUseCases } from '@/usecase/auth/iAuthUseCases';
+import { ICalendarPermissionUseCase } from '@/usecase/calendar/iCalendarPermissionUseCase';
+import { IPushPermissionUseCase } from '@/usecase/notifications/iPushPermissionUseCase';
+import { IPushTokenUseCase } from '@/usecase/notifications/iPushTokenUseCase';
 import AuthError from '@/model/errors/authError';
 import User from '@/model/entities/user';
 
 describe('useHomeViewModel', () => {
     let mockAuthUseCases: IAuthUseCases;
+    let mockCalendarPermissionUseCase: ICalendarPermissionUseCase;
+    let mockPushPermissionUseCase: IPushPermissionUseCase;
+    let mockPushTokenUseCase: IPushTokenUseCase;
 
     beforeEach(() => {
         mockAuthUseCases = {
@@ -14,6 +20,20 @@ describe('useHomeViewModel', () => {
             logout: jest.fn(),
             resetPassword: jest.fn(),
             onAuthStateChanged: jest.fn().mockReturnValue(jest.fn()),
+        };
+        mockCalendarPermissionUseCase = {
+            checkPermission: jest.fn().mockResolvedValue('authorized'),
+            requestPermission: jest.fn().mockResolvedValue('authorized'),
+            openSettings: jest.fn().mockResolvedValue(undefined),
+        };
+        mockPushPermissionUseCase = {
+            checkPermission: jest.fn().mockResolvedValue('granted'),
+            requestPermission: jest.fn().mockResolvedValue('granted'),
+            openSettings: jest.fn().mockResolvedValue(undefined),
+        };
+        mockPushTokenUseCase = {
+            register: jest.fn(),
+            unregister: jest.fn(),
         };
     });
 
@@ -25,8 +45,18 @@ describe('useHomeViewModel', () => {
         createdAt: new Date(),
     };
 
+    const renderHome = () =>
+        renderHook(() =>
+            useHomeViewModel(
+                mockAuthUseCases,
+                mockCalendarPermissionUseCase,
+                mockPushPermissionUseCase,
+                mockPushTokenUseCase
+            )
+        );
+
     it('deve inicializar com loading true', () => {
-        const { result } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { result } = renderHome();
 
         expect(result.current.user).toBeNull();
         expect(result.current.error).toBeNull();
@@ -41,7 +71,7 @@ describe('useHomeViewModel', () => {
             return jest.fn();
         });
 
-        const { result } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { result } = renderHome();
 
         expect(mockAuthUseCases.onAuthStateChanged).toHaveBeenCalled();
 
@@ -61,7 +91,7 @@ describe('useHomeViewModel', () => {
             return jest.fn();
         });
 
-        const { result } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { result } = renderHome();
 
         act(() => {
             capturedCallback!(null);
@@ -80,7 +110,7 @@ describe('useHomeViewModel', () => {
             return jest.fn();
         });
 
-        const { result } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { result } = renderHome();
 
         act(() => {
             capturedCallback!(mockUser);
@@ -100,7 +130,7 @@ describe('useHomeViewModel', () => {
     it('deve tratar AuthError no logout', async () => {
         (mockAuthUseCases.logout as jest.Mock).mockRejectedValue(new AuthError('Erro no logout'));
 
-        const { result } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { result } = renderHome();
 
         await act(async () => {
             await result.current.logout();
@@ -112,7 +142,7 @@ describe('useHomeViewModel', () => {
     it('deve tratar erro desconhecido no logout', async () => {
         (mockAuthUseCases.logout as jest.Mock).mockRejectedValue(new Error('Unknown'));
 
-        const { result } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { result } = renderHome();
 
         await act(async () => {
             await result.current.logout();
@@ -122,7 +152,7 @@ describe('useHomeViewModel', () => {
     });
 
     it('deve setar loading durante logout', async () => {
-        let resolveLogout: (value?: unknown) => void;
+        let resolveLogout: ((value?: unknown) => void) | undefined;
         (mockAuthUseCases.logout as jest.Mock).mockImplementation(() => new Promise((resolve) => {
             resolveLogout = resolve;
         }));
@@ -133,7 +163,7 @@ describe('useHomeViewModel', () => {
             return jest.fn();
         });
 
-        const { result } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { result } = renderHome();
 
         act(() => {
             capturedCallback!(mockUser);
@@ -148,6 +178,10 @@ describe('useHomeViewModel', () => {
         expect(result.current.loading).toBe(true);
 
         await act(async () => {
+            await Promise.resolve();
+        });
+
+        await act(async () => {
             resolveLogout!();
         });
 
@@ -158,7 +192,7 @@ describe('useHomeViewModel', () => {
         const mockUnsubscribe = jest.fn();
         (mockAuthUseCases.onAuthStateChanged as jest.Mock).mockReturnValue(mockUnsubscribe);
 
-        const { unmount } = renderHook(() => useHomeViewModel(mockAuthUseCases));
+        const { unmount } = renderHome();
 
         unmount();
 

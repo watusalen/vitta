@@ -39,12 +39,15 @@ describe('AcceptAppointmentUseCase', () => {
             listByDate: jest.fn(),
             listByStatus: jest.fn(),
             listAcceptedByDateRange: jest.fn(),
+            listAgendaByDateRange: jest.fn(),
             updateStatus: jest.fn().mockImplementation((id, status) => {
                 updatedStatuses.set(id, status);
                 return Promise.resolve();
             }),
+    updateCalendarEventIds: jest.fn(),
             onPatientAppointmentsChange: jest.fn(),
             onNutritionistPendingChange: jest.fn(),
+            onNutritionistAppointmentsChange: jest.fn(),
         };
 
         useCase = new AcceptAppointmentUseCase(mockRepository);

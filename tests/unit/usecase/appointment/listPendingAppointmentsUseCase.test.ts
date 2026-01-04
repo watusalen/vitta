@@ -33,9 +33,12 @@ describe('ListPendingAppointmentsUseCase', () => {
             listByDate: jest.fn(),
             listByStatus: jest.fn(),
             listAcceptedByDateRange: jest.fn(),
+            listAgendaByDateRange: jest.fn(),
             updateStatus: jest.fn(),
+    updateCalendarEventIds: jest.fn(),
             onPatientAppointmentsChange: jest.fn(),
             onNutritionistPendingChange: jest.fn(),
+            onNutritionistAppointmentsChange: jest.fn(),
         };
 
         useCase = new ListPendingAppointmentsUseCase(mockRepository);

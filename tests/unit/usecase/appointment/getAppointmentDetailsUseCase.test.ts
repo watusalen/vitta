@@ -13,7 +13,6 @@ const createMockAppointment = (id: string): Appointment => ({
     timeStart: '09:00',
     timeEnd: '11:00',
     status: 'pending',
-    observations: 'Primeira consulta',
     createdAt: new Date(),
     updatedAt: new Date(),
 });
@@ -26,9 +25,12 @@ const createMockRepository = (appointment: Appointment | null = null): IAppointm
     listByDate: jest.fn(),
     listByStatus: jest.fn(),
     listAcceptedByDateRange: jest.fn(),
+    listAgendaByDateRange: jest.fn(),
     updateStatus: jest.fn(),
+    updateCalendarEventIds: jest.fn(),
     onPatientAppointmentsChange: jest.fn(() => () => {}),
     onNutritionistPendingChange: jest.fn(() => () => {}),
+    onNutritionistAppointmentsChange: jest.fn(() => () => {}),
 });
 
 describe('GetAppointmentDetailsUseCase', () => {
@@ -58,7 +60,6 @@ describe('GetAppointmentDetailsUseCase', () => {
             expect(result).toHaveProperty('timeStart');
             expect(result).toHaveProperty('timeEnd');
             expect(result).toHaveProperty('status');
-            expect(result).toHaveProperty('observations');
             expect(result).toHaveProperty('createdAt');
             expect(result).toHaveProperty('updatedAt');
         });

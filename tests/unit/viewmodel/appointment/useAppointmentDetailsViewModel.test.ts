@@ -21,7 +21,6 @@ describe('useAppointmentDetailsViewModel', () => {
         timeStart: '09:00',
         timeEnd: '11:00',
         status: 'pending',
-        observations: 'Observação de teste',
         createdAt: new Date(),
         updatedAt: new Date(),
     };

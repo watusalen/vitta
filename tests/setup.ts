@@ -1,6 +1,3 @@
-// Setup file para testes
-// Não usamos jest-native pois não testamos View
-
 jest.mock('@react-native-async-storage/async-storage', () => ({
   setItem: jest.fn(() => Promise.resolve()),
   getItem: jest.fn(() => Promise.resolve(null)),
@@ -34,6 +31,11 @@ jest.mock('firebase/firestore', () => ({
   query: jest.fn(),
   where: jest.fn(),
   getDocs: jest.fn(),
+}));
+
+jest.mock('expo-constants', () => ({
+  expoConfig: { extra: {} },
+  easConfig: {},
 }));
 
 global.console.warn = jest.fn();

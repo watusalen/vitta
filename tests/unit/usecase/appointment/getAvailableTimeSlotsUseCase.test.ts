@@ -11,9 +11,12 @@ const createMockRepository = (acceptedAppointments: Appointment[] = []): jest.Mo
     listByDate: jest.fn().mockResolvedValue(acceptedAppointments),
     listByStatus: jest.fn(),
     listAcceptedByDateRange: jest.fn().mockResolvedValue(acceptedAppointments),
+    listAgendaByDateRange: jest.fn(),
     updateStatus: jest.fn(),
+    updateCalendarEventIds: jest.fn(),
     onPatientAppointmentsChange: jest.fn((_: string, __: (appointments: Appointment[]) => void) => () => {}),
     onNutritionistPendingChange: jest.fn((_: string, __: (appointments: Appointment[]) => void) => () => {}),
+    onNutritionistAppointmentsChange: jest.fn((_: string, __: (appointments: Appointment[]) => void) => () => {}),
 });
 
 // Helper para criar datas locais

@@ -4,6 +4,8 @@ import { IAcceptAppointmentUseCase } from "@/usecase/appointment/status/iAcceptA
 import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectAppointmentUseCase";
 import { IListPendingAppointmentsUseCase } from "@/usecase/appointment/list/iListPendingAppointmentsUseCase";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
+import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
+import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import ValidationError from "@/model/errors/validationError";
 import RepositoryError from "@/model/errors/repositoryError";
 import {
@@ -19,6 +21,8 @@ export default function usePendingRequestsViewModel(
     acceptAppointmentUseCase: IAcceptAppointmentUseCase,
     rejectAppointmentUseCase: IRejectAppointmentUseCase,
     getUserByIdUseCase: IGetUserByIdUseCase,
+    calendarSyncUseCase: IAppointmentCalendarSyncUseCase,
+    appointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase,
     nutritionistId: string
 ): PendingRequestsState & PendingRequestsActions {
 
@@ -50,7 +54,6 @@ export default function usePendingRequestsViewModel(
                             dateFormatted: formatPendingDate(appt.date),
                             timeStart: appt.timeStart,
                             timeEnd: appt.timeEnd,
-                            observations: appt.observations,
                         };
                     })
                 );
@@ -69,7 +72,17 @@ export default function usePendingRequestsViewModel(
         setError(null);
 
         try {
-            await acceptAppointmentUseCase.acceptAppointment(appointmentId);
+            const appointment = await acceptAppointmentUseCase.acceptAppointment(appointmentId);
+            try {
+                await calendarSyncUseCase.syncAccepted(appointment, "nutritionist");
+            } catch {
+                // Não bloqueia o fluxo se o calendário falhar.
+            }
+            try {
+                await appointmentPushNotificationUseCase.notify(appointment, "accepted", "patient");
+            } catch (error) {
+                console.warn("Falha ao enviar notificacao de aceite:", error);
+            }
             setSuccessMessage('Consulta aceita com sucesso!');
             return true;
         } catch (err) {
@@ -84,14 +97,19 @@ export default function usePendingRequestsViewModel(
         } finally {
             setProcessing(false);
         }
-    }, [acceptAppointmentUseCase]);
+    }, [acceptAppointmentUseCase, appointmentPushNotificationUseCase, calendarSyncUseCase]);
 
     const rejectAppointment = useCallback(async (appointmentId: string): Promise<boolean> => {
         setProcessing(true);
         setError(null);
 
         try {
-            await rejectAppointmentUseCase.rejectAppointment(appointmentId);
+            const appointment = await rejectAppointmentUseCase.rejectAppointment(appointmentId);
+            try {
+                await appointmentPushNotificationUseCase.notify(appointment, "rejected", "patient");
+            } catch (error) {
+                console.warn("Falha ao enviar notificacao de recusa:", error);
+            }
             setSuccessMessage('Consulta recusada.');
             return true;
         } catch (err) {
@@ -106,7 +124,7 @@ export default function usePendingRequestsViewModel(
         } finally {
             setProcessing(false);
         }
-    }, [rejectAppointmentUseCase]);
+    }, [rejectAppointmentUseCase, appointmentPushNotificationUseCase]);
 
     const clearError = useCallback((): void => {
         setError(null);

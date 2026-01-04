@@ -2,28 +2,32 @@ import React from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View, StyleSheet } from "react-native";
 import { colors, fontSizes, fonts, spacing } from "@/view/themes/theme";
 
-type ConfirmVariant = "accept" | "reject" | "cancel";
+type ConfirmVariant = "accept" | "reject" | "cancel" | "reactivate";
 
 type Props = {
     canHandle: boolean;
     canCancel: boolean;
+    canReactivate: boolean;
     processing: boolean;
     confirmVariant: ConfirmVariant;
     onAccept: () => void;
     onReject: () => void;
     onCancel: () => void;
+    onReactivate: () => void;
 };
 
 export default function NutritionistAppointmentDetailsActionBar({
     canHandle,
     canCancel,
+    canReactivate,
     processing,
     confirmVariant,
     onAccept,
     onReject,
     onCancel,
+    onReactivate,
 }: Props) {
-    if (!canHandle && !canCancel) return null;
+    if (!canHandle && !canCancel && !canReactivate) return null;
 
     if (canHandle) {
         return (
@@ -56,18 +60,37 @@ export default function NutritionistAppointmentDetailsActionBar({
         );
     }
 
+    if (canCancel) {
+        return (
+            <View style={styles.bottomBar}>
+                <TouchableOpacity
+                    style={[styles.actionButton, styles.cancelButton]}
+                    onPress={onCancel}
+                    disabled={processing}
+                    activeOpacity={0.9}
+                >
+                    {processing && confirmVariant === "cancel" ? (
+                        <ActivityIndicator color={colors.background} />
+                    ) : (
+                        <Text style={styles.actionText}>Cancelar Consulta</Text>
+                    )}
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
     return (
         <View style={styles.bottomBar}>
             <TouchableOpacity
-                style={[styles.actionButton, styles.cancelButton]}
-                onPress={onCancel}
+                style={[styles.actionButton, styles.acceptButton]}
+                onPress={onReactivate}
                 disabled={processing}
                 activeOpacity={0.9}
             >
-                {processing && confirmVariant === "cancel" ? (
+                {processing && confirmVariant === "reactivate" ? (
                     <ActivityIndicator color={colors.background} />
                 ) : (
-                    <Text style={styles.actionText}>Cancelar Consulta</Text>
+                    <Text style={styles.actionText}>Aceitar</Text>
                 )}
             </TouchableOpacity>
         </View>

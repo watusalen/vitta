@@ -45,9 +45,21 @@
       <key>NSAllowsLocalNetworking</key>
       <true/>
     </dict>
+    <key>NSCalendarsFullAccessUsageDescription</key>
+    <string>O Vitta precisa acessar o seu calendário para organizar suas consultas e enviar lembretes.</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>O Vitta precisa acessar o seu calendário para organizar suas consultas e enviar lembretes.</string>
+    <key>NSRemindersFullAccessUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your reminders</string>
+    <key>NSRemindersUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your reminders</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+    </array>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>remote-notification</string>
     </array>
     <key>RCTNewArchEnabled</key>
     <true/>

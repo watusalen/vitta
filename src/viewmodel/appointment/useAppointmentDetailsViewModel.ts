@@ -5,6 +5,7 @@ import RepositoryError from "@/model/errors/repositoryError";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
 import { ICancelAppointmentUseCase } from "@/usecase/appointment/status/iCancelAppointmentUseCase";
 import ValidationError from "@/model/errors/validationError";
+import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 
 export interface AppointmentDetailsState {
     appointment: Appointment | null;
@@ -28,7 +29,8 @@ export interface AppointmentDetailsActions {
 export default function useAppointmentDetailsViewModel(
     getAppointmentDetailsUseCase: IGetAppointmentDetailsUseCase,
     getUserByIdUseCase?: IGetUserByIdUseCase,
-    cancelAppointmentUseCase?: ICancelAppointmentUseCase
+    cancelAppointmentUseCase?: ICancelAppointmentUseCase,
+    appointmentPushNotificationUseCase?: IAppointmentPushNotificationUseCase
 ): AppointmentDetailsState & AppointmentDetailsActions {
     const [appointment, setAppointment] = useState<Appointment | null>(null);
     const [loading, setLoading] = useState(false);
@@ -86,6 +88,13 @@ export default function useAppointmentDetailsViewModel(
             const updated = await cancelAppointmentUseCase.cancelAppointment(appointmentId);
             setAppointment(updated);
             setSuccessMessage("Consulta cancelada.");
+            if (appointmentPushNotificationUseCase) {
+                try {
+                    await appointmentPushNotificationUseCase.notify(updated, "cancelled", "nutritionist");
+                } catch (error) {
+                    console.warn("Falha ao enviar notificacao de cancelamento:", error);
+                }
+            }
         } catch (err) {
             if (err instanceof ValidationError) {
                 setError(err.message);

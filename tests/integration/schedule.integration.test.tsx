@@ -6,6 +6,7 @@ import RequestAppointmentUseCase from "@/usecase/appointment/request/requestAppo
 import GetNutritionistUseCase from "@/usecase/user/getNutritionistUseCase";
 import useScheduleViewModel from "@/viewmodel/appointment/useScheduleViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository } from "./helpers/inMemoryStores";
+import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 
 describe("Schedule integration", () => {
     beforeEach(() => {
@@ -46,9 +47,17 @@ describe("Schedule integration", () => {
         const getAvailableSlots = new GetAvailableTimeSlotsUseCase(appointmentRepository);
         const requestAppointment = new RequestAppointmentUseCase(appointmentRepository);
         const getNutritionist = new GetNutritionistUseCase(userRepository);
+        const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
+            notify: jest.fn(),
+        };
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(getAvailableSlots, requestAppointment, getNutritionist)
+            useScheduleViewModel(
+                getAvailableSlots,
+                requestAppointment,
+                appointmentPushNotification,
+                getNutritionist
+            )
         );
 
         await act(async () => {
@@ -117,9 +126,12 @@ describe("Schedule integration", () => {
 
         const getAvailableSlots = new GetAvailableTimeSlotsUseCase(appointmentRepository);
         const requestAppointment = new RequestAppointmentUseCase(appointmentRepository);
+        const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
+            notify: jest.fn(),
+        };
 
         const { result } = renderHook(() =>
-            useScheduleViewModel(getAvailableSlots, requestAppointment)
+            useScheduleViewModel(getAvailableSlots, requestAppointment, appointmentPushNotification)
         );
 
         await act(async () => {

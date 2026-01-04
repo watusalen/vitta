@@ -8,11 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		329DE491680F49856DF5B64A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 65C4F32F5762481FA9930F6A /* PrivacyInfo.xcprivacy */; };
+		377630B3306C813F92C8BA54 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E75F8189DC1F2F13A80883 /* ExpoModulesProvider.swift */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		520B2E993C3710B5CCB6D77C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FB060A6C4531F38229F18AA4 /* PrivacyInfo.xcprivacy */; };
-		8CE99C0EA167A7C375AF81AD /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F53305DA59DD525BA405C82 /* ExpoModulesProvider.swift */; };
-		A9ADA4AC08655ED24C0EE362 /* libPods-Vitta.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46B9689CCA5CA0A225E8BB00 /* libPods-Vitta.a */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		ECAA728033C0E006C24FC60E /* libPods-Vitta.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 66CEC5423A34C81EBC714B19 /* libPods-Vitta.a */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -20,16 +20,16 @@
 		13B07F961A680F5B00A75B9A /* Vitta.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vitta.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Vitta/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Vitta/Info.plist; sourceTree = "<group>"; };
-		46B9689CCA5CA0A225E8BB00 /* libPods-Vitta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Vitta.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F53305DA59DD525BA405C82 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Vitta/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		A461DF9C92057A33D9DE11D9 /* Pods-Vitta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vitta.release.xcconfig"; path = "Target Support Files/Pods-Vitta/Pods-Vitta.release.xcconfig"; sourceTree = "<group>"; };
+		23E75F8189DC1F2F13A80883 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Vitta/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		65C4F32F5762481FA9930F6A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Vitta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		66CEC5423A34C81EBC714B19 /* libPods-Vitta.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Vitta.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		89EB087BB0C4C07100DFC5AF /* Pods-Vitta.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vitta.release.xcconfig"; path = "Target Support Files/Pods-Vitta/Pods-Vitta.release.xcconfig"; sourceTree = "<group>"; };
+		A84BDDCB4BF85E1719F5F2AC /* Pods-Vitta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vitta.debug.xcconfig"; path = "Target Support Files/Pods-Vitta/Pods-Vitta.debug.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Vitta/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		DD1D1F7D941BC94A05BC96E4 /* Pods-Vitta.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vitta.debug.xcconfig"; path = "Target Support Files/Pods-Vitta/Pods-Vitta.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Vitta/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Vitta-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Vitta-Bridging-Header.h"; path = "Vitta/Vitta-Bridging-Header.h"; sourceTree = "<group>"; };
-		FB060A6C4531F38229F18AA4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = Vitta/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9ADA4AC08655ED24C0EE362 /* libPods-Vitta.a in Frameworks */,
+				ECAA728033C0E006C24FC60E /* libPods-Vitta.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,7 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				FB060A6C4531F38229F18AA4 /* PrivacyInfo.xcprivacy */,
+				65C4F32F5762481FA9930F6A /* PrivacyInfo.xcprivacy */,
 			);
 			name = Vitta;
 			sourceTree = "<group>";
@@ -62,17 +62,17 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				46B9689CCA5CA0A225E8BB00 /* libPods-Vitta.a */,
+				66CEC5423A34C81EBC714B19 /* libPods-Vitta.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4BFADC728AE2B11285046543 /* Vitta */ = {
+		60591F72B6927E58BDBD8CD9 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				5F53305DA59DD525BA405C82 /* ExpoModulesProvider.swift */,
+				D1034B60D388003E483E9CD8 /* Vitta */,
 			);
-			name = Vitta;
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -89,8 +89,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				F63596DE84D864B35C3A08B0 /* Pods */,
-				8B4E3F1DACBF86C01516D98A /* ExpoModulesProviders */,
+				D56BA8E4C2C62F916F7DFE94 /* Pods */,
+				60591F72B6927E58BDBD8CD9 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,14 +105,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8B4E3F1DACBF86C01516D98A /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				4BFADC728AE2B11285046543 /* Vitta */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,11 +114,19 @@
 			path = Vitta/Supporting;
 			sourceTree = "<group>";
 		};
-		F63596DE84D864B35C3A08B0 /* Pods */ = {
+		D1034B60D388003E483E9CD8 /* Vitta */ = {
 			isa = PBXGroup;
 			children = (
-				DD1D1F7D941BC94A05BC96E4 /* Pods-Vitta.debug.xcconfig */,
-				A461DF9C92057A33D9DE11D9 /* Pods-Vitta.release.xcconfig */,
+				23E75F8189DC1F2F13A80883 /* ExpoModulesProvider.swift */,
+			);
+			name = Vitta;
+			sourceTree = "<group>";
+		};
+		D56BA8E4C2C62F916F7DFE94 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A84BDDCB4BF85E1719F5F2AC /* Pods-Vitta.debug.xcconfig */,
+				89EB087BB0C4C07100DFC5AF /* Pods-Vitta.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -140,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Vitta" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				23F2EDE3D36FC9FBD4F0F03D /* [Expo] Configure project */,
+				5FE511D0FEC546E1964DDFB1 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				E82835F7C233D8288A527A92 /* [CP] Embed Pods Frameworks */,
+				468B9F6CB1A7665C8E20BA5E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -166,8 +166,8 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = 5RZ8SQWW5T;
 						LastSwiftMigration = 1250;
-						DevelopmentTeam = "5RZ8SQWW5T";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -198,7 +198,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				520B2E993C3710B5CCB6D77C /* PrivacyInfo.xcprivacy in Resources */,
+				329DE491680F49856DF5B64A /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,7 +244,29 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		23F2EDE3D36FC9FBD4F0F03D /* [Expo] Configure project */ = {
+		468B9F6CB1A7665C8E20BA5E /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Vitta/Pods-Vitta-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Vitta/Pods-Vitta-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5FE511D0FEC546E1964DDFB1 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -275,8 +297,11 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Vitta/Pods-Vitta-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXNotifications/ExpoNotifications_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoDevice/ExpoDevice_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RNCAsyncStorage/RNCAsyncStorage_resources.bundle",
@@ -286,8 +311,11 @@
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoApplication_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoNotifications_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoDevice_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RNCAsyncStorage_resources.bundle",
@@ -300,28 +328,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Vitta/Pods-Vitta-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E82835F7C233D8288A527A92 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Vitta/Pods-Vitta-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Vitta/Pods-Vitta-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -330,7 +336,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				8CE99C0EA167A7C375AF81AD /* ExpoModulesProvider.swift in Sources */,
+				377630B3306C813F92C8BA54 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -339,12 +345,15 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DD1D1F7D941BC94A05BC96E4 /* Pods-Vitta.debug.xcconfig */;
+			baseConfigurationReference = A84BDDCB4BF85E1719F5F2AC /* Pods-Vitta.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Vitta/Vitta.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5RZ8SQWW5T;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -370,20 +379,20 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-				DEVELOPMENT_TEAM = "5RZ8SQWW5T";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A461DF9C92057A33D9DE11D9 /* Pods-Vitta.release.xcconfig */;
+			baseConfigurationReference = 89EB087BB0C4C07100DFC5AF /* Pods-Vitta.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Vitta/Vitta.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5RZ8SQWW5T;
 				INFOPLIST_FILE = Vitta/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -403,9 +412,6 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-				DEVELOPMENT_TEAM = "5RZ8SQWW5T";
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Release;
 		};

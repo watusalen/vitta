@@ -7,7 +7,19 @@ export interface IAppointmentRepository {
     listByDate(date: string, nutritionistId?: string): Promise<Appointment[]>;
     listByStatus(status: AppointmentStatus, nutritionistId?: string): Promise<Appointment[]>;
     listAcceptedByDateRange(startDate: string, endDate: string, nutritionistId: string): Promise<Appointment[]>;
+    listAgendaByDateRange(startDate: string, endDate: string, nutritionistId: string): Promise<Appointment[]>;
     updateStatus(id: string, status: AppointmentStatus): Promise<void>;
+    updateCalendarEventIds(
+        id: string,
+        data: {
+            calendarEventIdPatient?: string | null;
+            calendarEventIdNutritionist?: string | null;
+        }
+    ): Promise<void>;
     onPatientAppointmentsChange(patientId: string, callback: (appointments: Appointment[]) => void): () => void;
     onNutritionistPendingChange(nutritionistId: string, callback: (appointments: Appointment[]) => void): () => void;
+    onNutritionistAppointmentsChange(
+        nutritionistId: string,
+        callback: (appointments: Appointment[]) => void
+    ): () => void;
 }

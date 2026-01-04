@@ -3,23 +3,34 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import { colors, fontSizes, fonts, spacing, borderRadius } from "@/view/themes/theme";
-import { useAuthHomeViewModel, usePatientHomeViewModel } from "@/di/container";
+import { useAuthHomeViewModel, usePatientHomeViewModel, usePatientCalendarSyncViewModel } from "@/di/container";
 import LogoutButton from "@/view/components/LogoutButton";
 import HomeCard from "@/view/components/HomeCard";
 import AlertModal from "@/view/components/AlertModal";
+import ConfirmActionModal from "@/view/components/ConfirmActionModal";
 import useRedirectEffect from "@/view/hooks/useRedirectEffect";
+import { router } from "expo-router";
 
 export default function PatientHomeScreen() {
     const insets = useSafeAreaInsets();
-    const { user, error, logout, clearError, unauthenticatedRedirect } = useAuthHomeViewModel();
+    const { user, error, logout, clearError, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
     const [logoutErrorOpen, setLogoutErrorOpen] = useState(false);
+    const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
     const { navigationRoute, navigationMethod, goToSchedule, goToAppointments, clearNavigation } = usePatientHomeViewModel();
+    usePatientCalendarSyncViewModel(user?.id ?? "");
 
     async function handleLogout() {
+        setLogoutConfirmOpen(true);
+    }
+
+    async function confirmLogout() {
+        setLogoutConfirmOpen(false);
         await logout();
+        router.replace("/login");
     }
 
     useRedirectEffect(unauthenticatedRedirect);
+    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     useEffect(() => {
@@ -86,6 +97,15 @@ export default function PatientHomeScreen() {
                     setLogoutErrorOpen(false);
                     clearError();
                 }}
+            />
+            <ConfirmActionModal
+                visible={logoutConfirmOpen}
+                variant="reject"
+                title="Confirmar logout"
+                subtitle="Tem certeza que deseja sair da sua conta?"
+                confirmText="Sair"
+                onConfirm={confirmLogout}
+                onClose={() => setLogoutConfirmOpen(false)}
             />
         </View>
     );

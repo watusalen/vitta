@@ -20,7 +20,11 @@ export default class FirebaseAuthService implements IAuthService {
                 id: userCredential.user.uid,
                 email: userCredential.user.email ?? ''
             }
-        } catch {
+        } catch (err) {
+            const code = (err as { code?: string }).code;
+            if (code === "auth/user-not-found") {
+                throw new AuthError("Email não cadastrado.");
+            }
             throw new AuthError('Credenciais inválidas.');
         }
     }

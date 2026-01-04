@@ -21,6 +21,7 @@ describe('useNutritionistHomeViewModel', () => {
         mockListNutritionistAgendaUseCase = {
             listAgenda: jest.fn(),
             listAcceptedByDate: jest.fn(),
+            subscribeToNutritionistAppointments: jest.fn(() => () => {}),
         };
 
         mockGetUserByIdUseCase = {

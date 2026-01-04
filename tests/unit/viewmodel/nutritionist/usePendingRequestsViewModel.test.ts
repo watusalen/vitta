@@ -4,6 +4,8 @@ import { IListPendingAppointmentsUseCase } from '@/usecase/appointment/list/iLis
 import { IAcceptAppointmentUseCase } from '@/usecase/appointment/status/iAcceptAppointmentUseCase';
 import { IRejectAppointmentUseCase } from '@/usecase/appointment/status/iRejectAppointmentUseCase';
 import { IGetUserByIdUseCase } from '@/usecase/user/iGetUserByIdUseCase';
+import { IAppointmentCalendarSyncUseCase } from '@/usecase/calendar/iAppointmentCalendarSyncUseCase';
+import { IAppointmentPushNotificationUseCase } from '@/usecase/notifications/iAppointmentPushNotificationUseCase';
 import Appointment from '@/model/entities/appointment';
 import ValidationError from '@/model/errors/validationError';
 import RepositoryError from '@/model/errors/repositoryError';
@@ -26,6 +28,8 @@ describe('usePendingRequestsViewModel', () => {
     let mockAcceptUseCase: IAcceptAppointmentUseCase;
     let mockRejectUseCase: IRejectAppointmentUseCase;
     let mockGetUserByIdUseCase: IGetUserByIdUseCase;
+    let mockCalendarSyncUseCase: IAppointmentCalendarSyncUseCase;
+    let mockAppointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase;
     let unsubscribeMock: jest.Mock;
 
     beforeEach(() => {
@@ -52,6 +56,13 @@ describe('usePendingRequestsViewModel', () => {
         mockGetUserByIdUseCase = {
             getById: jest.fn().mockResolvedValue({ id: 'patient-1', name: 'João Silva', email: 'joao@test.com', role: 'patient', createdAt: new Date() }),
         };
+        mockCalendarSyncUseCase = {
+            syncAccepted: jest.fn(),
+            syncCancelledOrRejected: jest.fn(),
+        };
+        mockAppointmentPushNotificationUseCase = {
+            notify: jest.fn(),
+        };
     });
 
     afterEach(() => {
@@ -67,6 +78,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -88,6 +101,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -113,6 +128,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -127,6 +144,10 @@ describe('usePendingRequestsViewModel', () => {
         expect(success).toBe(true);
         expect(result.current.successMessage).toBe('Consulta aceita com sucesso!');
         expect(mockAcceptUseCase.acceptAppointment).toHaveBeenCalledWith('appt-1');
+        expect(mockCalendarSyncUseCase.syncAccepted).toHaveBeenCalledWith(
+            { ...appointment, status: 'accepted' },
+            'nutritionist'
+        );
     });
 
     it('deve tratar erro ao aceitar consulta', async () => {
@@ -142,6 +163,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -171,6 +194,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -200,6 +225,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -226,6 +253,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -259,6 +288,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );
@@ -290,6 +321,8 @@ describe('usePendingRequestsViewModel', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
+                mockCalendarSyncUseCase,
+                mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
         );

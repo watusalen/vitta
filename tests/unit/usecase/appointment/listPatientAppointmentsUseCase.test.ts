@@ -27,13 +27,16 @@ const createMockRepository = (appointments: Appointment[] = []): IAppointmentRep
     listByDate: jest.fn(),
     listByStatus: jest.fn(),
     listAcceptedByDateRange: jest.fn(),
+    listAgendaByDateRange: jest.fn(),
     updateStatus: jest.fn(),
+    updateCalendarEventIds: jest.fn(),
     onPatientAppointmentsChange: jest.fn((_, callback) => {
         // Simula chamada inicial com os appointments
         callback(appointments);
         return () => {};
     }),
     onNutritionistPendingChange: jest.fn(() => () => {}),
+    onNutritionistAppointmentsChange: jest.fn(() => () => {}),
 });
 
 describe('ListPatientAppointmentsUseCase', () => {
@@ -218,6 +221,7 @@ describe('ListPatientAppointmentsUseCase', () => {
             const mockUnsubscribe = jest.fn();
             const mockRepo = {
                 ...createMockRepository([]),
+    updateCalendarEventIds: jest.fn(),
                 onPatientAppointmentsChange: jest.fn(() => mockUnsubscribe),
             };
             const useCase = new ListPatientAppointmentsUseCase(mockRepo);

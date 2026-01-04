@@ -1,16 +1,19 @@
 import FirebaseUserRepository from '@/infra/firebase/repository/firebaseUserRepository';
 import RepositoryError from '@/model/errors/repositoryError';
 import User from '@/model/entities/user';
-import { doc, getDoc, setDoc, collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection, query, where, getDocs, Timestamp, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
 jest.mock('firebase/firestore', () => ({
     doc: jest.fn(),
     getDoc: jest.fn(),
     setDoc: jest.fn(),
+    updateDoc: jest.fn(),
     collection: jest.fn(),
     query: jest.fn(),
     where: jest.fn(),
     getDocs: jest.fn(),
+    arrayUnion: jest.fn((value: string) => value),
+    arrayRemove: jest.fn((value: string) => value),
     Timestamp: {
         fromDate: jest.fn((date: Date) => ({ toDate: () => date })),
     },
@@ -22,10 +25,13 @@ jest.mock('@/infra/firebase/config', () => ({
 const mockDoc = doc as jest.Mock;
 const mockGetDoc = getDoc as jest.Mock;
 const mockSetDoc = setDoc as jest.Mock;
+const mockUpdateDoc = updateDoc as jest.Mock;
 const mockCollection = collection as jest.Mock;
 const mockQuery = query as jest.Mock;
 const mockWhere = where as jest.Mock;
 const mockGetDocs = getDocs as jest.Mock;
+const mockArrayUnion = arrayUnion as jest.Mock;
+const mockArrayRemove = arrayRemove as jest.Mock;
 
 describe('FirebaseUserRepository', () => {
     let repository: FirebaseUserRepository;
@@ -185,6 +191,94 @@ describe('FirebaseUserRepository', () => {
             await expect(repository.getByRole('nutritionist')).rejects.toThrow(RepositoryError);
             await expect(repository.getByRole('nutritionist')).rejects.toThrow(
                 'Erro ao buscar usuários por role no Firestore.'
+            );
+        });
+    });
+
+    describe('addPushToken', () => {
+        it('deve salvar o token de notificacao', async () => {
+            mockUpdateDoc.mockResolvedValue(undefined);
+
+            await expect(repository.addPushToken('user-123', 'token-1')).resolves.toBeUndefined();
+
+            expect(mockDoc).toHaveBeenCalledWith({}, 'users', 'user-123');
+            expect(mockUpdateDoc).toHaveBeenCalledWith({ id: 'doc-ref' }, { pushTokens: 'token-1' });
+        });
+
+        it('deve lançar RepositoryError quando falhar', async () => {
+            mockUpdateDoc.mockRejectedValue(new Error('Firestore error'));
+
+            await expect(repository.addPushToken('user-123', 'token-1')).rejects.toThrow(RepositoryError);
+            await expect(repository.addPushToken('user-123', 'token-1')).rejects.toThrow(
+                'Erro ao salvar token de notificação.'
+            );
+        });
+    });
+
+    describe('removePushToken', () => {
+        it('deve remover o token de notificacao', async () => {
+            mockUpdateDoc.mockResolvedValue(undefined);
+
+            await expect(repository.removePushToken('user-123', 'token-1')).resolves.toBeUndefined();
+
+            expect(mockDoc).toHaveBeenCalledWith({}, 'users', 'user-123');
+            expect(mockUpdateDoc).toHaveBeenCalledWith({ id: 'doc-ref' }, { pushTokens: 'token-1' });
+        });
+
+        it('deve lançar RepositoryError quando falhar', async () => {
+            mockUpdateDoc.mockRejectedValue(new Error('Firestore error'));
+
+            await expect(repository.removePushToken('user-123', 'token-1')).rejects.toThrow(RepositoryError);
+            await expect(repository.removePushToken('user-123', 'token-1')).rejects.toThrow(
+                'Erro ao remover token de notificação.'
+            );
+        });
+    });
+
+    describe('getPushTokens', () => {
+        it('deve retornar tokens quando existirem', async () => {
+            mockGetDoc.mockResolvedValue({
+                exists: () => true,
+                data: () => ({
+                    pushTokens: ['token-1', 'token-2'],
+                }),
+            });
+
+            const result = await repository.getPushTokens('user-123');
+
+            expect(mockDoc).toHaveBeenCalledWith({}, 'users', 'user-123');
+            expect(result).toEqual(['token-1', 'token-2']);
+        });
+
+        it('deve retornar lista vazia quando user nao existe', async () => {
+            mockGetDoc.mockResolvedValue({
+                exists: () => false,
+            });
+
+            const result = await repository.getPushTokens('user-123');
+
+            expect(result).toEqual([]);
+        });
+
+        it('deve retornar lista vazia quando pushTokens invalido', async () => {
+            mockGetDoc.mockResolvedValue({
+                exists: () => true,
+                data: () => ({
+                    pushTokens: 'invalid',
+                }),
+            });
+
+            const result = await repository.getPushTokens('user-123');
+
+            expect(result).toEqual([]);
+        });
+
+        it('deve lançar RepositoryError quando falhar', async () => {
+            mockGetDoc.mockRejectedValue(new Error('Firestore error'));
+
+            await expect(repository.getPushTokens('user-123')).rejects.toThrow(RepositoryError);
+            await expect(repository.getPushTokens('user-123')).rejects.toThrow(
+                'Erro ao buscar tokens de notificação.'
             );
         });
     });

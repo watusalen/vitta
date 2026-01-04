@@ -1,0 +1,3 @@
+import NutritionistConflictResolutionScreen from "@/view/pages/nutritionist/NutritionistConflictResolutionScreen";
+
+export default NutritionistConflictResolutionScreen;

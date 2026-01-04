@@ -7,7 +7,6 @@ export interface RequestAppointmentInput {
     date: Date;
     timeStart: string;
     timeEnd: string;
-    observations?: string;
 }
 
 export interface IRequestAppointmentUseCase {

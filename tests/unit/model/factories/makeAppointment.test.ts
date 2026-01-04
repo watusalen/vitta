@@ -72,32 +72,6 @@ describe('makeAppointment Factory', () => {
         });
     });
 
-    describe('Optional Observations', () => {
-        it('should include observations when provided', () => {
-            const appointment = makeAppointment({
-                ...validInput,
-                observations: 'Primeira consulta - alergia a glúten',
-            });
-
-            expect(appointment.observations).toBe('Primeira consulta - alergia a glúten');
-        });
-
-        it('should have undefined observations when not provided', () => {
-            const appointment = makeAppointment(validInput);
-
-            expect(appointment.observations).toBeUndefined();
-        });
-
-        it('should handle empty string observations', () => {
-            const appointment = makeAppointment({
-                ...validInput,
-                observations: '',
-            });
-
-            expect(appointment.observations).toBe('');
-        });
-    });
-
     describe('Status Types', () => {
         it('should accept pending status', () => {
             const appointment = makeAppointment({

@@ -30,7 +30,28 @@ describe("Auth integration", () => {
         expect(loginResult.current.user?.id).toBe(users[0].id);
         expect(loginResult.current.redirectRoute).toBe("/patient-home");
 
-        const { result: homeResult } = renderHook(() => useHomeViewModel(authUseCases));
+        const calendarPermissionUseCase = {
+            checkPermission: jest.fn().mockResolvedValue("authorized"),
+            requestPermission: jest.fn().mockResolvedValue("authorized"),
+            openSettings: jest.fn().mockResolvedValue(undefined),
+        };
+        const pushPermissionUseCase = {
+            checkPermission: jest.fn().mockResolvedValue("granted"),
+            requestPermission: jest.fn().mockResolvedValue("granted"),
+            openSettings: jest.fn().mockResolvedValue(undefined),
+        };
+        const pushTokenUseCase = {
+            register: jest.fn(),
+            unregister: jest.fn(),
+        };
+        const { result: homeResult } = renderHook(() =>
+            useHomeViewModel(
+                authUseCases,
+                calendarPermissionUseCase,
+                pushPermissionUseCase,
+                pushTokenUseCase
+            )
+        );
 
         await act(async () => {
             await flushPromises();

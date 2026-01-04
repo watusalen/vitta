@@ -25,7 +25,7 @@ export default class ListNutritionistAgendaUseCase implements IListNutritionistA
         const startStr = formatDateToISO(start);
         const endStr = formatDateToISO(end);
 
-        const appointments = await this.appointmentRepository.listAcceptedByDateRange(
+        const appointments = await this.appointmentRepository.listAgendaByDateRange(
             startStr,
             endStr,
             nutritionistId
@@ -59,8 +59,19 @@ export default class ListNutritionistAgendaUseCase implements IListNutritionistA
         const allAppointments = await this.appointmentRepository.listByDate(dateStr, nutritionistId);
 
         return allAppointments
-            .filter(appt => appt.status === 'accepted')
+            .filter(appt => appt.status === 'accepted' || appt.status === 'cancelled')
             .sort((a, b) => a.timeStart.localeCompare(b.timeStart));
+    }
+
+    subscribeToNutritionistAppointments(
+        nutritionistId: string,
+        callback: (appointments: Appointment[]) => void
+    ): () => void {
+        this.assertNutritionistId(nutritionistId);
+        return this.appointmentRepository.onNutritionistAppointmentsChange(
+            nutritionistId,
+            callback
+        );
     }
 
     private assertNutritionistId(nutritionistId: string): void {

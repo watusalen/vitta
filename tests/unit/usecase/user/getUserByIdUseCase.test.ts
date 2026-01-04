@@ -10,6 +10,9 @@ describe("GetUserByIdUseCase", () => {
             getUserByID: jest.fn(),
             createUser: jest.fn(),
             getByRole: jest.fn(),
+            addPushToken: jest.fn(),
+            removePushToken: jest.fn(),
+            getPushTokens: jest.fn(),
         };
     });
 

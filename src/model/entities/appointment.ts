@@ -8,7 +8,8 @@ export default interface Appointment {
     timeStart: string;
     timeEnd: string;
     status: AppointmentStatus;
-    observations?: string;
+    calendarEventIdPatient?: string;
+    calendarEventIdNutritionist?: string;
     createdAt: Date;
     updatedAt: Date;
 }

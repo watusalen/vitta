@@ -5,7 +5,6 @@ export interface PendingAppointmentItem {
     dateFormatted: string;
     timeStart: string;
     timeEnd: string;
-    observations?: string;
 }
 
 export interface PendingRequestsState {

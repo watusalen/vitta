@@ -28,9 +28,12 @@ const createMockRepository = (appointments: Appointment[] = []): IAppointmentRep
     listByDate: jest.fn().mockResolvedValue(appointments),
     listByStatus: jest.fn(),
     listAcceptedByDateRange: jest.fn(),
+    listAgendaByDateRange: jest.fn(),
     updateStatus: jest.fn(),
+    updateCalendarEventIds: jest.fn(),
     onPatientAppointmentsChange: jest.fn(() => () => {}),
     onNutritionistPendingChange: jest.fn(() => () => {}),
+    onNutritionistAppointmentsChange: jest.fn(() => () => {}),
 });
 
 describe('CheckAppointmentConflictUseCase', () => {

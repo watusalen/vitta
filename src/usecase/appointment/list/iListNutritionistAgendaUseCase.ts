@@ -12,4 +12,8 @@ export interface IListNutritionistAgendaUseCase {
         endDate?: Date
     ): Promise<AgendaByDate[]>;
     listAcceptedByDate(nutritionistId: string, date: Date): Promise<Appointment[]>;
+    subscribeToNutritionistAppointments(
+        nutritionistId: string,
+        callback: (appointments: Appointment[]) => void
+    ): () => void;
 }

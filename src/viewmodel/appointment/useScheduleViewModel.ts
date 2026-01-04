@@ -7,13 +7,14 @@ import ValidationError from "@/model/errors/validationError";
 import useScheduleAvailability from "@/viewmodel/appointment/helpers/useScheduleAvailability";
 import { ScheduleActions, ScheduleState } from "@/viewmodel/appointment/types/scheduleViewModelTypes";
 import useScheduleSubmission from "@/viewmodel/appointment/helpers/useScheduleSubmission";
+import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 
 export default function useScheduleViewModel(
     getAvailableTimeSlotsUseCase: IGetAvailableTimeSlotsUseCase,
     requestAppointmentUseCase: IRequestAppointmentUseCase,
+    appointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase,
     getNutritionistUseCase?: IGetNutritionistUseCase
 ): ScheduleState & ScheduleActions {
-    const [observations, setObservationsState] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [nutritionist, setNutritionist] = useState<User | null>(null);
     const [nutritionistLoading, setNutritionistLoading] = useState(false);
@@ -33,10 +34,6 @@ export default function useScheduleViewModel(
         clearSelection,
     } = useScheduleAvailability(getAvailableTimeSlotsUseCase, setError);
 
-    const setObservations = useCallback((text: string): void => {
-        setObservationsState(text);
-    }, []);
-
     const {
         submitting,
         successMessage,
@@ -46,14 +43,13 @@ export default function useScheduleViewModel(
         clearSuccess,
     } = useScheduleSubmission({
         requestAppointmentUseCase,
+        appointmentPushNotificationUseCase,
         selectedDate,
         selectedSlot,
-        observations,
         nutritionist,
         nutritionistLoading,
         onError: setError,
         onClearSelection: clearSelection,
-        onClearObservations: () => setObservationsState(""),
         onRefreshDate: selectDate,
     });
 
@@ -106,7 +102,6 @@ export default function useScheduleViewModel(
         selectedDate,
         availableSlots,
         selectedSlot,
-        observations,
         loading,
         submitting,
         error,
@@ -120,7 +115,6 @@ export default function useScheduleViewModel(
         navigationMethod,
         selectDate,
         selectSlot,
-        setObservations,
         requestAppointment,
         submitAppointment,
         loadMonthAvailability,
