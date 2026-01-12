@@ -1,8 +1,3 @@
-<!--
-Objetivo: Documentar as telas e fluxos de navegação do aplicativo.
-Escopo: Descrição detalhada de todas as interfaces do sistema para ambos os perfis.
--->
-
 # Especificação de Telas do Sistema
 
 ## 1. Visão Geral

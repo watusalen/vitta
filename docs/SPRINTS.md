@@ -1,8 +1,3 @@
-<!--
-Objetivo: Definir o planejamento de sprints do projeto.
-Escopo: Entregas incrementais, priorização e cronograma de desenvolvimento.
--->
-
 # Planejamento de Sprints - Vitta
 
 App de Agendamento de Consultas Nutricionais  

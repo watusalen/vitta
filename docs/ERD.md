@@ -2,8 +2,6 @@
 
 Objetivo: consolidar entidades, atributos e relacionamentos usados nas sprints. Baseado nas regras atuais (MVP) e nas integrações previstas.
 
-> Atualização 2026-01: consultas agora podem armazenar `calendarEventIdPatient`/`calendarEventIdNutritionist` e tokens de push (Expo) são persistidos por usuário para enviar notificações via Supabase + Expo Notifications.
-
 ## Convenções
 - IDs: strings UUID geradas via `crypto.randomUUID()` nas factories de domínio.
 - Datas/horas: ISO 8601 (`YYYY-MM-DD`), horário em string (`HH:mm`) ou timestamps do Firestore.
