@@ -1,100 +1,100 @@
-import ErroAuth from '../../../../src/model/errors/authError';
-import ErroValidacao from '../../../../src/model/errors/validationError';
-import ErroRepositorio from '../../../../src/model/errors/repositoryError';
+import AuthError from '../../../../src/model/errors/authError';
+import ValidationError from '../../../../src/model/errors/validationError';
+import RepositoryError from '../../../../src/model/errors/repositoryError';
 
 describe('Custom Error Classes', () => {
-  describe('ErroAuth', () => {
+  describe('AuthError', () => {
     it('deve criar auth error', () => {
-      const error = new ErroAuth('Invalid credentials');
+      const error = new AuthError('Invalid credentials');
 
       expect(error.message).toBe('Invalid credentials');
       expect(error).toBeInstanceOf(Error);
     });
 
     it('deve ter correct prototype', () => {
-      const error = new ErroAuth('Test');
-      expect(error instanceof ErroAuth).toBe(true);
+      const error = new AuthError('Test');
+      expect(error instanceof AuthError).toBe(true);
     });
 
     it('deve incluir stack trace', () => {
-      const error = new ErroAuth('Test error');
+      const error = new AuthError('Test error');
       expect(error.stack).toBeDefined();
     });
   });
 
-  describe('ErroValidacao', () => {
+  describe('ValidationError', () => {
     it('deve criar validation error', () => {
-      const error = new ErroValidacao('Invalid email');
+      const error = new ValidationError('Invalid email');
 
       expect(error.message).toBe('Invalid email');
       expect(error).toBeInstanceOf(Error);
     });
 
     it('deve ter correct prototype', () => {
-      const error = new ErroValidacao('Test');
-      expect(error instanceof ErroValidacao).toBe(true);
+      const error = new ValidationError('Test');
+      expect(error instanceof ValidationError).toBe(true);
     });
 
     it('deve incluir stack trace', () => {
-      const error = new ErroValidacao('Test error');
+      const error = new ValidationError('Test error');
       expect(error.stack).toBeDefined();
     });
   });
 
-  describe('ErroRepositorio', () => {
+  describe('RepositoryError', () => {
     it('deve criar repository error', () => {
-      const error = new ErroRepositorio('Database connection failed');
+      const error = new RepositoryError('Database connection failed');
 
       expect(error.message).toBe('Database connection failed');
       expect(error).toBeInstanceOf(Error);
     });
 
     it('deve ter correct prototype', () => {
-      const error = new ErroRepositorio('Test');
-      expect(error instanceof ErroRepositorio).toBe(true);
+      const error = new RepositoryError('Test');
+      expect(error instanceof RepositoryError).toBe(true);
     });
 
     it('deve incluir stack trace', () => {
-      const error = new ErroRepositorio('Test error');
+      const error = new RepositoryError('Test error');
       expect(error.stack).toBeDefined();
     });
   });
 
   describe('Error Handling', () => {
-    it('deve lançar and catch ErroAuth', () => {
+    it('deve lançar and catch AuthError', () => {
       const throwError = () => {
-        throw new ErroAuth('Auth failed');
+        throw new AuthError('Auth failed');
       };
 
-      expect(throwError).toThrow(ErroAuth);
+      expect(throwError).toThrow(AuthError);
     });
 
-    it('deve lançar and catch ErroValidacao', () => {
+    it('deve lançar and catch ValidationError', () => {
       const throwError = () => {
-        throw new ErroValidacao('Invalid data');
+        throw new ValidationError('Invalid data');
       };
 
-      expect(throwError).toThrow(ErroValidacao);
+      expect(throwError).toThrow(ValidationError);
     });
 
-    it('deve lançar and catch ErroRepositorio', () => {
+    it('deve lançar and catch RepositoryError', () => {
       const throwError = () => {
-        throw new ErroRepositorio('DB error');
+        throw new RepositoryError('DB error');
       };
 
-      expect(throwError).toThrow(ErroRepositorio);
+      expect(throwError).toThrow(RepositoryError);
     });
 
     it('deve distinguish different error types in array', () => {
       const errors = [
-        new ErroAuth('Auth'),
-        new ErroValidacao('Validation'),
-        new ErroRepositorio('Repository'),
+        new AuthError('Auth'),
+        new ValidationError('Validation'),
+        new RepositoryError('Repository'),
       ];
 
-      const authErros = errors.filter((e) => e instanceof ErroAuth);
-      const valErros = errors.filter((e) => e instanceof ErroValidacao);
-      const repoErros = errors.filter((e) => e instanceof ErroRepositorio);
+      const authErros = errors.filter((e) => e instanceof AuthError);
+      const valErros = errors.filter((e) => e instanceof ValidationError);
+      const repoErros = errors.filter((e) => e instanceof RepositoryError);
 
       expect(authErros).toHaveLength(1);
       expect(valErros).toHaveLength(1);
@@ -110,9 +110,9 @@ describe('Custom Error Classes', () => {
         'Custom repository message',
       ];
 
-      const authError = new ErroAuth(messages[0]);
-      const valError = new ErroValidacao(messages[1]);
-      const repoError = new ErroRepositorio(messages[2]);
+      const authError = new AuthError(messages[0]);
+      const valError = new ValidationError(messages[1]);
+      const repoError = new RepositoryError(messages[2]);
 
       expect(authError.message).toBe(messages[0]);
       expect(valError.message).toBe(messages[1]);

@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import CasosDeUsoAuth from "@/usecase/auth/authUseCases";
+import authUseCase from "@/usecase/auth/authUseCases";
 import useLoginViewModel from "@/viewmodel/auth/useLoginViewModel";
 import useSignUpViewModel from "@/viewmodel/auth/useSignUpViewModel";
 import useHomeViewModel from "@/viewmodel/auth/useHomeViewModel";
@@ -9,7 +9,7 @@ describe("Integração de autenticação", () => {
     it("faz cadastro, login e logout com redirecionamentos", async () => {
         const authService = new InMemoryAuthService();
         const userRepository = new InMemoryUserRepository();
-        const authUseCases = new CasosDeUsoAuth(authService, userRepository);
+        const authUseCases = new authUseCase(authService, userRepository);
 
         const { result: signUpResult } = renderHook(() => useSignUpViewModel(authUseCases));
 
@@ -69,7 +69,7 @@ describe("Integração de autenticação", () => {
     it("trata sucesso e erro na redefinição de senha", async () => {
         const authService = new InMemoryAuthService();
         const userRepository = new InMemoryUserRepository();
-        const authUseCases = new CasosDeUsoAuth(authService, userRepository);
+        const authUseCases = new authUseCase(authService, userRepository);
 
         const { result: signUpResult } = renderHook(() => useSignUpViewModel(authUseCases));
         await act(async () => {

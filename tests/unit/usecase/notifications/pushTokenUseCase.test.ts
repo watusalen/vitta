@@ -1,8 +1,8 @@
-import CasoDeUsoTokenPush from "@/usecase/notifications/pushTokenUseCase";
+import PushTokenUseCase from "@/usecase/notifications/pushTokenUseCase";
 import { IPushNotificationService } from "@/model/services/iPushNotificationService";
 import { IUserRepository } from "@/model/repositories/iUserRepository";
 
-describe("Caso de Uso: Token de Notificação Push", () => {
+describe("Push Token Use Case", () => {
     let service: jest.Mocked<IPushNotificationService>;
     let repository: jest.Mocked<IUserRepository>;
 
@@ -26,7 +26,7 @@ describe("Caso de Uso: Token de Notificação Push", () => {
 
     it("deve registrar token quando disponível", async () => {
         service.getDevicePushToken.mockResolvedValue("token-1");
-        const useCase = new CasoDeUsoTokenPush(service, repository);
+        const useCase = new PushTokenUseCase(service, repository);
 
         await useCase.register("user-1");
 
@@ -37,7 +37,7 @@ describe("Caso de Uso: Token de Notificação Push", () => {
 
     it("não deve registrar quando token estiver vazio", async () => {
         service.getDevicePushToken.mockResolvedValue(null);
-        const useCase = new CasoDeUsoTokenPush(service, repository);
+        const useCase = new PushTokenUseCase(service, repository);
 
         await useCase.register("user-1");
 
@@ -46,7 +46,7 @@ describe("Caso de Uso: Token de Notificação Push", () => {
 
     it("deve remover token quando disponível", async () => {
         service.getDevicePushToken.mockResolvedValue("token-1");
-        const useCase = new CasoDeUsoTokenPush(service, repository);
+        const useCase = new PushTokenUseCase(service, repository);
 
         await useCase.unregister("user-1");
 
@@ -56,7 +56,7 @@ describe("Caso de Uso: Token de Notificação Push", () => {
 
     it("não deve remover quando token estiver vazio", async () => {
         service.getDevicePushToken.mockResolvedValue(null);
-        const useCase = new CasoDeUsoTokenPush(service, repository);
+        const useCase = new PushTokenUseCase(service, repository);
 
         await useCase.unregister("user-1");
 

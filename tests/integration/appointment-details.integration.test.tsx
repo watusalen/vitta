@@ -95,6 +95,7 @@ describe("Integração dos detalhes da consulta", () => {
 
         await act(async () => {
             await result.current.loadAppointment("appt-1");
+            await flushPromises();
         });
 
         expect(result.current.patientName).toBe("Lucas");

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -91,25 +91,25 @@
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -117,25 +117,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Appointment from "@/model/entities/appointment";
 import { IAppointmentRepository } from "@/model/repositories/iAppointmentRepository";
-<span class="cstat-no" title="statement not covered" >import { assertNonEmpty } from "@/usecase/utils/validationUtils";</span>
+import { assertNonEmpty } from "@/usecase/utils/validationUtils";
 import { IListAppointmentConflictsUseCase } from "@/usecase/appointment/list/iListAppointmentConflictsUseCase";
 &nbsp;
-<span class="cstat-no" title="statement not covered" >export default class L</span>istAppointmentConflictsUseCase implements IListAppointmentConflictsUseCase {
-<span class="fstat-no" title="function not covered" >    constructor(private <span class="cstat-no" title="statement not covered" >a</span>ppointmentRepository: IAppointmentRepository)</span> { }
+export default class ListAppointmentConflictsUseCase implements IListAppointmentConflictsUseCase {
+    constructor(private appointmentRepository: IAppointmentRepository) { }
 &nbsp;
-<span class="fstat-no" title="function not covered" >    async </span>listConflictsBySlot(
+    async listConflictsBySlot(
         nutritionistId: string,
         date: string,
         timeStart: string,
         timeEnd: string
     ): Promise&lt;Appointment[]&gt; {
-<span class="cstat-no" title="statement not covered" >        assertNonEmpty(nutritionistId, "Nutricionista inválida.");</span>
+        assertNonEmpty(nutritionistId, "Nutricionista inválida.");
 &nbsp;
-        const sameDay = <span class="cstat-no" title="statement not covered" >await this.appointmentRepository.listByDate(date, nutritionistId);</span>
+        const sameDay = await this.appointmentRepository.listByDate(date, nutritionistId);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        return sameDay.filter(</span>
-<span class="fstat-no" title="function not covered" >            appt </span>=&gt;
-<span class="cstat-no" title="statement not covered" >                appt.timeStart === timeStart &amp;&amp;</span>
+        return sameDay.filter(
+            appt =&gt;
+                appt.timeStart === timeStart &amp;&amp;
                 appt.timeEnd === timeEnd &amp;&amp;
                 (appt.status === "accepted" || appt.status === "cancelled")
         );
@@ -148,7 +148,7 @@ import { IListAppointmentConflictsUseCase } from "@/usecase/appointment/list/iLi
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-13T04:11:32.296Z
+                at 2026-01-13T14:37:17.312Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

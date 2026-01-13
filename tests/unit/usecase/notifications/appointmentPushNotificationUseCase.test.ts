@@ -1,12 +1,12 @@
-import CasoDeUsoNotificacaoConsulta from "@/usecase/notifications/appointmentPushNotificationUseCase";
+import AppointmentPushNotificationUseCase from "@/usecase/notifications/appointmentPushNotificationUseCase";
 import { IUserRepository } from "@/model/repositories/iUserRepository";
 import { IPushNotificationSender } from "@/model/services/iPushNotificationSender";
 import Appointment from "@/model/entities/appointment";
 
-describe("Caso de Uso: Notificação de Consulta", () => {
+describe("Appointment Push Notification Use Case", () => {
     let repository: jest.Mocked<IUserRepository>;
     let sender: jest.Mocked<IPushNotificationSender>;
-    let useCase: CasoDeUsoNotificacaoConsulta;
+    let useCase: AppointmentPushNotificationUseCase;
 
     const appointment: Appointment = {
         id: "appt-1",
@@ -32,7 +32,7 @@ describe("Caso de Uso: Notificação de Consulta", () => {
         sender = {
             sendPush: jest.fn(),
         };
-        useCase = new CasoDeUsoNotificacaoConsulta(repository, sender);
+        useCase = new AppointmentPushNotificationUseCase(repository, sender);
     });
 
     it("deve ignorar quando não existir token", async () => {

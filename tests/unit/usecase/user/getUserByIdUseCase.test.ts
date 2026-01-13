@@ -1,8 +1,8 @@
-import CasoDeUsoObterUsuarioPorId from "@/usecase/user/getUserByIdUseCase";
+import GetUserByIdUseCase from "@/usecase/user/getUserByIdUseCase";
 import { IUserRepository } from "@/model/repositories/iUserRepository";
-import ErroValidacao from "@/model/errors/validationError";
+import ValidationError from "@/model/errors/validationError";
 
-describe("Caso de Uso: Obter Usuário por ID", () => {
+describe("Get User By ID Use Case", () => {
     let repository: jest.Mocked<IUserRepository>;
 
     beforeEach(() => {
@@ -17,9 +17,9 @@ describe("Caso de Uso: Obter Usuário por ID", () => {
     });
 
     it("deve lançar erro quando id é vazio", async () => {
-        const useCase = new CasoDeUsoObterUsuarioPorId(repository);
+        const useCase = new GetUserByIdUseCase(repository);
 
-        await expect(useCase.getById("")).rejects.toThrow(ErroValidacao);
+        await expect(useCase.getById("")).rejects.toThrow(ValidationError);
     });
 
     it("deve retornar usuário quando encontrado", async () => {
@@ -31,7 +31,7 @@ describe("Caso de Uso: Obter Usuário por ID", () => {
             createdAt: new Date(),
         };
         repository.getUserByID.mockResolvedValueOnce(user);
-        const useCase = new CasoDeUsoObterUsuarioPorId(repository);
+        const useCase = new GetUserByIdUseCase(repository);
 
         const result = await useCase.getById("user-1");
 

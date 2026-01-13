@@ -1,5 +1,5 @@
 import FirebaseAppointmentRepository from '@/infra/firebase/repository/firebaseAppointmentRepository';
-import ErroRepositorio from '@/model/errors/repositoryError';
+import RepositoryError from '@/model/errors/repositoryError';
 import Appointment from '@/model/entities/appointment';
 import {
     doc,
@@ -12,7 +12,6 @@ import {
     orderBy,
     getDocs,
     onSnapshot,
-    Timestamp,
 } from 'firebase/firestore';
 
 jest.mock('firebase/firestore', () => ({
@@ -86,12 +85,12 @@ describe('FirebaseAppointmentRepository', () => {
             expect(mockSetDoc).toHaveBeenCalled();
         });
 
-        it('deve lançar ErroRepositorio quando falha', async () => {
+        it('deve lançar RepositoryError quando falha', async () => {
             mockSetDoc.mockRejectedValue(new Error('Firestore error'));
 
             const appointment = createMockAppointment();
 
-            await expect(repository.create(appointment)).rejects.toThrow(ErroRepositorio);
+            await expect(repository.create(appointment)).rejects.toThrow(RepositoryError);
             await expect(repository.create(appointment)).rejects.toThrow('Erro ao criar agendamento no Firestore.');
         });
     });
@@ -130,10 +129,10 @@ describe('FirebaseAppointmentRepository', () => {
             expect(result).toBeNull();
         });
 
-        it('deve lançar ErroRepositorio quando falha', async () => {
+        it('deve lançar RepositoryError quando falha', async () => {
             mockGetDoc.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.getById('appt-123')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.getById('appt-123')).rejects.toThrow(RepositoryError);
             await expect(repository.getById('appt-123')).rejects.toThrow('Erro ao buscar agendamento no Firestore.');
         });
     });
@@ -165,10 +164,10 @@ describe('FirebaseAppointmentRepository', () => {
             expect(mockWhere).toHaveBeenCalledWith('patientId', '==', 'patient-1');
         });
 
-        it('deve lançar ErroRepositorio quando falha', async () => {
+        it('deve lançar RepositoryError quando falha', async () => {
             mockGetDocs.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.listByPatient('patient-1')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.listByPatient('patient-1')).rejects.toThrow(RepositoryError);
             await expect(repository.listByPatient('patient-1')).rejects.toThrow(
                 'Erro ao listar agendamentos do paciente.'
             );
@@ -209,10 +208,10 @@ describe('FirebaseAppointmentRepository', () => {
             expect(mockWhere).toHaveBeenCalledWith('nutritionistId', '==', 'nutri-1');
         });
 
-        it('deve lançar ErroRepositorio quando falha', async () => {
+        it('deve lançar RepositoryError quando falha', async () => {
             mockGetDocs.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.listByDate('2024-01-15')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.listByDate('2024-01-15')).rejects.toThrow(RepositoryError);
             await expect(repository.listByDate('2024-01-15')).rejects.toThrow(
                 'Erro ao listar agendamentos por data.'
             );
@@ -253,10 +252,10 @@ describe('FirebaseAppointmentRepository', () => {
             expect(mockWhere).toHaveBeenCalledWith('nutritionistId', '==', 'nutri-1');
         });
 
-        it('deve lançar ErroRepositorio quando falha', async () => {
+        it('deve lançar RepositoryError quando falha', async () => {
             mockGetDocs.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.listByStatus('pending')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.listByStatus('pending')).rejects.toThrow(RepositoryError);
             await expect(repository.listByStatus('pending')).rejects.toThrow(
                 'Erro ao listar agendamentos por status.'
             );
@@ -289,11 +288,11 @@ describe('FirebaseAppointmentRepository', () => {
             expect(mockWhere).toHaveBeenCalledWith('status', '==', 'accepted');
         });
 
-        it('deve lançar ErroRepositorio quando falha', async () => {
+        it('deve lançar RepositoryError quando falha', async () => {
             mockGetDocs.mockRejectedValue(new Error('Firestore error'));
 
             await expect(repository.listAcceptedByDateRange('2024-01-01', '2024-01-31', 'nutri-1')).rejects.toThrow(
-                ErroRepositorio
+                RepositoryError
             );
             await expect(repository.listAcceptedByDateRange('2024-01-01', '2024-01-31', 'nutri-1')).rejects.toThrow(
                 'Erro ao listar agendamentos aceitos por período.'
@@ -310,10 +309,10 @@ describe('FirebaseAppointmentRepository', () => {
             expect(mockUpdateDoc).toHaveBeenCalled();
         });
 
-        it('deve lançar ErroRepositorio quando falha', async () => {
+        it('deve lançar RepositoryError quando falha', async () => {
             mockUpdateDoc.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.updateStatus('appt-123', 'accepted')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.updateStatus('appt-123', 'accepted')).rejects.toThrow(RepositoryError);
             await expect(repository.updateStatus('appt-123', 'accepted')).rejects.toThrow(
                 'Erro ao atualizar status do agendamento.'
             );

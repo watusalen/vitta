@@ -1,5 +1,5 @@
 import FirebaseUserRepository from '@/infra/firebase/repository/firebaseUserRepository';
-import ErroRepositorio from '@/model/errors/repositoryError';
+import RepositoryError from '@/model/errors/repositoryError';
 import User from '@/model/entities/user';
 import { doc, getDoc, setDoc, collection, query, where, getDocs, Timestamp, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
@@ -30,8 +30,6 @@ const mockCollection = collection as jest.Mock;
 const mockQuery = query as jest.Mock;
 const mockWhere = where as jest.Mock;
 const mockGetDocs = getDocs as jest.Mock;
-const mockArrayUnion = arrayUnion as jest.Mock;
-const mockArrayRemove = arrayRemove as jest.Mock;
 
 describe('FirebaseUserRepository', () => {
     let repository: FirebaseUserRepository;
@@ -62,7 +60,7 @@ describe('FirebaseUserRepository', () => {
             expect(mockSetDoc).toHaveBeenCalled();
         });
 
-        it('deve lançar ErroRepositorio quando falha ao criar', async () => {
+        it('deve lançar RepositoryError quando falha ao criar', async () => {
             mockSetDoc.mockRejectedValue(new Error('Firestore error'));
 
             const user: User = {
@@ -73,7 +71,7 @@ describe('FirebaseUserRepository', () => {
                 createdAt: new Date(),
             };
 
-            await expect(repository.createUser(user)).rejects.toThrow(ErroRepositorio);
+            await expect(repository.createUser(user)).rejects.toThrow(RepositoryError);
             await expect(repository.createUser(user)).rejects.toThrow('Erro ao criar usuário no Firestore.');
         });
     });
@@ -113,10 +111,10 @@ describe('FirebaseUserRepository', () => {
             expect(result).toBeNull();
         });
 
-        it('deve lançar ErroRepositorio quando falha ao buscar', async () => {
+        it('deve lançar RepositoryError quando falha ao buscar', async () => {
             mockGetDoc.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.getUserByID('user-123')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.getUserByID('user-123')).rejects.toThrow(RepositoryError);
             await expect(repository.getUserByID('user-123')).rejects.toThrow('Erro ao buscar usuário no Firestore.');
         });
     });
@@ -185,10 +183,10 @@ describe('FirebaseUserRepository', () => {
             expect(result[0].createdAt).toBeInstanceOf(Date);
         });
 
-        it('deve lançar ErroRepositorio quando falha ao buscar', async () => {
+        it('deve lançar RepositoryError quando falha ao buscar', async () => {
             mockGetDocs.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.getByRole('nutritionist')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.getByRole('nutritionist')).rejects.toThrow(RepositoryError);
             await expect(repository.getByRole('nutritionist')).rejects.toThrow(
                 'Erro ao buscar usuários por role no Firestore.'
             );
@@ -205,10 +203,10 @@ describe('FirebaseUserRepository', () => {
             expect(mockUpdateDoc).toHaveBeenCalledWith({ id: 'doc-ref' }, { pushTokens: 'token-1' });
         });
 
-        it('deve lançar ErroRepositorio quando falhar', async () => {
+        it('deve lançar RepositoryError quando falhar', async () => {
             mockUpdateDoc.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.addPushToken('user-123', 'token-1')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.addPushToken('user-123', 'token-1')).rejects.toThrow(RepositoryError);
             await expect(repository.addPushToken('user-123', 'token-1')).rejects.toThrow(
                 'Erro ao salvar token de notificação.'
             );
@@ -225,10 +223,10 @@ describe('FirebaseUserRepository', () => {
             expect(mockUpdateDoc).toHaveBeenCalledWith({ id: 'doc-ref' }, { pushTokens: 'token-1' });
         });
 
-        it('deve lançar ErroRepositorio quando falhar', async () => {
+        it('deve lançar RepositoryError quando falhar', async () => {
             mockUpdateDoc.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.removePushToken('user-123', 'token-1')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.removePushToken('user-123', 'token-1')).rejects.toThrow(RepositoryError);
             await expect(repository.removePushToken('user-123', 'token-1')).rejects.toThrow(
                 'Erro ao remover token de notificação.'
             );
@@ -273,10 +271,10 @@ describe('FirebaseUserRepository', () => {
             expect(result).toEqual([]);
         });
 
-        it('deve lançar ErroRepositorio quando falhar', async () => {
+        it('deve lançar RepositoryError quando falhar', async () => {
             mockGetDoc.mockRejectedValue(new Error('Firestore error'));
 
-            await expect(repository.getPushTokens('user-123')).rejects.toThrow(ErroRepositorio);
+            await expect(repository.getPushTokens('user-123')).rejects.toThrow(RepositoryError);
             await expect(repository.getPushTokens('user-123')).rejects.toThrow(
                 'Erro ao buscar tokens de notificação.'
             );

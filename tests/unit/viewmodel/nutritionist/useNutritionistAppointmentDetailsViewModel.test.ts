@@ -1,7 +1,7 @@
 import { renderHook, act } from "@testing-library/react";
 import useNutritionistAppointmentDetailsViewModel from "@/viewmodel/nutritionist/useNutritionistAppointmentDetailsViewModel";
-import ErroRepositorio from "@/model/errors/repositoryError";
-import ErroValidacao from "@/model/errors/validationError";
+import RepositoryError from "@/model/errors/repositoryError";
+import ValidationError from "@/model/errors/validationError";
 import Appointment from "@/model/entities/appointment";
 import { IGetAppointmentDetailsUseCase } from "@/usecase/appointment/details/iGetAppointmentDetailsUseCase";
 import { IAcceptAppointmentUseCase } from "@/usecase/appointment/status/iAcceptAppointmentUseCase";
@@ -126,7 +126,7 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
     });
 
     it("deve tratar erro ao carregar consulta", async () => {
-        getDetailsUseCase.getById.mockRejectedValueOnce(new ErroRepositorio("Falha"));
+        getDetailsUseCase.getById.mockRejectedValueOnce(new RepositoryError("Falha"));
 
         const { result } = renderHook(() =>
             useNutritionistAppointmentDetailsViewModel(
@@ -174,7 +174,7 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
     });
 
     it("deve tratar erro de validação ao aceitar", async () => {
-        acceptUseCase.acceptAppointment.mockRejectedValueOnce(new ErroValidacao("Conflito"));
+        acceptUseCase.acceptAppointment.mockRejectedValueOnce(new ValidationError("Conflito"));
 
         const { result } = renderHook(() =>
             useNutritionistAppointmentDetailsViewModel(
@@ -197,7 +197,7 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
     });
 
     it("deve tratar erro de repositório ao recusar", async () => {
-        rejectUseCase.rejectAppointment.mockRejectedValueOnce(new ErroRepositorio("Erro ao recusar"));
+        rejectUseCase.rejectAppointment.mockRejectedValueOnce(new RepositoryError("Erro ao recusar"));
 
         const { result } = renderHook(() =>
             useNutritionistAppointmentDetailsViewModel(

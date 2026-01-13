@@ -1,5 +1,5 @@
 import ValidadorAuth from '../../../../src/usecase/auth/validator/authValidator';
-import ErroValidacao from '../../../../src/model/errors/validationError';
+import ValidationError from '../../../../src/model/errors/validationError';
 
 describe('ValidadorAuth', () => {
   describe('validateLogin', () => {
@@ -12,25 +12,25 @@ describe('ValidadorAuth', () => {
     it('deve rejeitar empty email', () => {
       expect(() => {
         ValidadorAuth.validateLogin('', 'password123');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar whitespace-only email', () => {
       expect(() => {
         ValidadorAuth.validateLogin('   ', 'password123');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar empty password', () => {
       expect(() => {
         ValidadorAuth.validateLogin('joao@example.com', '');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar whitespace-only password', () => {
       expect(() => {
         ValidadorAuth.validateLogin('joao@example.com', '   ');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
   });
 
@@ -44,37 +44,37 @@ describe('ValidadorAuth', () => {
     it('deve rejeitar empty name', () => {
       expect(() => {
         ValidadorAuth.validateSignUp('', 'joao@example.com', 'password123');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar whitespace-only name', () => {
       expect(() => {
         ValidadorAuth.validateSignUp('   ', 'joao@example.com', 'password123');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar empty email', () => {
       expect(() => {
         ValidadorAuth.validateSignUp('João', '', 'password123');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar invalid email format', () => {
       expect(() => {
         ValidadorAuth.validateSignUp('João', 'invalid-email', 'password123');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar short password (< 6 characters)', () => {
       expect(() => {
         ValidadorAuth.validateSignUp('João', 'joao@example.com', '12345');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve rejeitar empty password', () => {
       expect(() => {
         ValidadorAuth.validateSignUp('João', 'joao@example.com', '');
-      }).toThrow(ErroValidacao);
+      }).toThrow(ValidationError);
     });
 
     it('deve aceitar exactly 6 character password', () => {
@@ -105,12 +105,12 @@ describe('ValidadorAuth', () => {
       invalidEmails.forEach((email) => {
         expect(() => {
           ValidadorAuth.validateSignUp('Test', email, 'password123');
-        }).toThrow(ErroValidacao);
+        }).toThrow(ValidationError);
       });
     });
   });
 
-  describe('Casos de Borda', () => {
+  describe('Edge Cases', () => {
     it('deve tratar unicode characters in name', () => {
       expect(() => {
         ValidadorAuth.validateSignUp('João José', 'test@example.com', 'password123');

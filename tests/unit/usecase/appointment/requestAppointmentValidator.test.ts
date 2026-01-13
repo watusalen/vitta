@@ -3,7 +3,7 @@ import {
     assertSlotNotInPast,
     assertValidSlot,
 } from "@/usecase/appointment/request/validator/requestAppointmentValidator";
-import ErroValidacao from "@/model/errors/validationError";
+import ValidationError from "@/model/errors/validationError";
 
 describe("requestAppointmentValidator", () => {
     beforeAll(() => {
@@ -16,11 +16,11 @@ describe("requestAppointmentValidator", () => {
     });
 
     it("deve impedir finais de semana", () => {
-        expect(() => assertValidDate(new Date(2025, 11, 20, 12, 0, 0))).toThrow(ErroValidacao);
+        expect(() => assertValidDate(new Date(2025, 11, 20, 12, 0, 0))).toThrow(ValidationError);
     });
 
     it("deve impedir datas passadas", () => {
-        expect(() => assertValidDate(new Date(2025, 11, 16, 12, 0, 0))).toThrow(ErroValidacao);
+        expect(() => assertValidDate(new Date(2025, 11, 16, 12, 0, 0))).toThrow(ValidationError);
     });
 
     it("deve impedir horário inválido", () => {
@@ -41,6 +41,6 @@ describe("requestAppointmentValidator", () => {
 
     it("deve validar slot permitido", () => {
         expect(() => assertValidSlot("09:00", "11:00")).not.toThrow();
-        expect(() => assertValidSlot("08:00", "10:00")).toThrow(ErroValidacao);
+        expect(() => assertValidSlot("08:00", "10:00")).toThrow(ValidationError);
     });
 });

@@ -1,4 +1,4 @@
-import CasoDeUsoListarConsultasPendentes from '@/usecase/appointment/list/listPendingAppointmentsUseCase';
+import ListPendingAppointmentsUseCase from '@/usecase/appointment/list/listPendingAppointmentsUseCase';
 import { IListPendingAppointmentsUseCase } from '@/usecase/appointment/list/iListPendingAppointmentsUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
@@ -20,7 +20,7 @@ const createMockAppointment = (
     updatedAt: new Date(),
 });
 
-describe('Caso de Uso: Listar Consultas Pendentes', () => {
+describe('List Pending Appointments Use Case', () => {
     let mockRepository: IAppointmentRepository;
     let useCase: IListPendingAppointmentsUseCase;
 
@@ -40,7 +40,7 @@ describe('Caso de Uso: Listar Consultas Pendentes', () => {
             onNutritionistAppointmentsChange: jest.fn(),
         };
 
-        useCase = new CasoDeUsoListarConsultasPendentes(mockRepository);
+        useCase = new ListPendingAppointmentsUseCase(mockRepository);
     });
 
     describe('listPendingByNutritionist', () => {

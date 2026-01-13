@@ -4,17 +4,17 @@ import { IAuthUseCases } from '@/usecase/auth/iAuthUseCases';
 import { ICalendarPermissionUseCase } from '@/usecase/calendar/iCalendarPermissionUseCase';
 import { IPushPermissionUseCase } from '@/usecase/notifications/iPushPermissionUseCase';
 import { IPushTokenUseCase } from '@/usecase/notifications/iPushTokenUseCase';
-import ErroAuth from '@/model/errors/authError';
+import AuthError from '@/model/errors/authError';
 import User from '@/model/entities/user';
 
 describe('ViewModel de Home - Autenticação', () => {
-    let mockCasosDeUsoAuth: IAuthUseCases;
+    let mockAuthUseCases: IAuthUseCases;
     let mockCalendarPermissionUseCase: ICalendarPermissionUseCase;
-    let mockCasoDeUsoPermissaoPush: IPushPermissionUseCase;
-    let mockCasoDeUsoTokenPush: IPushTokenUseCase;
+    let mockPushPermissionUseCase: IPushPermissionUseCase;
+    let mockPushTokenUseCase: IPushTokenUseCase;
 
     beforeEach(() => {
-        mockCasosDeUsoAuth = {
+        mockAuthUseCases = {
             login: jest.fn(),
             signUp: jest.fn(),
             logout: jest.fn(),
@@ -26,12 +26,12 @@ describe('ViewModel de Home - Autenticação', () => {
             requestPermission: jest.fn().mockResolvedValue('authorized'),
             openSettings: jest.fn().mockResolvedValue(undefined),
         };
-        mockCasoDeUsoPermissaoPush = {
+        mockPushPermissionUseCase = {
             checkPermission: jest.fn().mockResolvedValue('granted'),
             requestPermission: jest.fn().mockResolvedValue('granted'),
             openSettings: jest.fn().mockResolvedValue(undefined),
         };
-        mockCasoDeUsoTokenPush = {
+        mockPushTokenUseCase = {
             register: jest.fn(),
             unregister: jest.fn(),
         };
@@ -48,10 +48,10 @@ describe('ViewModel de Home - Autenticação', () => {
     const renderHome = () =>
         renderHook(() =>
             useHomeViewModel(
-                mockCasosDeUsoAuth,
+                mockAuthUseCases,
                 mockCalendarPermissionUseCase,
-                mockCasoDeUsoPermissaoPush,
-                mockCasoDeUsoTokenPush
+                mockPushPermissionUseCase,
+                mockPushTokenUseCase
             )
         );
 
@@ -66,14 +66,14 @@ describe('ViewModel de Home - Autenticação', () => {
     it('deve escutar onAuthStateChanged e atualizar user', () => {
         let capturedCallback: ((user: User | null) => void) | null = null;
 
-        (mockCasosDeUsoAuth.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
+        (mockAuthUseCases.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
             capturedCallback = callback;
             return jest.fn();
         });
 
         const { result } = renderHome();
 
-        expect(mockCasosDeUsoAuth.onAuthStateChanged).toHaveBeenCalled();
+        expect(mockAuthUseCases.onAuthStateChanged).toHaveBeenCalled();
 
         act(() => {
             capturedCallback!(mockUser);
@@ -86,7 +86,7 @@ describe('ViewModel de Home - Autenticação', () => {
     it('deve setar user como null quando deslogado', () => {
         let capturedCallback: ((user: User | null) => void) | null = null;
 
-        (mockCasosDeUsoAuth.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
+        (mockAuthUseCases.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
             capturedCallback = callback;
             return jest.fn();
         });
@@ -102,10 +102,10 @@ describe('ViewModel de Home - Autenticação', () => {
     });
 
     it('deve fazer logout com sucesso', async () => {
-        (mockCasosDeUsoAuth.logout as jest.Mock).mockResolvedValue(undefined);
+        (mockAuthUseCases.logout as jest.Mock).mockResolvedValue(undefined);
         let capturedCallback: ((user: User | null) => void) | null = null;
 
-        (mockCasosDeUsoAuth.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
+        (mockAuthUseCases.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
             capturedCallback = callback;
             return jest.fn();
         });
@@ -124,11 +124,11 @@ describe('ViewModel de Home - Autenticação', () => {
 
         expect(result.current.user).toBeNull();
         expect(result.current.error).toBeNull();
-        expect(mockCasosDeUsoAuth.logout).toHaveBeenCalled();
+        expect(mockAuthUseCases.logout).toHaveBeenCalled();
     });
 
-    it('deve tratar ErroAuth no logout', async () => {
-        (mockCasosDeUsoAuth.logout as jest.Mock).mockRejectedValue(new ErroAuth('Erro no logout'));
+    it('deve tratar AuthError no logout', async () => {
+        (mockAuthUseCases.logout as jest.Mock).mockRejectedValue(new AuthError('Erro no logout'));
 
         const { result } = renderHome();
 
@@ -140,7 +140,7 @@ describe('ViewModel de Home - Autenticação', () => {
     });
 
     it('deve tratar erro desconhecido no logout', async () => {
-        (mockCasosDeUsoAuth.logout as jest.Mock).mockRejectedValue(new Error('Unknown'));
+        (mockAuthUseCases.logout as jest.Mock).mockRejectedValue(new Error('Unknown'));
 
         const { result } = renderHome();
 
@@ -153,12 +153,12 @@ describe('ViewModel de Home - Autenticação', () => {
 
     it('deve setar loading durante logout', async () => {
         let resolveLogout: ((value?: unknown) => void) | undefined;
-        (mockCasosDeUsoAuth.logout as jest.Mock).mockImplementation(() => new Promise((resolve) => {
+        (mockAuthUseCases.logout as jest.Mock).mockImplementation(() => new Promise((resolve) => {
             resolveLogout = resolve;
         }));
 
         let capturedCallback: ((user: User | null) => void) | null = null;
-        (mockCasosDeUsoAuth.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
+        (mockAuthUseCases.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
             capturedCallback = callback;
             return jest.fn();
         });
@@ -190,7 +190,7 @@ describe('ViewModel de Home - Autenticação', () => {
 
     it('deve fazer unsubscribe ao desmontar', () => {
         const mockUnsubscribe = jest.fn();
-        (mockCasosDeUsoAuth.onAuthStateChanged as jest.Mock).mockReturnValue(mockUnsubscribe);
+        (mockAuthUseCases.onAuthStateChanged as jest.Mock).mockReturnValue(mockUnsubscribe);
 
         const { unmount } = renderHome();
 

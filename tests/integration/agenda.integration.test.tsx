@@ -1,8 +1,8 @@
 import { act, renderHook } from "@testing-library/react";
 import { makeAppointment } from "@/model/factories/makeAppointment";
 import { formatDateISO } from "@/view/utils/dateFormatters";
-import CasoDeUsoListarAgendaDaNutricionista from "@/usecase/appointment/list/listNutritionistAgendaUseCase";
-import CasoDeUsoObterUsuarioPorId from "@/usecase/user/getUserByIdUseCase";
+import listNutritionistAgendaUseCase from "@/usecase/appointment/list/listNutritionistAgendaUseCase";
+import getUserByIdUseCase from "@/usecase/user/getUserByIdUseCase";
 import useNutritionistAgendaViewModel from "@/viewmodel/nutritionist/useNutritionistAgendaViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository, flushPromises } from "./helpers/inMemoryStores";
 
@@ -55,8 +55,8 @@ describe("Integração da agenda da nutricionista", () => {
             })
         );
 
-        const listAgenda = new CasoDeUsoListarAgendaDaNutricionista(appointmentRepository);
-        const getUserById = new CasoDeUsoObterUsuarioPorId(userRepository);
+        const listAgenda = new listNutritionistAgendaUseCase(appointmentRepository);
+        const getUserById = new getUserByIdUseCase(userRepository);
 
         const { result } = renderHook(() =>
             useNutritionistAgendaViewModel(listAgenda, getUserById, nutritionistId)

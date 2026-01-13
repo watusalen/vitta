@@ -1,4 +1,4 @@
-import CasoDeUsoHorariosDisponiveis from '../../../../src/usecase/appointment/availability/getAvailableTimeSlotsUseCase';
+import GetAvailableTimeSlotsUseCase from '../../../../src/usecase/appointment/availability/getAvailableTimeSlotsUseCase';
 import { IAppointmentRepository } from '../../../../src/model/repositories/iAppointmentRepository';
 import Appointment from '../../../../src/model/entities/appointment';
 import TimeSlot from '../../../../src/model/entities/timeSlot';
@@ -39,7 +39,7 @@ const createMockAppointment = (
     updatedAt: new Date(),
 });
 
-describe('CasoDeUsoHorariosDisponiveis', () => {
+describe('Get Available Time Slots Use Case', () => {
     const nutritionistId = 'nutri-1';
 
     beforeAll(() => {
@@ -54,7 +54,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
     describe('execute - Basic Functionality', () => {
         it('deve retornar all 4 slots for a weekday with no appointments', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -68,7 +68,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
 
         it('deve retornar empty array for Saturday', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const saturday = createLocalDate(2025, 12, 20);
             const slots = await useCase.listAvailableSlots(saturday, nutritionistId);
@@ -78,7 +78,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
 
         it('deve retornar empty array for Sunday', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const sunday = createLocalDate(2025, 12, 21);
             const slots = await useCase.listAvailableSlots(sunday, nutritionistId);
@@ -88,7 +88,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
 
         it('deve marcar all slots as available=true', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -100,7 +100,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
 
         it('deve definir correct date on all slots', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -117,7 +117,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
                 createMockAppointment('2025-12-17', '09:00', '11:00', 'accepted'),
             ];
             const mockRepo = createMockRepository(acceptedAppointments);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -131,7 +131,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
             mockRepo.listByPatient.mockResolvedValueOnce([
                 createMockAppointment('2025-12-17', '11:00', '13:00', 'pending'),
             ]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId, 'patient-1');
@@ -145,7 +145,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
                 createMockAppointment('2025-12-17', '09:00', '11:00', 'pending'),
             ];
             const mockRepo = createMockRepository(pendingAppointments);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -158,7 +158,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
                 createMockAppointment('2025-12-17', '09:00', '11:00', 'rejected'),
             ];
             const mockRepo = createMockRepository(rejectedAppointments);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -171,7 +171,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
                 createMockAppointment('2025-12-17', '09:00', '11:00', 'cancelled'),
             ];
             const mockRepo = createMockRepository(cancelledAppointments);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -185,7 +185,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
                 createMockAppointment('2025-12-17', '13:00', '15:00', 'accepted'),
             ];
             const mockRepo = createMockRepository(acceptedAppointments);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -205,7 +205,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
                 createMockAppointment('2025-12-17', '14:00', '16:00', 'accepted'),
             ];
             const mockRepo = createMockRepository(acceptedAppointments);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);
@@ -217,7 +217,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
     describe('hasAvailability', () => {
         it('deve retornar true quando há horários disponíveis', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const hasAvailability = await useCase.hasAvailabilityOnDate(wednesday, nutritionistId);
@@ -227,7 +227,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
 
         it('deve retornar false for weekend', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const saturday = createLocalDate(2025, 12, 20);
             const hasAvailability = await useCase.hasAvailabilityOnDate(saturday, nutritionistId);
@@ -243,7 +243,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
                 createMockAppointment('2025-12-17', '14:00', '16:00', 'accepted'),
             ];
             const mockRepo = createMockRepository(acceptedAppointments);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const hasAvailability = await useCase.hasAvailabilityOnDate(wednesday, nutritionistId);
@@ -255,7 +255,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
     describe('executeForRange', () => {
         it('deve retornar slots for each weekday in range', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const startDate = createLocalDate(2025, 12, 15);
             const endDate = createLocalDate(2025, 12, 19);
@@ -272,7 +272,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
 
         it('deve exclude weekends from range', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const startDate = createLocalDate(2025, 12, 19);
             const endDate = createLocalDate(2025, 12, 22);
@@ -290,7 +290,7 @@ describe('CasoDeUsoHorariosDisponiveis', () => {
         it('deve exclude slots earlier than current time for today', async () => {
             jest.setSystemTime(new Date(2025, 11, 17, 12, 30, 0));
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoHorariosDisponiveis(mockRepo);
+            const useCase = new GetAvailableTimeSlotsUseCase(mockRepo);
 
             const wednesday = createLocalDate(2025, 12, 17);
             const slots = await useCase.listAvailableSlots(wednesday, nutritionistId);

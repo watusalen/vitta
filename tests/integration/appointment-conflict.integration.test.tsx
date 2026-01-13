@@ -1,4 +1,4 @@
-import CasoDeUsoAceitarConsulta from "@/usecase/appointment/status/acceptAppointmentUseCase";
+import acceptAppointmentUseCase from "@/usecase/appointment/status/acceptAppointmentUseCase";
 import { makeAppointment } from "@/model/factories/makeAppointment";
 import { InMemoryAppointmentRepository } from "./helpers/inMemoryStores";
 
@@ -32,7 +32,7 @@ describe("Integração de conflitos de consulta", () => {
             })
         );
 
-        const acceptUseCase = new CasoDeUsoAceitarConsulta(appointmentRepository);
+        const acceptUseCase = new acceptAppointmentUseCase(appointmentRepository);
         await acceptUseCase.acceptAppointment("appt-main");
 
         const main = await appointmentRepository.getById("appt-main");

@@ -1,4 +1,4 @@
-import CasoDeUsoListarAgendaDaNutricionista from '@/usecase/appointment/list/listNutritionistAgendaUseCase';
+import ListNutritionistAgendaUseCase from '@/usecase/appointment/list/listNutritionistAgendaUseCase';
 import { IListNutritionistAgendaUseCase } from '@/usecase/appointment/list/iListNutritionistAgendaUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
@@ -20,7 +20,7 @@ const createMockAppointment = (
     updatedAt: new Date(),
 });
 
-describe('Caso de Uso: Listar Agenda da Nutricionista', () => {
+describe('List Nutritionist Agenda Use Case', () => {
     let mockRepository: IAppointmentRepository;
     let useCase: IListNutritionistAgendaUseCase;
 
@@ -40,7 +40,7 @@ describe('Caso de Uso: Listar Agenda da Nutricionista', () => {
             onNutritionistAppointmentsChange: jest.fn(),
         };
 
-        useCase = new CasoDeUsoListarAgendaDaNutricionista(mockRepository);
+        useCase = new ListNutritionistAgendaUseCase(mockRepository);
     });
 
     describe('listAgenda', () => {

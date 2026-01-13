@@ -1,9 +1,9 @@
 import { act, renderHook } from "@testing-library/react";
 import { formatDateISO } from "@/view/utils/dateFormatters";
 import { makeAppointment } from "@/model/factories/makeAppointment";
-import CasoDeUsoHorariosDisponiveis from "@/usecase/appointment/availability/getAvailableTimeSlotsUseCase";
-import CasoDeUsoSolicitarConsulta from "@/usecase/appointment/request/requestAppointmentUseCase";
-import CasoDeUsoObterNutricionista from "@/usecase/user/getNutritionistUseCase";
+import getAvailableTimeSlotsUseCase from "@/usecase/appointment/availability/getAvailableTimeSlotsUseCase";
+import requestAppointmentUseCase from "@/usecase/appointment/request/requestAppointmentUseCase";
+import getNutritionistUseCase from "@/usecase/user/getNutritionistUseCase";
 import useScheduleViewModel from "@/viewmodel/appointment/useScheduleViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository } from "./helpers/inMemoryStores";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
@@ -44,9 +44,9 @@ describe("Integração de agendamento", () => {
 
         await appointmentRepository.create(acceptedAppointment);
 
-        const getAvailableSlots = new CasoDeUsoHorariosDisponiveis(appointmentRepository);
-        const requestAppointment = new CasoDeUsoSolicitarConsulta(appointmentRepository);
-        const getNutritionist = new CasoDeUsoObterNutricionista(userRepository);
+        const getAvailableSlots = new getAvailableTimeSlotsUseCase(appointmentRepository);
+        const requestAppointment = new requestAppointmentUseCase(appointmentRepository);
+        const getNutritionist = new getNutritionistUseCase(userRepository);
         const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };
@@ -124,8 +124,8 @@ describe("Integração de agendamento", () => {
             )
         );
 
-        const getAvailableSlots = new CasoDeUsoHorariosDisponiveis(appointmentRepository);
-        const requestAppointment = new CasoDeUsoSolicitarConsulta(appointmentRepository);
+        const getAvailableSlots = new getAvailableTimeSlotsUseCase(appointmentRepository);
+        const requestAppointment = new requestAppointmentUseCase(appointmentRepository);
         const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };

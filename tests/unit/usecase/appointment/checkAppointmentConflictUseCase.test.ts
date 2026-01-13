@@ -1,7 +1,7 @@
-import CasoDeUsoVerificarConflitoDeConsulta from '@/usecase/appointment/status/checkAppointmentConflictUseCase';
+import CheckAppointmentConflictUseCase from '@/usecase/appointment/status/checkAppointmentConflictUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
-import ErroValidacao from '@/model/errors/validationError';
+import ValidationError from '@/model/errors/validationError';
 
 const createMockAppointment = (
     id: string,
@@ -36,7 +36,7 @@ const createMockRepository = (appointments: Appointment[] = []): IAppointmentRep
     onNutritionistAppointmentsChange: jest.fn(() => () => {}),
 });
 
-describe('CasoDeUsoVerificarConflitoDeConsulta', () => {
+describe('Check Appointment Conflict Use Case', () => {
     const input = {
         date: '2025-01-20',
         timeStart: '09:00',
@@ -46,7 +46,7 @@ describe('CasoDeUsoVerificarConflitoDeConsulta', () => {
 
     it('deve retornar false quando não há consultas na data', async () => {
         const mockRepo = createMockRepository([]);
-        const useCase = new CasoDeUsoVerificarConflitoDeConsulta(mockRepo);
+        const useCase = new CheckAppointmentConflictUseCase(mockRepo);
 
         const result = await useCase.hasConflict(input);
 
@@ -59,7 +59,7 @@ describe('CasoDeUsoVerificarConflitoDeConsulta', () => {
             createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'accepted'),
         ];
         const mockRepo = createMockRepository(appointments);
-        const useCase = new CasoDeUsoVerificarConflitoDeConsulta(mockRepo);
+        const useCase = new CheckAppointmentConflictUseCase(mockRepo);
 
         const result = await useCase.hasConflict(input);
 
@@ -73,7 +73,7 @@ describe('CasoDeUsoVerificarConflitoDeConsulta', () => {
             createMockAppointment('appt-3', '2025-01-20', '09:00', '11:00', 'cancelled'),
         ];
         const mockRepo = createMockRepository(appointments);
-        const useCase = new CasoDeUsoVerificarConflitoDeConsulta(mockRepo);
+        const useCase = new CheckAppointmentConflictUseCase(mockRepo);
 
         const result = await useCase.hasConflict(input);
 
@@ -85,7 +85,7 @@ describe('CasoDeUsoVerificarConflitoDeConsulta', () => {
             createMockAppointment('appt-1', '2025-01-20', '11:00', '13:00', 'accepted'),
         ];
         const mockRepo = createMockRepository(appointments);
-        const useCase = new CasoDeUsoVerificarConflitoDeConsulta(mockRepo);
+        const useCase = new CheckAppointmentConflictUseCase(mockRepo);
 
         const result = await useCase.hasConflict(input);
 
@@ -97,7 +97,7 @@ describe('CasoDeUsoVerificarConflitoDeConsulta', () => {
             createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'accepted'),
         ];
         const mockRepo = createMockRepository(appointments);
-        const useCase = new CasoDeUsoVerificarConflitoDeConsulta(mockRepo);
+        const useCase = new CheckAppointmentConflictUseCase(mockRepo);
 
         const result = await useCase.hasConflict({
             ...input,
@@ -107,13 +107,13 @@ describe('CasoDeUsoVerificarConflitoDeConsulta', () => {
         expect(result).toBe(false);
     });
 
-    it('deve lançar ErroValidacao quando a entrada é inválida', async () => {
+    it('deve lançar ValidationError quando a entrada é inválida', async () => {
         const mockRepo = createMockRepository([]);
-        const useCase = new CasoDeUsoVerificarConflitoDeConsulta(mockRepo);
+        const useCase = new CheckAppointmentConflictUseCase(mockRepo);
 
         await expect(
             useCase.hasConflict({ ...input, date: '' })
-        ).rejects.toThrow(ErroValidacao);
+        ).rejects.toThrow(ValidationError);
 
         await expect(
             useCase.hasConflict({ ...input, date: '20250120' })

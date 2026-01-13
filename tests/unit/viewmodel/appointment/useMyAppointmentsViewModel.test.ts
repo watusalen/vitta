@@ -2,15 +2,15 @@ import { renderHook, act } from '@testing-library/react';
 import useMyAppointmentsViewModel from '@/viewmodel/appointment/useMyAppointmentsViewModel';
 import { IListPatientAppointmentsUseCase } from '@/usecase/appointment/list/iListPatientAppointmentsUseCase';
 import { IAppointmentCalendarSyncUseCase } from '@/usecase/calendar/iAppointmentCalendarSyncUseCase';
-import ErroRepositorio from '@/model/errors/repositoryError';
+import RepositoryError from '@/model/errors/repositoryError';
 import Appointment from '@/model/entities/appointment';
 
 describe('useMyAppointmentsViewModel', () => {
-    let mockCasoDeUsoListarConsultasDoPaciente: IListPatientAppointmentsUseCase;
+    let mockListPatientAppointmentsUseCase: IListPatientAppointmentsUseCase;
     let mockCalendarSyncUseCase: IAppointmentCalendarSyncUseCase;
 
     beforeEach(() => {
-        mockCasoDeUsoListarConsultasDoPaciente = {
+        mockListPatientAppointmentsUseCase = {
             listByPatient: jest.fn(),
             subscribeToPatientAppointments: jest.fn(() => jest.fn()),
         };
@@ -46,10 +46,10 @@ describe('useMyAppointmentsViewModel', () => {
     ];
 
     it('deve inicializar com loading true', () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockResolvedValue([]);
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         expect(result.current.loading).toBe(true);
@@ -57,10 +57,10 @@ describe('useMyAppointmentsViewModel', () => {
     });
 
     it('deve carregar consultas na inicialização', async () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockResolvedValue(mockAppointments);
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue(mockAppointments);
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -72,23 +72,23 @@ describe('useMyAppointmentsViewModel', () => {
     });
 
     it('deve configurar subscription ao inicializar', () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockResolvedValue([]);
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
 
         renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
-        expect(mockCasoDeUsoListarConsultasDoPaciente.subscribeToPatientAppointments).toHaveBeenCalledWith(
+        expect(mockListPatientAppointmentsUseCase.subscribeToPatientAppointments).toHaveBeenCalledWith(
             'patient-1',
             expect.any(Function)
         );
     });
 
     it('deve fazer refresh', async () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockResolvedValue(mockAppointments);
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue(mockAppointments);
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -96,14 +96,14 @@ describe('useMyAppointmentsViewModel', () => {
         });
 
         expect(result.current.refreshing).toBe(false);
-        expect(mockCasoDeUsoListarConsultasDoPaciente.listByPatient).toHaveBeenCalled();
+        expect(mockListPatientAppointmentsUseCase.listByPatient).toHaveBeenCalled();
     });
 
     it('deve limpar erro', async () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockRejectedValue(new ErroRepositorio('Erro'));
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockRejectedValue(new RepositoryError('Erro'));
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -119,11 +119,11 @@ describe('useMyAppointmentsViewModel', () => {
         expect(result.current.error).toBeNull();
     });
 
-    it('deve tratar ErroRepositorio', async () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockRejectedValue(new ErroRepositorio('Erro de conexão'));
+    it('deve tratar RepositoryError', async () => {
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockRejectedValue(new RepositoryError('Erro de conexão'));
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -134,10 +134,10 @@ describe('useMyAppointmentsViewModel', () => {
     });
 
     it('deve tratar erro genérico', async () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockRejectedValue(new Error('Unknown'));
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockRejectedValue(new Error('Unknown'));
 
         const { result } = renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -149,11 +149,11 @@ describe('useMyAppointmentsViewModel', () => {
 
     it('deve fazer unsubscribe ao desmontar', async () => {
         const mockUnsubscribe = jest.fn();
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockResolvedValue([]);
-        (mockCasoDeUsoListarConsultasDoPaciente.subscribeToPatientAppointments as jest.Mock).mockReturnValue(mockUnsubscribe);
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
+        (mockListPatientAppointmentsUseCase.subscribeToPatientAppointments as jest.Mock).mockReturnValue(mockUnsubscribe);
 
         const { unmount } = renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, 'patient-1')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
         );
 
         await act(async () => {
@@ -166,16 +166,16 @@ describe('useMyAppointmentsViewModel', () => {
     });
 
     it('não deve carregar se patientId estiver vazio', async () => {
-        (mockCasoDeUsoListarConsultasDoPaciente.listByPatient as jest.Mock).mockResolvedValue([]);
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
 
         renderHook(() =>
-            useMyAppointmentsViewModel(mockCasoDeUsoListarConsultasDoPaciente, mockCalendarSyncUseCase, '')
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, '')
         );
 
         await act(async () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        expect(mockCasoDeUsoListarConsultasDoPaciente.listByPatient).not.toHaveBeenCalled();
+        expect(mockListPatientAppointmentsUseCase.listByPatient).not.toHaveBeenCalled();
     });
 });

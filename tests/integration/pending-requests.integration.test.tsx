@@ -57,7 +57,9 @@ describe("Integração de solicitações pendentes", () => {
         );
 
         const listPending: IListPendingAppointmentsUseCase = {
-            listPending: jest.fn().mockResolvedValue([]),
+            listPendingByNutritionist: jest
+                .fn()
+                .mockResolvedValue(await appointmentRepository.listByStatus("pending", nutritionistId)),
             subscribePendingByNutritionist: jest.fn((nutritionistId, callback) => {
                 return appointmentRepository.onNutritionistPendingChange(nutritionistId, callback);
             }),

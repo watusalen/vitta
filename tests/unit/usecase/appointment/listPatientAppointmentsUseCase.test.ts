@@ -1,4 +1,4 @@
-import CasoDeUsoListarConsultasDoPaciente from '../../../../src/usecase/appointment/list/listPatientAppointmentsUseCase';
+import ListPatientAppointmentsUseCase from '../../../../src/usecase/appointment/list/listPatientAppointmentsUseCase';
 import { IAppointmentRepository } from '../../../../src/model/repositories/iAppointmentRepository';
 import Appointment from '../../../../src/model/entities/appointment';
 
@@ -36,7 +36,7 @@ const createMockRepository = (appointments: Appointment[] = []): IAppointmentRep
     onNutritionistAppointmentsChange: jest.fn(() => () => {}),
 });
 
-describe('CasoDeUsoListarConsultasDoPaciente', () => {
+describe('List Patient Appointments Use Case', () => {
     const patientId = 'patient-1';
 
     describe('execute - Basic Functionality', () => {
@@ -46,7 +46,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('2', '2025-12-21'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId);
 
@@ -56,7 +56,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
 
         it('deve retornar array vazio quando o paciente não tem consultas', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId);
 
@@ -72,7 +72,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('3', '2025-12-22', 'pending'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'pending' });
 
@@ -87,7 +87,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('3', '2025-12-22', 'accepted'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'accepted' });
 
@@ -101,7 +101,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('2', '2025-12-21', 'rejected'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'rejected' });
 
@@ -115,7 +115,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('2', '2025-12-21', 'accepted'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'cancelled' });
 
@@ -140,7 +140,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('3', formatDate(today), 'pending'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { futureOnly: true });
 
@@ -164,7 +164,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('2', formatDate(pastDate), 'accepted'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { futureOnly: false });
 
@@ -188,7 +188,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
                 createMockAppointment('3', formatDate(pastDate), 'pending'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { 
                 status: 'pending', 
@@ -203,7 +203,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
     describe('subscribe', () => {
         it('deve chamar repository.onPatientAppointmentsChange', () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
             const callback = jest.fn();
 
             useCase.subscribeToPatientAppointments(patientId, callback);
@@ -221,7 +221,7 @@ describe('CasoDeUsoListarConsultasDoPaciente', () => {
     updateCalendarEventIds: jest.fn(),
                 onPatientAppointmentsChange: jest.fn(() => mockUnsubscribe),
             };
-            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
+            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
             const callback = jest.fn();
 
             const unsubscribe = useCase.subscribeToPatientAppointments(patientId, callback);

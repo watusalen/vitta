@@ -1,8 +1,8 @@
-import CasoDeUsoAceitarConsulta from '@/usecase/appointment/status/acceptAppointmentUseCase';
+import AcceptAppointmentUseCase from '@/usecase/appointment/status/acceptAppointmentUseCase';
 import { IAcceptAppointmentUseCase } from '@/usecase/appointment/status/iAcceptAppointmentUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
-import ErroValidacao from '@/model/errors/validationError';
+import ValidationError from '@/model/errors/validationError';
 
 const createMockAppointment = (
     id: string,
@@ -23,7 +23,7 @@ const createMockAppointment = (
     updatedAt: new Date(),
 });
 
-describe('Caso de Uso: Aceitar Consulta', () => {
+describe('Accept Appointment Use Case', () => {
     let mockRepository: IAppointmentRepository;
     let useCase: IAcceptAppointmentUseCase;
     let updatedStatuses: Map<string, string>;
@@ -49,7 +49,7 @@ describe('Caso de Uso: Aceitar Consulta', () => {
             onNutritionistAppointmentsChange: jest.fn(),
         };
 
-        useCase = new CasoDeUsoAceitarConsulta(mockRepository);
+        useCase = new AcceptAppointmentUseCase(mockRepository);
     });
 
     describe('Successful Accept', () => {
@@ -110,48 +110,48 @@ describe('Caso de Uso: Aceitar Consulta', () => {
     });
 
     describe('Validation Erros', () => {
-        it('deve lançar ErroValidacao if appointment not found', async () => {
+        it('deve lançar ValidationError if appointment not found', async () => {
             (mockRepository.getById as jest.Mock).mockResolvedValue(null);
 
-            await expect(useCase.acceptAppointment('non-existent')).rejects.toThrow(ErroValidacao);
+            await expect(useCase.acceptAppointment('non-existent')).rejects.toThrow(ValidationError);
             await expect(useCase.acceptAppointment('non-existent')).rejects.toThrow('Consulta não encontrada.');
         });
 
-        it('deve lançar ErroValidacao if appointment is not pending', async () => {
+        it('deve lançar ValidationError if appointment is not pending', async () => {
             const accepted = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'accepted');
             (mockRepository.getById as jest.Mock).mockResolvedValue(accepted);
 
-            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow(ErroValidacao);
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow(ValidationError);
             await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
         });
 
-        it('deve lançar ErroValidacao if appointment is rejected', async () => {
+        it('deve lançar ValidationError if appointment is rejected', async () => {
             const rejected = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'rejected');
             (mockRepository.getById as jest.Mock).mockResolvedValue(rejected);
 
             await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
         });
 
-        it('deve lançar ErroValidacao if appointment is cancelled', async () => {
+        it('deve lançar ValidationError if appointment is cancelled', async () => {
             const cancelled = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'cancelled');
             (mockRepository.getById as jest.Mock).mockResolvedValue(cancelled);
 
             await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Apenas consultas pendentes podem ser aceitas.');
         });
 
-        it('deve lançar ErroValidacao if slot already has accepted appointment', async () => {
+        it('deve lançar ValidationError if slot already has accepted appointment', async () => {
             const pending = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'pending');
             const alreadyAccepted = createMockAppointment('appt-2', '2025-01-20', '09:00', '11:00', 'accepted');
 
             (mockRepository.getById as jest.Mock).mockResolvedValue(pending);
             (mockRepository.listByDate as jest.Mock).mockResolvedValue([pending, alreadyAccepted]);
 
-            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow(ErroValidacao);
+            await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow(ValidationError);
             await expect(useCase.acceptAppointment('appt-1')).rejects.toThrow('Já existe uma consulta aceita neste horário.');
         });
     });
 
-    describe('Casos de Borda', () => {
+    describe('Edge Cases', () => {
         it('deve funcionar quando não há outras consultas pendentes', async () => {
             const appointment = createMockAppointment('appt-1', '2025-01-20', '09:00', '11:00', 'pending');
 
