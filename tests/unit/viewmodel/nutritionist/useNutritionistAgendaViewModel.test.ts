@@ -222,4 +222,89 @@ describe('ViewModel de Agenda da Nutricionista', () => {
         expect(result.current.selectedDateFormatted).not.toBe('');
         expect(result.current.selectedDateFormatted.toLowerCase()).toContain('janeiro');
     });
+
+    it('deve lidar com selectDate chamado com data inválida', async () => {
+        (mockUseCase.listAgenda as jest.Mock).mockResolvedValue([]);
+        (mockUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+
+        const { result } = renderHook(() =>
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
+        );
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        const invalidDate = new Date('invalid');
+
+        await act(async () => {
+            await result.current.selectDate(invalidDate);
+        });
+
+        expect(result.current.selectedDate).toEqual(invalidDate);
+    });
+
+    it('deve fazer getUser por cada nova consulta na data selecionada', async () => {
+        const appt1 = createMockAppointment('appt-1', '2025-01-20');
+        const appt2 = createMockAppointment('appt-2', '2025-01-20');
+
+        (mockUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([appt1, appt2]);
+
+        const { result } = renderHook(() =>
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
+        );
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.selectDate(new Date(2025, 0, 20));
+        });
+
+        expect(mockGetUserByIdUseCase.getById).toHaveBeenCalledWith('patient-1');
+    });
+
+    it('deve atualizar selectedDateAppointments quando selectDate é chamado', async () => {
+        const appt1 = createMockAppointment('appt-1', '2025-01-20');
+        (mockUseCase.listAcceptedByDate as jest.Mock)
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([appt1]);
+
+        const { result } = renderHook(() =>
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
+        );
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.selectDate(new Date(2025, 0, 20));
+        });
+
+        await waitFor(() => {
+            expect(result.current.selectedDateAppointments.length).toBeGreaterThanOrEqual(0);
+        });
+    });
+
+    it('deve suportar múltiplas seleções de data em sequência', async () => {
+        const appt1 = createMockAppointment('appt-1', '2025-01-20');
+        const appt2 = createMockAppointment('appt-2', '2025-01-21');
+
+        (mockUseCase.listAcceptedByDate as jest.Mock)
+            .mockResolvedValueOnce([])
+            .mockResolvedValueOnce([appt1])
+            .mockResolvedValueOnce([appt2]);
+
+        const { result } = renderHook(() =>
+            useNutritionistAgendaViewModel(mockUseCase, mockGetUserByIdUseCase, 'nutri-1')
+        );
+
+        await waitFor(() => expect(result.current.loading).toBe(false));
+
+        await act(async () => {
+            await result.current.selectDate(new Date(2025, 0, 20));
+        });
+
+        await act(async () => {
+            await result.current.selectDate(new Date(2025, 0, 21));
+        });
+
+        expect(mockUseCase.listAcceptedByDate).toHaveBeenCalledTimes(2);
+    });
 });

@@ -264,4 +264,304 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
         expect(result.current.error).toBeNull();
         expect(result.current.successMessage).toBeNull();
     });
+
+    it("deve ignorar chamada de loadAppointment com appointmentId vazio", async () => {
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.loadAppointment("");
+        });
+
+        expect(getDetailsUseCase.getById).not.toHaveBeenCalled();
+    });
+
+    it("deve limpar conflictMessage e conflictAlertOpen no loadAppointment", async () => {
+        const appointment = { ...baseAppointment };
+        getDetailsUseCase.getById.mockResolvedValueOnce(appointment);
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.loadAppointment("appt-1");
+        });
+
+        expect(result.current.conflictAlertOpen).toBe(false);
+        expect(result.current.conflictMessage).toBeNull();
+    });
+
+    it("deve tratar ValidationError ao aceitar consulta", async () => {
+        acceptUseCase.acceptAppointment.mockRejectedValueOnce(
+            new ValidationError("Status inválido para aceitar")
+        );
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.acceptAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Status inválido para aceitar");
+        expect(result.current.processing).toBe(false);
+    });
+
+    it("deve tratar RepositoryError ao aceitar consulta", async () => {
+        acceptUseCase.acceptAppointment.mockRejectedValueOnce(
+            new RepositoryError("Erro ao atualizar banco de dados")
+        );
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.acceptAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Erro ao atualizar banco de dados");
+    });
+
+    it("deve tratar erro genérico ao aceitar consulta", async () => {
+        acceptUseCase.acceptAppointment.mockRejectedValueOnce(new Error("Unknown error"));
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.acceptAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Erro ao aceitar consulta.");
+    });
+
+    it("deve tratar ValidationError ao rejeitar consulta", async () => {
+        rejectUseCase.rejectAppointment.mockRejectedValueOnce(
+            new ValidationError("Não pode rejeitar esta consulta")
+        );
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.rejectAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Não pode rejeitar esta consulta");
+    });
+
+    it("deve tratar erro genérico ao rejeitar consulta", async () => {
+        rejectUseCase.rejectAppointment.mockRejectedValueOnce(new Error("Unknown error"));
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.rejectAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Erro ao recusar consulta.");
+    });
+
+    it("deve tratar erro genérico ao cancelar consulta", async () => {
+        cancelUseCase.cancelAppointment.mockRejectedValueOnce(new Error("Unknown error"));
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.cancelAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Erro ao cancelar consulta.");
+    });
+
+    it("deve tratar erro genérico ao reativar consulta", async () => {
+        reactivateUseCase.reactivateAppointment.mockRejectedValueOnce(new Error("Unknown error"));
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.reactivateAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Erro ao reativar consulta.");
+    });
+
+    it("deve detectar conflito quando ValidationError contém 'conflito'", async () => {
+        reactivateUseCase.reactivateAppointment.mockRejectedValueOnce(
+            new ValidationError("Conflito de horário")
+        );
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.reactivateAppointment("appt-1");
+        });
+
+        expect(result.current.conflictAlertOpen).toBe(true);
+        expect(result.current.conflictMessage).toContain("horário");
+    });
+
+    it("deve limpar condicoes ao aceitar quando há erro anterior", async () => {
+        acceptUseCase.acceptAppointment.mockRejectedValueOnce(new Error("First error"));
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.acceptAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBe("Erro ao aceitar consulta.");
+
+        const acceptedAppointment = { ...baseAppointment, status: "accepted" as const };
+        acceptUseCase.acceptAppointment.mockResolvedValueOnce(acceptedAppointment);
+        (calendarSyncUseCase.syncAccepted as jest.Mock).mockResolvedValue(undefined);
+        (appointmentPushNotificationUseCase.notify as jest.Mock).mockResolvedValue(undefined);
+
+        await act(async () => {
+            await result.current.acceptAppointment("appt-1");
+        });
+
+        expect(result.current.error).toBeNull();
+        expect(result.current.successMessage).toBe("Consulta aceita com sucesso!");
+    });
+
+    it("deve manter estado correto durante operações paralelas", async () => {
+        const appointment = { ...baseAppointment };
+        getDetailsUseCase.getById.mockResolvedValueOnce(appointment);
+
+        const { result } = renderHook(() =>
+            useNutritionistAppointmentDetailsViewModel(
+                getDetailsUseCase,
+                acceptUseCase,
+                rejectUseCase,
+                cancelUseCase,
+                reactivateUseCase,
+                getUserByIdUseCase,
+                calendarSyncUseCase,
+                appointmentPushNotificationUseCase
+            )
+        );
+
+        await act(async () => {
+            await result.current.loadAppointment("appt-1");
+        });
+
+        expect(result.current.loading).toBe(false);
+        expect(result.current.processing).toBe(false);
+    });
 });

@@ -178,4 +178,145 @@ describe('useMyAppointmentsViewModel', () => {
 
         expect(mockListPatientAppointmentsUseCase.listByPatient).not.toHaveBeenCalled();
     });
+
+    it('deve navegar para detalhes da consulta', () => {
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
+
+        const { result } = renderHook(() =>
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
+        );
+
+        act(() => {
+            result.current.openAppointment('appt-1');
+        });
+
+        expect(result.current.navigationRoute).toBe('/appointment/appt-1');
+        expect(result.current.navigationMethod).toBe('push');
+    });
+
+    it('deve voltar para home', () => {
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
+
+        const { result } = renderHook(() =>
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
+        );
+
+        act(() => {
+            result.current.goBack();
+        });
+
+        expect(result.current.navigationRoute).toBe('/patient-home');
+        expect(result.current.navigationMethod).toBe('replace');
+    });
+
+    it('deve limpar rota de navegação', () => {
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
+
+        const { result } = renderHook(() =>
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
+        );
+
+        act(() => {
+            result.current.openAppointment('appt-1');
+        });
+
+        expect(result.current.navigationRoute).toBe('/appointment/appt-1');
+
+        act(() => {
+            result.current.clearNavigation();
+        });
+
+        expect(result.current.navigationRoute).toBeNull();
+    });
+
+    it('deve chamar syncAppointmentCalendar quando consulta é aceita', async () => {
+        const acceptedAppointment: Appointment = {
+            ...mockAppointments[0],
+            status: 'accepted',
+        };
+
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
+        let callSubscriberFn: ((appointments: Appointment[]) => void) | null = null;
+        (mockListPatientAppointmentsUseCase.subscribeToPatientAppointments as jest.Mock).mockImplementation(
+            (_patientId, callback) => {
+                callSubscriberFn = callback;
+                return jest.fn();
+            }
+        );
+        (mockCalendarSyncUseCase.syncAccepted as jest.Mock).mockResolvedValue(undefined);
+
+        renderHook(() =>
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
+        );
+
+        await act(async () => {
+            if (callSubscriberFn) {
+                callSubscriberFn([acceptedAppointment]);
+            }
+        });
+
+        expect(mockCalendarSyncUseCase.syncAccepted).toHaveBeenCalled();
+    });
+
+    it('deve não chamar syncCancelledOrRejected para rejected sem calendarEventIdPatient', async () => {
+        const rejectedAppointment: Appointment = {
+            ...mockAppointments[0],
+            status: 'rejected',
+            calendarEventIdPatient: undefined,
+        };
+
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
+        let callSubscriberFn: ((appointments: Appointment[]) => void) | null = null;
+        (mockListPatientAppointmentsUseCase.subscribeToPatientAppointments as jest.Mock).mockImplementation(
+            (_patientId, callback) => {
+                callSubscriberFn = callback;
+                return jest.fn();
+            }
+        );
+
+        renderHook(() =>
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
+        );
+
+        await act(async () => {
+            if (callSubscriberFn) {
+                callSubscriberFn([rejectedAppointment]);
+            }
+        });
+
+        expect(mockCalendarSyncUseCase.syncCancelledOrRejected).not.toHaveBeenCalled();
+    });
+
+    it('deve fazer refresh e resetar refreshing', async () => {
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue(mockAppointments);
+
+        const { result } = renderHook(() =>
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
+        );
+
+        await act(async () => {
+            await result.current.refresh();
+        });
+
+        expect(result.current.refreshing).toBe(false);
+        expect(result.current.appointments).toEqual(mockAppointments);
+    });
+
+    it('deve manter callbacks estáveis entre re-renders', () => {
+        (mockListPatientAppointmentsUseCase.listByPatient as jest.Mock).mockResolvedValue([]);
+
+        const { result, rerender } = renderHook(() =>
+            useMyAppointmentsViewModel(mockListPatientAppointmentsUseCase, mockCalendarSyncUseCase, 'patient-1')
+        );
+
+        const firstClearError = result.current.clearError;
+        const firstOpenAppointment = result.current.openAppointment;
+        const firstGoBack = result.current.goBack;
+
+        rerender();
+
+        expect(result.current.clearError).toBe(firstClearError);
+        expect(result.current.openAppointment).toBe(firstOpenAppointment);
+        expect(result.current.goBack).toBe(firstGoBack);
+    });
 });
