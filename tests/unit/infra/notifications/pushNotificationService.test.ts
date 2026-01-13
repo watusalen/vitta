@@ -1,4 +1,4 @@
-import PushNotificationService from "@/infra/notifications/pushNotificationService";
+import ServicoNotificacaoPush from "@/infra/notifications/pushNotificationService";
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import { Platform, Linking } from "react-native";
@@ -43,59 +43,59 @@ const setPlatform = (os: "ios" | "android") => {
     Object.defineProperty(Platform, "OS", { value: os, configurable: true });
 };
 
-describe("PushNotificationService", () => {
+describe("ServicoNotificacaoPush", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         setPlatform("ios");
         (Device as { __setIsDevice?: (value: boolean) => void }).__setIsDevice?.(true);
     });
 
-    it("deve retornar permissao concedida no iOS", async () => {
+    it("deve retornar permissão concedida no iOS", async () => {
         (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({
             ios: { status: Notifications.IosAuthorizationStatus.AUTHORIZED },
         });
-        const service = new PushNotificationService();
+        const service = new ServicoNotificacaoPush();
 
         await expect(service.getPermissionStatus()).resolves.toBe("granted");
     });
 
-    it("deve retornar permissao concedida no Android", async () => {
+    it("deve retornar permissão concedida no Android", async () => {
         setPlatform("android");
         (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({
             granted: true,
             status: "granted",
         });
-        const service = new PushNotificationService();
+        const service = new ServicoNotificacaoPush();
 
         await expect(service.getPermissionStatus()).resolves.toBe("granted");
     });
 
-    it("deve pedir permissao e respeitar status", async () => {
+    it("deve pedir permissão e respeitar status", async () => {
         (Notifications.requestPermissionsAsync as jest.Mock).mockResolvedValue({
             ios: { status: Notifications.IosAuthorizationStatus.DENIED },
         });
-        const service = new PushNotificationService();
+        const service = new ServicoNotificacaoPush();
 
         await expect(service.requestPermissions()).resolves.toBe("denied");
     });
 
-    it("nao deve retornar token quando nao e device", async () => {
+    it("não deve retornar token quando não e device", async () => {
         (Device as { __setIsDevice?: (value: boolean) => void }).__setIsDevice?.(false);
-        const service = new PushNotificationService();
+        const service = new ServicoNotificacaoPush();
 
         await expect(service.getDevicePushToken()).resolves.toBeNull();
     });
 
     it("deve retornar token quando disponivel", async () => {
         (Notifications.getExpoPushTokenAsync as jest.Mock).mockResolvedValue({ data: "token-1" });
-        const service = new PushNotificationService();
+        const service = new ServicoNotificacaoPush();
 
         await expect(service.getDevicePushToken()).resolves.toBe("token-1");
     });
 
     it("deve configurar canal no Android", async () => {
         setPlatform("android");
-        const service = new PushNotificationService();
+        const service = new ServicoNotificacaoPush();
 
         await service.configureAndroidChannel();
 
@@ -106,7 +106,7 @@ describe("PushNotificationService", () => {
     });
 
     it("deve abrir ajustes", async () => {
-        const service = new PushNotificationService();
+        const service = new ServicoNotificacaoPush();
 
         await service.openSettings();
 

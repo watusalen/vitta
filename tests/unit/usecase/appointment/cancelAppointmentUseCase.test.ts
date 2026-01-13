@@ -1,7 +1,7 @@
-import CancelAppointmentUseCase from "@/usecase/appointment/status/cancelAppointmentUseCase";
+import CasoDeUsoCancelarConsulta from "@/usecase/appointment/status/cancelAppointmentUseCase";
 import { IAppointmentRepository } from "@/model/repositories/iAppointmentRepository";
 import Appointment from "@/model/entities/appointment";
-import ValidationError from "@/model/errors/validationError";
+import ErroValidacao from "@/model/errors/validationError";
 
 const createMockRepository = (): jest.Mocked<IAppointmentRepository> => ({
     create: jest.fn(),
@@ -30,18 +30,18 @@ const createAppointment = (status: Appointment["status"]): Appointment => ({
     updatedAt: new Date(),
 });
 
-describe("CancelAppointmentUseCase", () => {
+describe("CasoDeUsoCancelarConsulta", () => {
     it("deve lançar erro quando id é inválido", async () => {
         const repo = createMockRepository();
-        const useCase = new CancelAppointmentUseCase(repo);
+        const useCase = new CasoDeUsoCancelarConsulta(repo);
 
-        await expect(useCase.cancelAppointment("")).rejects.toThrow(ValidationError);
+        await expect(useCase.cancelAppointment("")).rejects.toThrow(ErroValidacao);
     });
 
     it("deve lançar erro quando consulta não existe", async () => {
         const repo = createMockRepository();
         repo.getById.mockResolvedValueOnce(null);
-        const useCase = new CancelAppointmentUseCase(repo);
+        const useCase = new CasoDeUsoCancelarConsulta(repo);
 
         await expect(useCase.cancelAppointment("appt-1")).rejects.toThrow("Consulta não encontrada.");
     });
@@ -49,7 +49,7 @@ describe("CancelAppointmentUseCase", () => {
     it("deve lançar erro quando status não é cancelável", async () => {
         const repo = createMockRepository();
         repo.getById.mockResolvedValueOnce(createAppointment("rejected"));
-        const useCase = new CancelAppointmentUseCase(repo);
+        const useCase = new CasoDeUsoCancelarConsulta(repo);
 
         await expect(useCase.cancelAppointment("appt-1")).rejects.toThrow(
             "Apenas consultas pendentes ou aceitas podem ser canceladas."
@@ -62,7 +62,7 @@ describe("CancelAppointmentUseCase", () => {
             .mockResolvedValueOnce(createAppointment("accepted"))
             .mockResolvedValueOnce(createAppointment("cancelled"));
         repo.updateStatus.mockResolvedValueOnce(undefined);
-        const useCase = new CancelAppointmentUseCase(repo);
+        const useCase = new CasoDeUsoCancelarConsulta(repo);
 
         const result = await useCase.cancelAppointment("appt-1");
 
@@ -74,7 +74,7 @@ describe("CancelAppointmentUseCase", () => {
         const repo = createMockRepository();
         repo.getById.mockResolvedValueOnce(createAppointment("pending")).mockResolvedValueOnce(null);
         repo.updateStatus.mockResolvedValueOnce(undefined);
-        const useCase = new CancelAppointmentUseCase(repo);
+        const useCase = new CasoDeUsoCancelarConsulta(repo);
 
         await expect(useCase.cancelAppointment("appt-1")).rejects.toThrow(
             "Erro ao recuperar consulta atualizada."

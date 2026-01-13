@@ -1,8 +1,8 @@
-import PushTokenUseCase from "@/usecase/notifications/pushTokenUseCase";
+import CasoDeUsoTokenPush from "@/usecase/notifications/pushTokenUseCase";
 import { IPushNotificationService } from "@/model/services/iPushNotificationService";
 import { IUserRepository } from "@/model/repositories/iUserRepository";
 
-describe("PushTokenUseCase", () => {
+describe("Caso de Uso: Token de Notificação Push", () => {
     let service: jest.Mocked<IPushNotificationService>;
     let repository: jest.Mocked<IUserRepository>;
 
@@ -26,7 +26,7 @@ describe("PushTokenUseCase", () => {
 
     it("deve registrar token quando disponível", async () => {
         service.getDevicePushToken.mockResolvedValue("token-1");
-        const useCase = new PushTokenUseCase(service, repository);
+        const useCase = new CasoDeUsoTokenPush(service, repository);
 
         await useCase.register("user-1");
 
@@ -35,9 +35,9 @@ describe("PushTokenUseCase", () => {
         expect(repository.addPushToken).toHaveBeenCalledWith("user-1", "token-1");
     });
 
-    it("nao deve registrar quando token estiver vazio", async () => {
+    it("não deve registrar quando token estiver vazio", async () => {
         service.getDevicePushToken.mockResolvedValue(null);
-        const useCase = new PushTokenUseCase(service, repository);
+        const useCase = new CasoDeUsoTokenPush(service, repository);
 
         await useCase.register("user-1");
 
@@ -46,7 +46,7 @@ describe("PushTokenUseCase", () => {
 
     it("deve remover token quando disponível", async () => {
         service.getDevicePushToken.mockResolvedValue("token-1");
-        const useCase = new PushTokenUseCase(service, repository);
+        const useCase = new CasoDeUsoTokenPush(service, repository);
 
         await useCase.unregister("user-1");
 
@@ -54,9 +54,9 @@ describe("PushTokenUseCase", () => {
         expect(repository.removePushToken).toHaveBeenCalledWith("user-1", "token-1");
     });
 
-    it("nao deve remover quando token estiver vazio", async () => {
+    it("não deve remover quando token estiver vazio", async () => {
         service.getDevicePushToken.mockResolvedValue(null);
-        const useCase = new PushTokenUseCase(service, repository);
+        const useCase = new CasoDeUsoTokenPush(service, repository);
 
         await useCase.unregister("user-1");
 

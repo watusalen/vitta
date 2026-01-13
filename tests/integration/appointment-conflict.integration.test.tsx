@@ -1,9 +1,9 @@
-import AcceptAppointmentUseCase from "@/usecase/appointment/status/acceptAppointmentUseCase";
+import CasoDeUsoAceitarConsulta from "@/usecase/appointment/status/acceptAppointmentUseCase";
 import { makeAppointment } from "@/model/factories/makeAppointment";
 import { InMemoryAppointmentRepository } from "./helpers/inMemoryStores";
 
-describe("Appointment conflict integration", () => {
-    it("accepting one appointment rejects competing pending requests", async () => {
+describe("Integração de conflitos de consulta", () => {
+    it("aceitar uma consulta rejeita as solicitações pendentes concorrentes", async () => {
         const appointmentRepository = new InMemoryAppointmentRepository();
         const nutritionistId = "nutri-1";
         const date = "2025-05-10";
@@ -32,7 +32,7 @@ describe("Appointment conflict integration", () => {
             })
         );
 
-        const acceptUseCase = new AcceptAppointmentUseCase(appointmentRepository);
+        const acceptUseCase = new CasoDeUsoAceitarConsulta(appointmentRepository);
         await acceptUseCase.acceptAppointment("appt-main");
 
         const main = await appointmentRepository.getById("appt-main");

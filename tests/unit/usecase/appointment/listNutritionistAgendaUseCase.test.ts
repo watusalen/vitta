@@ -1,9 +1,8 @@
-import ListNutritionistAgendaUseCase from '@/usecase/appointment/list/listNutritionistAgendaUseCase';
+import CasoDeUsoListarAgendaDaNutricionista from '@/usecase/appointment/list/listNutritionistAgendaUseCase';
 import { IListNutritionistAgendaUseCase } from '@/usecase/appointment/list/iListNutritionistAgendaUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
 
-// Helper para criar appointment mock
 const createMockAppointment = (
     id: string,
     date: string,
@@ -21,7 +20,7 @@ const createMockAppointment = (
     updatedAt: new Date(),
 });
 
-describe('ListNutritionistAgendaUseCase', () => {
+describe('Caso de Uso: Listar Agenda da Nutricionista', () => {
     let mockRepository: IAppointmentRepository;
     let useCase: IListNutritionistAgendaUseCase;
 
@@ -41,11 +40,11 @@ describe('ListNutritionistAgendaUseCase', () => {
             onNutritionistAppointmentsChange: jest.fn(),
         };
 
-        useCase = new ListNutritionistAgendaUseCase(mockRepository);
+        useCase = new CasoDeUsoListarAgendaDaNutricionista(mockRepository);
     });
 
     describe('listAgenda', () => {
-        it('should return appointments grouped by date', async () => {
+        it('deve retornar appointments grouped by date', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-20', '09:00'),
                 createMockAppointment('appt-2', '2025-01-20', '11:00'),
@@ -56,14 +55,14 @@ describe('ListNutritionistAgendaUseCase', () => {
 
             const result = await useCase.listAgenda('nutri-1');
 
-            expect(result).toHaveLength(2); // 2 datas diferentes
+            expect(result).toHaveLength(2); 
             expect(result[0].date).toBe('2025-01-20');
             expect(result[0].appointments).toHaveLength(2);
             expect(result[1].date).toBe('2025-01-21');
             expect(result[1].appointments).toHaveLength(1);
         });
 
-        it('should return empty array when no accepted appointments', async () => {
+        it('deve retornar array vazio quando não há consultas aceitas', async () => {
             (mockRepository.listAgendaByDateRange as jest.Mock).mockResolvedValue([]);
 
             const result = await useCase.listAgenda('nutri-1');
@@ -71,7 +70,7 @@ describe('ListNutritionistAgendaUseCase', () => {
             expect(result).toHaveLength(0);
         });
 
-        it('should sort appointments by time within each date', async () => {
+        it('deve ordenar appointments by time within each date', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-20', '14:00'),
                 createMockAppointment('appt-2', '2025-01-20', '09:00'),
@@ -87,7 +86,7 @@ describe('ListNutritionistAgendaUseCase', () => {
             expect(result[0].appointments[2].timeStart).toBe('14:00');
         });
 
-        it('should sort dates in ascending order', async () => {
+        it('deve ordenar dates in ascending order', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-25', '09:00'),
                 createMockAppointment('appt-2', '2025-01-20', '09:00'),
@@ -103,7 +102,7 @@ describe('ListNutritionistAgendaUseCase', () => {
             expect(result[2].date).toBe('2025-01-25');
         });
 
-        it('should use custom date range when provided', async () => {
+        it('deve usar intervalo de datas personalizado quando fornecido', async () => {
             (mockRepository.listAgendaByDateRange as jest.Mock).mockResolvedValue([]);
 
             const startDate = new Date(2025, 0, 15);
@@ -120,7 +119,7 @@ describe('ListNutritionistAgendaUseCase', () => {
     });
 
     describe('listAcceptedByDate', () => {
-        it('should return accepted and cancelled appointments for specific date', async () => {
+        it('deve retornar accepted and cancelled appointments for specific date', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-20', '09:00', 'accepted'),
                 createMockAppointment('appt-2', '2025-01-20', '11:00', 'pending'),
@@ -136,7 +135,7 @@ describe('ListNutritionistAgendaUseCase', () => {
             expect(result.every((appt: Appointment) => appt.status === 'accepted' || appt.status === 'cancelled')).toBe(true);
         });
 
-        it('should sort appointments by time', async () => {
+        it('deve ordenar appointments by time', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-20', '14:00', 'accepted'),
                 createMockAppointment('appt-2', '2025-01-20', '09:00', 'accepted'),
@@ -150,7 +149,7 @@ describe('ListNutritionistAgendaUseCase', () => {
             expect(result[1].timeStart).toBe('14:00');
         });
 
-        it('should return empty array when no accepted or cancelled appointments on date', async () => {
+        it('deve retornar array vazio quando não há consultas aceitas ou canceladas na data', async () => {
             const appointments = [
                 createMockAppointment('appt-1', '2025-01-20', '09:00', 'pending'),
             ];

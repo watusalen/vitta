@@ -1,8 +1,8 @@
 import Appointment from '../../../../src/model/entities/appointment';
 
-describe('Appointment Entity Interface', () => {
+describe('Entidade Appointment Interface', () => {
   describe('Structure', () => {
-    it('should have required properties', () => {
+    it('deve ter required properties', () => {
       const appointment: Appointment = {
         id: 'apt-1',
         patientId: 'patient-1',
@@ -20,7 +20,7 @@ describe('Appointment Entity Interface', () => {
       expect(appointment.status).toBe('pending');
     });
 
-    it('should support all status types', () => {
+    it('deve suportar all status types', () => {
       const statuses: ('pending' | 'accepted' | 'rejected' | 'cancelled')[] = [
         'pending',
         'accepted',
@@ -46,7 +46,7 @@ describe('Appointment Entity Interface', () => {
   });
 
   describe('Type Safety', () => {
-    it('should have required fields', () => {
+    it('deve ter required fields', () => {
       const appointment: Appointment = {
         id: 'apt-1',
         patientId: 'patient-1',
@@ -70,7 +70,7 @@ describe('Appointment Entity Interface', () => {
       expect(appointment).toHaveProperty('updatedAt');
     });
 
-    it('should track create and update timestamps', () => {
+    it('deve track create and update timestamps', () => {
       const now = new Date();
       const appointment: Appointment = {
         id: 'apt-1',
@@ -90,8 +90,7 @@ describe('Appointment Entity Interface', () => {
   });
 
   describe('Data Validation Examples', () => {
-    it('should validate timeStart < timeEnd', () => {
-      // Exemplo de validação que deveria ser implementada no serviço
+    it('deve validar timeStart < timeEnd', () => {
       const appointment: Appointment = {
         id: 'apt-1',
         patientId: 'p1',
@@ -112,8 +111,7 @@ describe('Appointment Entity Interface', () => {
       expect(startTime).toBeLessThan(endTime);
     });
 
-    it('should validate future dates', () => {
-      // Exemplo de validação que deveria ser implementada no serviço
+    it('deve validar future dates', () => {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 7);
       const dateString = futureDate.toISOString().split('T')[0];

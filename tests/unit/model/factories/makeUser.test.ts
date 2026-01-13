@@ -1,8 +1,8 @@
 import { makeUser } from '../../../../src/model/factories/makeUser';
 
-describe('makeUser Factory', () => {
+describe('Factory makeUser', () => {
   describe('Create User', () => {
-    it('should create a valid patient', () => {
+    it('deve criar a valid patient', () => {
       const user = makeUser({
         id: 'user-1',
         name: 'João Silva',
@@ -16,7 +16,7 @@ describe('makeUser Factory', () => {
       expect(user.id).toBe('user-1');
     });
 
-    it('should create a valid nutritionist', () => {
+    it('deve criar a valid nutritionist', () => {
       const user = makeUser({
         id: 'nutri-1',
         name: 'Dra. Maria',
@@ -29,7 +29,7 @@ describe('makeUser Factory', () => {
       expect(user.role).toBe('nutritionist');
     });
 
-    it('should generate id when not provided', () => {
+    it('deve gerar id quando não informado', () => {
       const user = makeUser({
         name: 'João Silva',
         email: 'joao@example.com',
@@ -42,8 +42,8 @@ describe('makeUser Factory', () => {
     });
   });
 
-  describe('Data Integrity', () => {
-    it('should preserve all user properties', () => {
+  describe('Integridade de Dados', () => {
+    it('deve preserve all user properties', () => {
       const userData = {
         id: 'user-123',
         name: 'Test User',
@@ -60,7 +60,7 @@ describe('makeUser Factory', () => {
       expect(user.createdAt).toBeInstanceOf(Date);
     });
 
-    it('should support both patient and nutritionist roles', () => {
+    it('deve suportar both patient and nutritionist roles', () => {
       const patient = makeUser({
         id: 'p1',
         name: 'Patient',
@@ -81,7 +81,7 @@ describe('makeUser Factory', () => {
   });
 
   describe('Type Safety', () => {
-    it('should enforce User interface contract', () => {
+    it('deve enforce User interface contract', () => {
       const user = makeUser({
         id: 'test-id',
         name: 'Test',

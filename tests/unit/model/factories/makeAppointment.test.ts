@@ -1,7 +1,7 @@
 import { makeAppointment } from '../../../../src/model/factories/makeAppointment';
 import Appointment from '../../../../src/model/entities/appointment';
 
-describe('makeAppointment Factory', () => {
+describe('Factory makeAppointment', () => {
     const validInput = {
         patientId: 'patient-123',
         nutritionistId: 'nutri-1',
@@ -10,8 +10,8 @@ describe('makeAppointment Factory', () => {
         timeEnd: '11:00',
     };
 
-    describe('Basic Creation', () => {
-        it('should create an Appointment with all required fields', () => {
+    describe('Criação Básica', () => {
+        it('deve criar an Appointment with all required fields', () => {
             const appointment = makeAppointment(validInput);
 
             expect(appointment.patientId).toBe('patient-123');
@@ -21,7 +21,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.timeEnd).toBe('11:00');
         });
 
-        it('should generate a unique id when not provided', () => {
+        it('deve gerar a id único quando não informado', () => {
             const appointment1 = makeAppointment(validInput);
             const appointment2 = makeAppointment(validInput);
 
@@ -30,7 +30,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment1.id).not.toBe(appointment2.id);
         });
 
-        it('should use provided id when given', () => {
+        it('deve usar id informado quando fornecido', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 id: 'custom-id-123',
@@ -39,13 +39,13 @@ describe('makeAppointment Factory', () => {
             expect(appointment.id).toBe('custom-id-123');
         });
 
-        it('should default status to pending', () => {
+        it('deve padronizar status to pending', () => {
             const appointment = makeAppointment(validInput);
 
             expect(appointment.status).toBe('pending');
         });
 
-        it('should use provided status when given', () => {
+        it('deve usar status informado quando fornecido', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 status: 'accepted',
@@ -54,7 +54,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.status).toBe('accepted');
         });
 
-        it('should set createdAt and updatedAt to current time', () => {
+        it('deve definir createdAt and updatedAt to current time', () => {
             const before = new Date();
             const appointment = makeAppointment(validInput);
             const after = new Date();
@@ -65,7 +65,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.updatedAt.getTime()).toBeLessThanOrEqual(after.getTime());
         });
 
-        it('should have same createdAt and updatedAt on creation', () => {
+        it('deve ter same createdAt and updatedAt on creation', () => {
             const appointment = makeAppointment(validInput);
 
             expect(appointment.createdAt).toEqual(appointment.updatedAt);
@@ -73,7 +73,7 @@ describe('makeAppointment Factory', () => {
     });
 
     describe('Status Types', () => {
-        it('should accept pending status', () => {
+        it('deve aceitar pending status', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 status: 'pending',
@@ -82,7 +82,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.status).toBe('pending');
         });
 
-        it('should accept accepted status', () => {
+        it('deve aceitar accepted status', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 status: 'accepted',
@@ -91,7 +91,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.status).toBe('accepted');
         });
 
-        it('should accept rejected status', () => {
+        it('deve aceitar rejected status', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 status: 'rejected',
@@ -100,7 +100,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.status).toBe('rejected');
         });
 
-        it('should accept cancelled status', () => {
+        it('deve aceitar cancelled status', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 status: 'cancelled',
@@ -110,8 +110,8 @@ describe('makeAppointment Factory', () => {
         });
     });
 
-    describe('Type Compliance', () => {
-        it('should return a valid Appointment interface', () => {
+    describe('Conformidade de Tipos', () => {
+        it('deve retornar a valid Appointment interface', () => {
             const appointment: Appointment = makeAppointment(validInput);
 
             expect(appointment).toHaveProperty('id');
@@ -126,8 +126,8 @@ describe('makeAppointment Factory', () => {
         });
     });
 
-    describe('Data Integrity', () => {
-        it('should preserve date format', () => {
+    describe('Integridade de Dados', () => {
+        it('deve preserve date format', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 date: '2025-01-01',
@@ -136,7 +136,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.date).toBe('2025-01-01');
         });
 
-        it('should preserve time format', () => {
+        it('deve preserve time format', () => {
             const appointment = makeAppointment({
                 ...validInput,
                 timeStart: '14:30',
@@ -147,7 +147,7 @@ describe('makeAppointment Factory', () => {
             expect(appointment.timeEnd).toBe('16:30');
         });
 
-        it('should handle different time slots', () => {
+        it('deve tratar different time slots', () => {
             const slots = [
                 { timeStart: '09:00', timeEnd: '11:00' },
                 { timeStart: '11:00', timeEnd: '13:00' },

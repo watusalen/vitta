@@ -1,14 +1,14 @@
 import { act, renderHook } from "@testing-library/react";
 import { formatDateISO } from "@/view/utils/dateFormatters";
 import { makeAppointment } from "@/model/factories/makeAppointment";
-import GetAvailableTimeSlotsUseCase from "@/usecase/appointment/availability/getAvailableTimeSlotsUseCase";
-import RequestAppointmentUseCase from "@/usecase/appointment/request/requestAppointmentUseCase";
-import GetNutritionistUseCase from "@/usecase/user/getNutritionistUseCase";
+import CasoDeUsoHorariosDisponiveis from "@/usecase/appointment/availability/getAvailableTimeSlotsUseCase";
+import CasoDeUsoSolicitarConsulta from "@/usecase/appointment/request/requestAppointmentUseCase";
+import CasoDeUsoObterNutricionista from "@/usecase/user/getNutritionistUseCase";
 import useScheduleViewModel from "@/viewmodel/appointment/useScheduleViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository } from "./helpers/inMemoryStores";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 
-describe("Schedule integration", () => {
+describe("Integração de agendamento", () => {
     beforeEach(() => {
         jest.useFakeTimers();
         jest.setSystemTime(new Date(2025, 0, 20, 10, 30, 0));
@@ -18,7 +18,7 @@ describe("Schedule integration", () => {
         jest.useRealTimers();
     });
 
-    it("loads availability, hides past slots, and blocks requested slots", async () => {
+    it("carrega disponibilidade, oculta horários passados e bloqueia horários solicitados", async () => {
         const appointmentRepository = new InMemoryAppointmentRepository();
         const userRepository = new InMemoryUserRepository();
         const nutritionistId = "nutri-1";
@@ -44,9 +44,9 @@ describe("Schedule integration", () => {
 
         await appointmentRepository.create(acceptedAppointment);
 
-        const getAvailableSlots = new GetAvailableTimeSlotsUseCase(appointmentRepository);
-        const requestAppointment = new RequestAppointmentUseCase(appointmentRepository);
-        const getNutritionist = new GetNutritionistUseCase(userRepository);
+        const getAvailableSlots = new CasoDeUsoHorariosDisponiveis(appointmentRepository);
+        const requestAppointment = new CasoDeUsoSolicitarConsulta(appointmentRepository);
+        const getNutritionist = new CasoDeUsoObterNutricionista(userRepository);
         const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };
@@ -96,7 +96,7 @@ describe("Schedule integration", () => {
         expect(refreshedSlotKeys).not.toContain("13:00-15:00");
     });
 
-    it("marks days without availability as unavailable", async () => {
+    it("marca dias sem disponibilidade como indisponíveis", async () => {
         const appointmentRepository = new InMemoryAppointmentRepository();
         const nutritionistId = "nutri-1";
 
@@ -124,8 +124,8 @@ describe("Schedule integration", () => {
             )
         );
 
-        const getAvailableSlots = new GetAvailableTimeSlotsUseCase(appointmentRepository);
-        const requestAppointment = new RequestAppointmentUseCase(appointmentRepository);
+        const getAvailableSlots = new CasoDeUsoHorariosDisponiveis(appointmentRepository);
+        const requestAppointment = new CasoDeUsoSolicitarConsulta(appointmentRepository);
         const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };

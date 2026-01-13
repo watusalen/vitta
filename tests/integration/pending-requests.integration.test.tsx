@@ -1,16 +1,17 @@
 import { act, renderHook } from "@testing-library/react";
+import Appointment from "@/model/entities/appointment";
 import { makeAppointment } from "@/model/factories/makeAppointment";
-import AcceptAppointmentUseCase from "@/usecase/appointment/status/acceptAppointmentUseCase";
-import RejectAppointmentUseCase from "@/usecase/appointment/status/rejectAppointmentUseCase";
-import ListPendingAppointmentsUseCase from "@/usecase/appointment/list/listPendingAppointmentsUseCase";
-import GetUserByIdUseCase from "@/usecase/user/getUserByIdUseCase";
+import { IAcceptAppointmentUseCase } from "@/usecase/appointment/status/iAcceptAppointmentUseCase";
+import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectAppointmentUseCase";
+import { IListPendingAppointmentsUseCase } from "@/usecase/appointment/list/iListPendingAppointmentsUseCase";
+import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
 import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import usePendingRequestsViewModel from "@/viewmodel/nutritionist/usePendingRequestsViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository, flushPromises } from "./helpers/inMemoryStores";
 
-describe("Pending requests integration", () => {
-    it("loads pending requests and updates after acceptance", async () => {
+describe("Integração de solicitações pendentes", () => {
+    it("carrega solicitações pendentes e atualiza após a aceitação", async () => {
         const appointmentRepository = new InMemoryAppointmentRepository();
         const userRepository = new InMemoryUserRepository();
         const nutritionistId = "nutri-1";
@@ -55,10 +56,29 @@ describe("Pending requests integration", () => {
             })
         );
 
-        const listPending = new ListPendingAppointmentsUseCase(appointmentRepository);
-        const acceptUseCase = new AcceptAppointmentUseCase(appointmentRepository);
-        const rejectUseCase = new RejectAppointmentUseCase(appointmentRepository);
-        const getUserById = new GetUserByIdUseCase(userRepository);
+        const listPending: IListPendingAppointmentsUseCase = {
+            listPending: jest.fn().mockResolvedValue([]),
+            subscribePendingByNutritionist: jest.fn((nutritionistId, callback) => {
+                return appointmentRepository.onNutritionistPendingChange(nutritionistId, callback);
+            }),
+        } as any;
+        const acceptUseCase: IAcceptAppointmentUseCase = {
+            acceptAppointment: jest.fn(async (id) => {
+                await appointmentRepository.updateStatus(id, "accepted");
+                return appointmentRepository.getById(id) as Promise<Appointment>;
+            }),
+            prepareAcceptance: jest.fn(),
+        } as any;
+        const rejectUseCase: IRejectAppointmentUseCase = {
+            rejectAppointment: jest.fn(async (id) => {
+                await appointmentRepository.updateStatus(id, "rejected");
+                return appointmentRepository.getById(id) as Promise<Appointment>;
+            }),
+            prepareRejection: jest.fn(),
+        } as any;
+        const getUserById: IGetUserByIdUseCase = {
+            getById: jest.fn(async (id) => userRepository.getUserByID(id)),
+        };
         const calendarSyncUseCase: jest.Mocked<IAppointmentCalendarSyncUseCase> = {
             syncAccepted: jest.fn(),
             syncCancelledOrRejected: jest.fn(),

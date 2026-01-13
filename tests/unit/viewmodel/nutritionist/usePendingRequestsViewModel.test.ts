@@ -7,10 +7,9 @@ import { IGetUserByIdUseCase } from '@/usecase/user/iGetUserByIdUseCase';
 import { IAppointmentCalendarSyncUseCase } from '@/usecase/calendar/iAppointmentCalendarSyncUseCase';
 import { IAppointmentPushNotificationUseCase } from '@/usecase/notifications/iAppointmentPushNotificationUseCase';
 import Appointment from '@/model/entities/appointment';
-import ValidationError from '@/model/errors/validationError';
-import RepositoryError from '@/model/errors/repositoryError';
+import ErroValidacao from '@/model/errors/validationError';
+import ErroRepositorio from '@/model/errors/repositoryError';
 
-// Helper para criar appointment mock
 const createMockAppointment = (id: string, date: string = '2025-01-20'): Appointment => ({
     id,
     patientId: 'patient-1',
@@ -23,19 +22,19 @@ const createMockAppointment = (id: string, date: string = '2025-01-20'): Appoint
     updatedAt: new Date(),
 });
 
-describe('usePendingRequestsViewModel', () => {
-    let mockListPendingAppointmentsUseCase: IListPendingAppointmentsUseCase;
+describe('ViewModel de Solicitações Pendentes', () => {
+    let mockCasoDeUsoListarConsultasPendentes: IListPendingAppointmentsUseCase;
     let mockAcceptUseCase: IAcceptAppointmentUseCase;
     let mockRejectUseCase: IRejectAppointmentUseCase;
-    let mockGetUserByIdUseCase: IGetUserByIdUseCase;
+    let mockCasoDeUsoObterUsuarioPorId: IGetUserByIdUseCase;
     let mockCalendarSyncUseCase: IAppointmentCalendarSyncUseCase;
-    let mockAppointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase;
+    let mockCasoDeUsoNotificacaoConsulta: IAppointmentPushNotificationUseCase;
     let unsubscribeMock: jest.Mock;
 
     beforeEach(() => {
         unsubscribeMock = jest.fn();
 
-        mockListPendingAppointmentsUseCase = {
+        mockCasoDeUsoListarConsultasPendentes = {
             listPendingByNutritionist: jest.fn(),
             subscribePendingByNutritionist: jest.fn().mockImplementation((id, callback) => {
                 callback([]);
@@ -53,14 +52,14 @@ describe('usePendingRequestsViewModel', () => {
             prepareRejection: jest.fn(),
         };
 
-        mockGetUserByIdUseCase = {
+        mockCasoDeUsoObterUsuarioPorId = {
             getById: jest.fn().mockResolvedValue({ id: 'patient-1', name: 'João Silva', email: 'joao@test.com', role: 'patient', createdAt: new Date() }),
         };
         mockCalendarSyncUseCase = {
             syncAccepted: jest.fn(),
             syncCancelledOrRejected: jest.fn(),
         };
-        mockAppointmentPushNotificationUseCase = {
+        mockCasoDeUsoNotificacaoConsulta = {
             notify: jest.fn(),
         };
     });
@@ -70,16 +69,16 @@ describe('usePendingRequestsViewModel', () => {
     });
 
     it('deve iniciar com loading true', () => {
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation(() => unsubscribeMock);
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation(() => unsubscribeMock);
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -90,19 +89,19 @@ describe('usePendingRequestsViewModel', () => {
     it('deve carregar consultas pendentes via listener', async () => {
         const appointments = [createMockAppointment('appt-1'), createMockAppointment('appt-2')];
 
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             setTimeout(() => callback(appointments), 0);
             return unsubscribeMock;
         });
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -116,7 +115,7 @@ describe('usePendingRequestsViewModel', () => {
 
     it('deve aceitar consulta com sucesso', async () => {
         const appointment = createMockAppointment('appt-1');
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             callback([appointment]);
             return unsubscribeMock;
         });
@@ -124,12 +123,12 @@ describe('usePendingRequestsViewModel', () => {
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -151,20 +150,20 @@ describe('usePendingRequestsViewModel', () => {
     });
 
     it('deve tratar erro ao aceitar consulta', async () => {
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             callback([]);
             return unsubscribeMock;
         });
-        (mockAcceptUseCase.acceptAppointment as jest.Mock).mockRejectedValue(new ValidationError('Já existe consulta'));
+        (mockAcceptUseCase.acceptAppointment as jest.Mock).mockRejectedValue(new ErroValidacao('Já existe consulta'));
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -182,7 +181,7 @@ describe('usePendingRequestsViewModel', () => {
 
     it('deve recusar consulta com sucesso', async () => {
         const appointment = createMockAppointment('appt-1');
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             callback([appointment]);
             return unsubscribeMock;
         });
@@ -190,12 +189,12 @@ describe('usePendingRequestsViewModel', () => {
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -212,21 +211,21 @@ describe('usePendingRequestsViewModel', () => {
         expect(mockRejectUseCase.rejectAppointment).toHaveBeenCalledWith('appt-1');
     });
 
-    it('deve tratar RepositoryError', async () => {
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+    it('deve tratar ErroRepositorio', async () => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             callback([]);
             return unsubscribeMock;
         });
-        (mockAcceptUseCase.acceptAppointment as jest.Mock).mockRejectedValue(new RepositoryError('Erro de conexão'));
+        (mockAcceptUseCase.acceptAppointment as jest.Mock).mockRejectedValue(new ErroRepositorio('Erro de conexão'));
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -241,20 +240,20 @@ describe('usePendingRequestsViewModel', () => {
     });
 
     it('deve limpar erro', async () => {
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             callback([]);
             return unsubscribeMock;
         });
-        (mockAcceptUseCase.acceptAppointment as jest.Mock).mockRejectedValue(new ValidationError('Erro'));
+        (mockAcceptUseCase.acceptAppointment as jest.Mock).mockRejectedValue(new ErroValidacao('Erro'));
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -276,7 +275,7 @@ describe('usePendingRequestsViewModel', () => {
 
     it('deve limpar mensagem de sucesso', async () => {
         const appointment = createMockAppointment('appt-1');
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             callback([appointment]);
             return unsubscribeMock;
         });
@@ -284,12 +283,12 @@ describe('usePendingRequestsViewModel', () => {
 
         const { result } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );
@@ -310,19 +309,19 @@ describe('usePendingRequestsViewModel', () => {
     });
 
     it('deve chamar unsubscribe ao desmontar', async () => {
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
+        (mockCasoDeUsoListarConsultasPendentes.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
             callback([]);
             return unsubscribeMock;
         });
 
         const { unmount } = renderHook(() =>
             usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
                 mockAcceptUseCase,
                 mockRejectUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoObterUsuarioPorId,
                 mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
+                mockCasoDeUsoNotificacaoConsulta,
                 'nutri-1'
             )
         );

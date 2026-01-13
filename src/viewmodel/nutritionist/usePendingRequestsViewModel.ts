@@ -76,7 +76,6 @@ export default function usePendingRequestsViewModel(
             try {
                 await calendarSyncUseCase.syncAccepted(appointment, "nutritionist");
             } catch {
-                // Não bloqueia o fluxo se o calendário falhar.
             }
             try {
                 await appointmentPushNotificationUseCase.notify(appointment, "accepted", "patient");

@@ -4,7 +4,7 @@ import { IPushPermissionUseCase } from "@/usecase/notifications/iPushPermissionU
 
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-describe("usePushPermissionViewModel", () => {
+describe("ViewModel de Permissão de Notificação Push", () => {
     let useCase: jest.Mocked<IPushPermissionUseCase>;
 
     beforeEach(() => {

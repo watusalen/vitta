@@ -7,9 +7,9 @@ import {
 } from '../../../../src/model/utils/timeSlotUtils';
 import TimeSlot from '../../../../src/model/entities/timeSlot';
 
-describe('makeTimeSlot Factory', () => {
-    describe('Basic Creation', () => {
-        it('should create a TimeSlot with all required fields', () => {
+describe('Factory makeTimeSlot', () => {
+    describe('Criação Básica', () => {
+        it('deve criar a TimeSlot with all required fields', () => {
             const slot = makeTimeSlot({
                 date: '2025-12-17',
                 timeStart: '09:00',
@@ -22,7 +22,7 @@ describe('makeTimeSlot Factory', () => {
             expect(slot.available).toBe(true);
         });
 
-        it('should default available to true when not provided', () => {
+        it('deve padronizar available como true quando não informado', () => {
             const slot = makeTimeSlot({
                 date: '2025-12-17',
                 timeStart: '09:00',
@@ -32,7 +32,7 @@ describe('makeTimeSlot Factory', () => {
             expect(slot.available).toBe(true);
         });
 
-        it('should respect provided available value', () => {
+        it('deve respeitar provided available value', () => {
             const unavailableSlot = makeTimeSlot({
                 date: '2025-12-17',
                 timeStart: '09:00',
@@ -43,7 +43,7 @@ describe('makeTimeSlot Factory', () => {
             expect(unavailableSlot.available).toBe(false);
         });
 
-        it('should create slot with available=true when explicitly set', () => {
+        it('deve criar slot com available=true quando definido explicitamente', () => {
             const slot = makeTimeSlot({
                 date: '2025-12-17',
                 timeStart: '09:00',
@@ -55,8 +55,8 @@ describe('makeTimeSlot Factory', () => {
         });
     });
 
-    describe('Type Compliance', () => {
-        it('should return a valid TimeSlot interface', () => {
+    describe('Conformidade de Tipos', () => {
+        it('deve retornar a valid TimeSlot interface', () => {
             const slot: TimeSlot = makeTimeSlot({
                 date: '2025-12-17',
                 timeStart: '09:00',
@@ -71,19 +71,19 @@ describe('makeTimeSlot Factory', () => {
     });
 });
 
-describe('AVAILABLE_TIME_SLOTS Constant', () => {
-    it('should have 4 time slots', () => {
+describe('Constante AVAILABLE_TIME_SLOTS', () => {
+    it('deve ter 4 time slots', () => {
         expect(AVAILABLE_TIME_SLOTS).toHaveLength(4);
     });
 
-    it('should have correct time ranges', () => {
+    it('deve ter correct time ranges', () => {
         expect(AVAILABLE_TIME_SLOTS[0]).toEqual({ timeStart: '09:00', timeEnd: '11:00' });
         expect(AVAILABLE_TIME_SLOTS[1]).toEqual({ timeStart: '11:00', timeEnd: '13:00' });
         expect(AVAILABLE_TIME_SLOTS[2]).toEqual({ timeStart: '13:00', timeEnd: '15:00' });
         expect(AVAILABLE_TIME_SLOTS[3]).toEqual({ timeStart: '14:00', timeEnd: '16:00' });
     });
 
-    it('should cover 9h to 16h working hours', () => {
+    it('deve cobrir 9h to 16h working hours', () => {
         const firstSlotStart = AVAILABLE_TIME_SLOTS[0].timeStart;
         const lastSlotEnd = AVAILABLE_TIME_SLOTS[AVAILABLE_TIME_SLOTS.length - 1].timeEnd;
 
@@ -91,7 +91,7 @@ describe('AVAILABLE_TIME_SLOTS Constant', () => {
         expect(lastSlotEnd).toBe('16:00');
     });
 
-    it('should have 2-hour duration slots', () => {
+    it('deve ter 2-hour duration slots', () => {
         AVAILABLE_TIME_SLOTS.forEach(slot => {
             const [startHour] = slot.timeStart.split(':').map(Number);
             const [endHour] = slot.timeEnd.split(':').map(Number);
@@ -101,99 +101,91 @@ describe('AVAILABLE_TIME_SLOTS Constant', () => {
 });
 
 describe('AVAILABLE_WEEKDAYS Constant', () => {
-    it('should contain Monday through Friday (1-5)', () => {
+    it('deve conter Monday through Friday (1-5)', () => {
         expect(AVAILABLE_WEEKDAYS).toEqual([1, 2, 3, 4, 5]);
     });
 
-    it('should have 5 working days', () => {
+    it('deve ter 5 working days', () => {
         expect(AVAILABLE_WEEKDAYS).toHaveLength(5);
     });
 
-    it('should not include Sunday (0) or Saturday (6)', () => {
+    it('não deve incluir Sunday (0) or Saturday (6)', () => {
         expect(AVAILABLE_WEEKDAYS).not.toContain(0);
         expect(AVAILABLE_WEEKDAYS).not.toContain(6);
     });
 });
 
-describe('isWeekday Function', () => {
-    // Helper para criar datas no fuso local sem problemas de timezone
+describe('Função isWeekday', () => {
     const createLocalDate = (year: number, month: number, day: number): Date => {
-        return new Date(year, month - 1, day, 12, 0, 0); // meio-dia para evitar edge cases
+        return new Date(year, month - 1, day, 12, 0, 0);
     };
 
-    it('should return true for Monday', () => {
-        // 2025-12-15 is Monday
+    it('deve retornar true for Monday', () => {
         const monday = createLocalDate(2025, 12, 15);
-        expect(monday.getDay()).toBe(1); // Validar que é segunda
+        expect(monday.getDay()).toBe(1);
         expect(isWeekday(monday)).toBe(true);
     });
 
-    it('should return true for Wednesday', () => {
-        // 2025-12-17 is Wednesday
+    it('deve retornar true for Wednesday', () => {
         const wednesday = createLocalDate(2025, 12, 17);
-        expect(wednesday.getDay()).toBe(3); // Validar que é quarta
+        expect(wednesday.getDay()).toBe(3);
         expect(isWeekday(wednesday)).toBe(true);
     });
 
-    it('should return true for Friday', () => {
-        // 2025-12-19 is Friday
+    it('deve retornar true for Friday', () => {
         const friday = createLocalDate(2025, 12, 19);
-        expect(friday.getDay()).toBe(5); // Validar que é sexta
+        expect(friday.getDay()).toBe(5);
         expect(isWeekday(friday)).toBe(true);
     });
 
-    it('should return false for Saturday', () => {
-        // 2025-12-20 is Saturday
+    it('deve retornar false for Saturday', () => {
         const saturday = createLocalDate(2025, 12, 20);
-        expect(saturday.getDay()).toBe(6); // Validar que é sábado
+        expect(saturday.getDay()).toBe(6);
         expect(isWeekday(saturday)).toBe(false);
     });
 
-    it('should return false for Sunday', () => {
-        // 2025-12-21 is Sunday
+    it('deve retornar false for Sunday', () => {
         const sunday = createLocalDate(2025, 12, 21);
-        expect(sunday.getDay()).toBe(0); // Validar que é domingo
+        expect(sunday.getDay()).toBe(0);
         expect(isWeekday(sunday)).toBe(false);
     });
 
-    it('should correctly identify all days of a week', () => {
+    it('deve corretamente identify all days of a week', () => {
         const results = [];
         for (let i = 15; i <= 21; i++) {
             const date = createLocalDate(2025, 12, i);
             results.push(isWeekday(date));
         }
-        // Mon, Tue, Wed, Thu, Fri, Sat, Sun
         expect(results).toEqual([true, true, true, true, true, false, false]);
     });
 });
 
 describe('formatDateToISO Function', () => {
-    // Helper para criar datas no fuso local
     const createLocalDate = (year: number, month: number, day: number): Date => {
         return new Date(year, month - 1, day, 12, 0, 0);
     };
 
-    it('should format date to YYYY-MM-DD', () => {
+    it('deve formatar date to YYYY-MM-DD', () => {
         const date = createLocalDate(2025, 12, 17);
         expect(formatDateToISO(date)).toBe('2025-12-17');
     });
 
-    it('should pad single digit months with zero', () => {
+    it('deve preencher single digit months with zero', () => {
         const date = createLocalDate(2025, 1, 5);
         expect(formatDateToISO(date)).toBe('2025-01-05');
     });
 
-    it('should pad single digit days with zero', () => {
+    it('deve preencher single digit days with zero', () => {
         const date = createLocalDate(2025, 12, 1);
         expect(formatDateToISO(date)).toBe('2025-12-01');
     });
 
-    it('should handle end of year dates', () => {
+    it('deve tratar end of year dates', () => {
         const date = createLocalDate(2025, 12, 31);
         expect(formatDateToISO(date)).toBe('2025-12-31');
     });
 
-    it('should handle beginning of year dates', () => {
+    it('deve tratar beginning of year dates', () => {
         const date = createLocalDate(2025, 1, 1);
         expect(formatDateToISO(date)).toBe('2025-01-01');
     });

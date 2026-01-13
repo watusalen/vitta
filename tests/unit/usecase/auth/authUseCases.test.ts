@@ -1,13 +1,13 @@
-import AuthUseCases from '../../../../src/usecase/auth/authUseCases';
+import CasosDeUsoAuth from '../../../../src/usecase/auth/authUseCases';
 import { IAuthService } from '@/model/services/iAuthService';
 import { IUserRepository } from '@/model/repositories/iUserRepository';
 import User from '@/model/entities/user';
-import AuthError from '@/model/errors/authError';
-import ValidationError from '@/model/errors/validationError';
-import RepositoryError from '@/model/errors/repositoryError';
+import ErroAuth from '@/model/errors/authError';
+import ErroValidacao from '@/model/errors/validationError';
+import ErroRepositorio from '@/model/errors/repositoryError';
 
-describe('AuthUseCases', () => {
-  let authUseCases: AuthUseCases;
+describe('CasosDeUsoAuth', () => {
+  let authUseCases: CasosDeUsoAuth;
   let mockAuthService: jest.Mocked<IAuthService>;
   let mockUserRepository: jest.Mocked<IUserRepository>;
 
@@ -29,11 +29,11 @@ describe('AuthUseCases', () => {
       getPushTokens: jest.fn(),
     };
 
-    authUseCases = new AuthUseCases(mockAuthService, mockUserRepository);
+    authUseCases = new CasosDeUsoAuth(mockAuthService, mockUserRepository);
   });
 
   describe('Login', () => {
-    it('should login user successfully', async () => {
+    it('deve fazer login com sucesso', async () => {
       const credentials = { email: 'joao@example.com', password: 'password123' };
       const mockUser: User = {
         id: 'user-1',
@@ -55,19 +55,19 @@ describe('AuthUseCases', () => {
       );
     });
 
-    it('should throw ValidationError on empty email', async () => {
+    it('deve lançar ValidationError com email vazio', async () => {
       await expect(
         authUseCases.login('', 'password123')
-      ).rejects.toThrow(ValidationError);
+      ).rejects.toThrow(ErroValidacao);
     });
 
-    it('should throw ValidationError on empty password', async () => {
+    it('deve lançar ValidationError com senha vazia', async () => {
       await expect(
         authUseCases.login('joao@example.com', '')
-      ).rejects.toThrow(ValidationError);
+      ).rejects.toThrow(ErroValidacao);
     });
 
-    it('should throw AuthError when user not found', async () => {
+    it('deve lançar ErroAuth quando o usuário não é encontrado', async () => {
       mockAuthService.login.mockResolvedValueOnce({
         id: 'user-1',
         name: 'João',
@@ -79,20 +79,20 @@ describe('AuthUseCases', () => {
 
       await expect(
         authUseCases.login('joao@example.com', 'password123')
-      ).rejects.toThrow(AuthError);
+      ).rejects.toThrow(ErroAuth);
     });
 
-    it('should throw AuthError when auth service fails', async () => {
+    it('deve lançar ErroAuth quando o serviço de autenticação falha', async () => {
       mockAuthService.login.mockRejectedValueOnce(
-        new AuthError('Invalid credentials')
+        new ErroAuth('Invalid credentials')
       );
 
       await expect(
         authUseCases.login('joao@example.com', 'password123')
-      ).rejects.toThrow(AuthError);
+      ).rejects.toThrow(ErroAuth);
     });
 
-    it('should throw RepositoryError when repository fails', async () => {
+    it('deve lançar ErroRepositorio quando o repositório falha', async () => {
       mockAuthService.login.mockResolvedValueOnce({
         id: 'user-1',
         name: 'João',
@@ -100,14 +100,14 @@ describe('AuthUseCases', () => {
         role: 'patient',
         createdAt: new Date(),
       });
-      mockUserRepository.getUserByID.mockRejectedValueOnce(new RepositoryError('Erro'));
+      mockUserRepository.getUserByID.mockRejectedValueOnce(new ErroRepositorio('Erro'));
 
       await expect(
         authUseCases.login('joao@example.com', 'password123')
-      ).rejects.toThrow(RepositoryError);
+      ).rejects.toThrow(ErroRepositorio);
     });
 
-    it('should throw generic error when unexpected failure happens', async () => {
+    it('deve lançar erro genérico quando ocorre falha inesperada', async () => {
       mockAuthService.login.mockRejectedValueOnce(new Error('Unexpected'));
 
       await expect(
@@ -117,7 +117,7 @@ describe('AuthUseCases', () => {
   });
 
   describe('SignUp', () => {
-    it('should signup user successfully', async () => {
+    it('deve cadastrar usuário com sucesso', async () => {
       const signupData = {
         name: 'João Silva',
         email: 'joao@example.com',
@@ -146,35 +146,35 @@ describe('AuthUseCases', () => {
       expect(mockUserRepository.createUser).toHaveBeenCalled();
     });
 
-    it('should throw ValidationError on invalid email', async () => {
+    it('deve lançar ValidationError com email inválido', async () => {
       await expect(
         authUseCases.signUp('João', 'invalid', 'password123')
-      ).rejects.toThrow(ValidationError);
+      ).rejects.toThrow(ErroValidacao);
     });
 
-    it('should throw ValidationError on weak password', async () => {
+    it('deve lançar ErroValidacao on weak password', async () => {
       await expect(
         authUseCases.signUp('João', 'joao@example.com', '123')
-      ).rejects.toThrow(ValidationError);
+      ).rejects.toThrow(ErroValidacao);
     });
 
-    it('should throw ValidationError on empty name', async () => {
+    it('deve lançar ValidationError com nome vazio', async () => {
       await expect(
         authUseCases.signUp('', 'joao@example.com', 'password123')
-      ).rejects.toThrow(ValidationError);
+      ).rejects.toThrow(ErroValidacao);
     });
 
-    it('should throw AuthError when auth service fails', async () => {
+    it('deve lançar ErroAuth quando o serviço de autenticação falha', async () => {
       mockAuthService.signup.mockRejectedValueOnce(
-        new AuthError('Email already in use')
+        new ErroAuth('Email already in use')
       );
 
       await expect(
         authUseCases.signUp('João', 'joao@example.com', 'password123')
-      ).rejects.toThrow(AuthError);
+      ).rejects.toThrow(ErroAuth);
     });
 
-    it('should throw RepositoryError when repository fails', async () => {
+    it('deve lançar ErroRepositorio quando o repositório falha', async () => {
       mockAuthService.signup.mockResolvedValueOnce({
         id: 'user-1',
         name: 'João',
@@ -182,14 +182,14 @@ describe('AuthUseCases', () => {
         role: 'patient',
         createdAt: new Date(),
       });
-      mockUserRepository.createUser.mockRejectedValueOnce(new RepositoryError('Erro'));
+      mockUserRepository.createUser.mockRejectedValueOnce(new ErroRepositorio('Erro'));
 
       await expect(
         authUseCases.signUp('João', 'joao@example.com', 'password123')
-      ).rejects.toThrow(RepositoryError);
+      ).rejects.toThrow(ErroRepositorio);
     });
 
-    it('should throw generic error when unexpected failure happens', async () => {
+    it('deve lançar erro genérico quando ocorre falha inesperada', async () => {
       mockAuthService.signup.mockRejectedValueOnce(new Error('Unexpected'));
 
       await expect(
@@ -199,7 +199,7 @@ describe('AuthUseCases', () => {
   });
 
   describe('Logout', () => {
-    it('should logout user successfully', async () => {
+    it('deve fazer logout com sucesso', async () => {
       mockAuthService.logout.mockResolvedValueOnce(undefined);
 
       await authUseCases.logout();
@@ -207,15 +207,15 @@ describe('AuthUseCases', () => {
       expect(mockAuthService.logout).toHaveBeenCalled();
     });
 
-    it('should throw error when logout fails', async () => {
+    it('deve lançar erro quando o logout falha', async () => {
       mockAuthService.logout.mockRejectedValueOnce(
-        new AuthError('Logout failed')
+        new ErroAuth('Logout failed')
       );
 
-      await expect(authUseCases.logout()).rejects.toThrow(AuthError);
+      await expect(authUseCases.logout()).rejects.toThrow(ErroAuth);
     });
 
-    it('should throw generic error when logout fails unexpectedly', async () => {
+    it('deve lançar erro genérico quando o logout falha inesperadamente', async () => {
       mockAuthService.logout.mockRejectedValueOnce(new Error('Unexpected'));
 
       await expect(authUseCases.logout()).rejects.toThrow('Erro interno no logout');
@@ -223,7 +223,7 @@ describe('AuthUseCases', () => {
   });
 
   describe('ResetPassword', () => {
-    it('should call resetPassword successfully', async () => {
+    it('deve chamar resetPassword successfully', async () => {
       mockAuthService.resetPassword.mockResolvedValueOnce(undefined);
 
       await authUseCases.resetPassword('joao@example.com');
@@ -231,17 +231,17 @@ describe('AuthUseCases', () => {
       expect(mockAuthService.resetPassword).toHaveBeenCalledWith('joao@example.com');
     });
 
-    it('should throw ValidationError on invalid email', async () => {
-      await expect(authUseCases.resetPassword('invalid')).rejects.toThrow(ValidationError);
+    it('deve lançar ValidationError com email inválido', async () => {
+      await expect(authUseCases.resetPassword('invalid')).rejects.toThrow(ErroValidacao);
     });
 
-    it('should throw AuthError when resetPassword fails', async () => {
-      mockAuthService.resetPassword.mockRejectedValueOnce(new AuthError('Erro'));
+    it('deve lançar ErroAuth quando resetPassword falha', async () => {
+      mockAuthService.resetPassword.mockRejectedValueOnce(new ErroAuth('Erro'));
 
-      await expect(authUseCases.resetPassword('joao@example.com')).rejects.toThrow(AuthError);
+      await expect(authUseCases.resetPassword('joao@example.com')).rejects.toThrow(ErroAuth);
     });
 
-    it('should throw generic error when resetPassword fails unexpectedly', async () => {
+    it('deve lançar erro genérico quando resetPassword falha inesperadamente', async () => {
       mockAuthService.resetPassword.mockRejectedValueOnce(new Error('Unexpected'));
 
       await expect(authUseCases.resetPassword('joao@example.com')).rejects.toThrow(
@@ -251,7 +251,7 @@ describe('AuthUseCases', () => {
   });
 
   describe('OnAuthStateChanged', () => {
-    it('should call listener when auth state changes', (done) => {
+    it('deve chamar listener quando o estado de autenticação muda', (done) => {
       const mockUser: User = {
         id: 'user-1',
         name: 'João Silva',
@@ -276,7 +276,7 @@ describe('AuthUseCases', () => {
       }, 100);
     });
 
-    it('should handle null user (logged out)', (done) => {
+    it('deve tratar null user (logged out)', (done) => {
       const listener = jest.fn();
 
       mockAuthService.onAuthStateChanged.mockImplementationOnce((cb) => {
@@ -292,7 +292,7 @@ describe('AuthUseCases', () => {
       }, 0);
     });
 
-    it('should call listener with null on repository error', (done) => {
+    it('deve chamar listener with null on repository error', (done) => {
       const listener = jest.fn();
 
       mockUserRepository.getUserByID.mockRejectedValueOnce(new Error('Erro'));
@@ -309,7 +309,7 @@ describe('AuthUseCases', () => {
       }, 0);
     });
 
-    it('should call listener with null when authUser has no id', (done) => {
+    it('deve chamar listener com null quando authUser não tem id', (done) => {
       const listener = jest.fn();
 
       mockAuthService.onAuthStateChanged.mockImplementationOnce((cb) => {

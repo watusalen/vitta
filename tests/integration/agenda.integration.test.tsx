@@ -1,13 +1,13 @@
 import { act, renderHook } from "@testing-library/react";
 import { makeAppointment } from "@/model/factories/makeAppointment";
 import { formatDateISO } from "@/view/utils/dateFormatters";
-import ListNutritionistAgendaUseCase from "@/usecase/appointment/list/listNutritionistAgendaUseCase";
-import GetUserByIdUseCase from "@/usecase/user/getUserByIdUseCase";
+import CasoDeUsoListarAgendaDaNutricionista from "@/usecase/appointment/list/listNutritionistAgendaUseCase";
+import CasoDeUsoObterUsuarioPorId from "@/usecase/user/getUserByIdUseCase";
 import useNutritionistAgendaViewModel from "@/viewmodel/nutritionist/useNutritionistAgendaViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository, flushPromises } from "./helpers/inMemoryStores";
 
-describe("Nutritionist agenda integration", () => {
-    it("loads agenda dates and resolves patient names", async () => {
+describe("Integração da agenda da nutricionista", () => {
+    it("carrega as datas da agenda e resolve os nomes dos pacientes", async () => {
         const appointmentRepository = new InMemoryAppointmentRepository();
         const userRepository = new InMemoryUserRepository();
         const nutritionistId = "nutri-1";
@@ -55,8 +55,8 @@ describe("Nutritionist agenda integration", () => {
             })
         );
 
-        const listAgenda = new ListNutritionistAgendaUseCase(appointmentRepository);
-        const getUserById = new GetUserByIdUseCase(userRepository);
+        const listAgenda = new CasoDeUsoListarAgendaDaNutricionista(appointmentRepository);
+        const getUserById = new CasoDeUsoObterUsuarioPorId(userRepository);
 
         const { result } = renderHook(() =>
             useNutritionistAgendaViewModel(listAgenda, getUserById, nutritionistId)

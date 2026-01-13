@@ -83,7 +83,6 @@ export default function ConfirmActionModal({
 }
 
 function withAlpha(hexColor: string, alpha: number) {
-  // aceita "#RRGGBB"
   const hex = hexColor.replace("#", "");
   if (hex.length !== 6) return "rgba(0,0,0,0.08)";
   const r = parseInt(hex.slice(0, 2), 16);

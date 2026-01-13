@@ -1,19 +1,20 @@
 import { act, renderHook } from "@testing-library/react";
+import Appointment from "@/model/entities/appointment";
 import { makeAppointment } from "@/model/factories/makeAppointment";
-import GetAppointmentDetailsUseCase from "@/usecase/appointment/details/getAppointmentDetailsUseCase";
-import AcceptAppointmentUseCase from "@/usecase/appointment/status/acceptAppointmentUseCase";
-import RejectAppointmentUseCase from "@/usecase/appointment/status/rejectAppointmentUseCase";
-import CancelAppointmentUseCase from "@/usecase/appointment/status/cancelAppointmentUseCase";
-import ReactivateAppointmentUseCase from "@/usecase/appointment/status/reactivateAppointmentUseCase";
-import GetUserByIdUseCase from "@/usecase/user/getUserByIdUseCase";
+import { IGetAppointmentDetailsUseCase } from "@/usecase/appointment/details/iGetAppointmentDetailsUseCase";
+import { IAcceptAppointmentUseCase } from "@/usecase/appointment/status/iAcceptAppointmentUseCase";
+import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectAppointmentUseCase";
+import { ICancelAppointmentUseCase } from "@/usecase/appointment/status/iCancelAppointmentUseCase";
+import { IReactivateAppointmentUseCase } from "@/usecase/appointment/status/iReactivateAppointmentUseCase";
+import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
 import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import useNutritionistAppointmentDetailsViewModel from "@/viewmodel/nutritionist/useNutritionistAppointmentDetailsViewModel";
 import useAppointmentDetailsViewModel from "@/viewmodel/appointment/useAppointmentDetailsViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository, flushPromises } from "./helpers/inMemoryStores";
 
-describe("Appointment details integration", () => {
-    it("allows nutritionist to accept and cancel appointments", async () => {
+describe("Integração dos detalhes da consulta", () => {
+    it("permite que a nutricionista aceite e cancele consultas", async () => {
         const appointmentRepository = new InMemoryAppointmentRepository();
         const userRepository = new InMemoryUserRepository();
 
@@ -37,12 +38,40 @@ describe("Appointment details integration", () => {
             })
         );
 
-        const detailsUseCase = new GetAppointmentDetailsUseCase(appointmentRepository);
-        const acceptUseCase = new AcceptAppointmentUseCase(appointmentRepository);
-        const rejectUseCase = new RejectAppointmentUseCase(appointmentRepository);
-        const cancelUseCase = new CancelAppointmentUseCase(appointmentRepository);
-        const reactivateUseCase = new ReactivateAppointmentUseCase(appointmentRepository);
-        const getUserById = new GetUserByIdUseCase(userRepository);
+        const detailsUseCase: IGetAppointmentDetailsUseCase = {
+            getById: jest.fn(async (id) => appointmentRepository.getById(id)),
+        };
+        const acceptUseCase: IAcceptAppointmentUseCase = {
+            acceptAppointment: jest.fn(async (id) => {
+                await appointmentRepository.updateStatus(id, "accepted");
+                return appointmentRepository.getById(id) as Promise<Appointment>;
+            }),
+            prepareAcceptance: jest.fn(),
+        } as any;
+        const rejectUseCase: IRejectAppointmentUseCase = {
+            rejectAppointment: jest.fn(async (id) => {
+                await appointmentRepository.updateStatus(id, "rejected");
+                return appointmentRepository.getById(id) as Promise<Appointment>;
+            }),
+            prepareRejection: jest.fn(),
+        } as any;
+        const cancelUseCase: ICancelAppointmentUseCase = {
+            cancelAppointment: jest.fn(async (id) => {
+                await appointmentRepository.updateStatus(id, "cancelled");
+                return appointmentRepository.getById(id) as Promise<Appointment>;
+            }),
+            prepareCancel: jest.fn(),
+        } as any;
+        const reactivateUseCase: IReactivateAppointmentUseCase = {
+            reactivate: jest.fn(async (id) => {
+                await appointmentRepository.updateStatus(id, "pending");
+                return appointmentRepository.getById(id) as Promise<Appointment>;
+            }),
+            prepareReactivate: jest.fn(),
+        } as any;
+        const getUserById: IGetUserByIdUseCase = {
+            getById: jest.fn(async (id) => userRepository.getUserByID(id)),
+        };
         const calendarSyncUseCase: jest.Mocked<IAppointmentCalendarSyncUseCase> = {
             syncAccepted: jest.fn(),
             syncCancelledOrRejected: jest.fn(),
@@ -86,7 +115,7 @@ describe("Appointment details integration", () => {
         expect(result.current.successMessage).toBe("Consulta cancelada.");
     });
 
-    it("allows patient to cancel accepted appointment and resolves nutritionist name", async () => {
+    it("permite que o paciente cancele uma consulta aceita e resolve o nome da nutricionista", async () => {
         const appointmentRepository = new InMemoryAppointmentRepository();
         const userRepository = new InMemoryUserRepository();
 
@@ -110,9 +139,19 @@ describe("Appointment details integration", () => {
             })
         );
 
-        const detailsUseCase = new GetAppointmentDetailsUseCase(appointmentRepository);
-        const cancelUseCase = new CancelAppointmentUseCase(appointmentRepository);
-        const getUserById = new GetUserByIdUseCase(userRepository);
+        const detailsUseCase: IGetAppointmentDetailsUseCase = {
+            getById: jest.fn(async (id) => appointmentRepository.getById(id)),
+        };
+        const cancelUseCase: ICancelAppointmentUseCase = {
+            cancelAppointment: jest.fn(async (id) => {
+                await appointmentRepository.updateStatus(id, "cancelled");
+                return appointmentRepository.getById(id) as Promise<Appointment>;
+            }),
+            prepareCancel: jest.fn(),
+        } as any;
+        const getUserById: IGetUserByIdUseCase = {
+            getById: jest.fn(async (id) => userRepository.getUserByID(id)),
+        };
         const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };

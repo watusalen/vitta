@@ -1,32 +1,32 @@
-import PushNotificationSender from "@/infra/notifications/pushNotificationSender";
+import EmissorNotificacaoPush from "@/infra/notifications/pushNotificationSender";
 
 const mockFetch = jest.fn();
 
-describe("PushNotificationSender", () => {
+describe("EmissorNotificacaoPush", () => {
     beforeEach(() => {
         mockFetch.mockReset();
         (global as any).fetch = mockFetch;
     });
 
-    it("deve ignorar quando nao houver baseUrl", async () => {
-        const sender = new PushNotificationSender(undefined, undefined);
+    it("deve ignorar quando não houver baseUrl", async () => {
+        const sender = new EmissorNotificacaoPush(undefined, undefined);
 
         await sender.sendPush(["token-1"], { title: "titulo", body: "corpo" });
 
         expect(mockFetch).not.toHaveBeenCalled();
     });
 
-    it("deve ignorar quando nao houver tokens", async () => {
-        const sender = new PushNotificationSender("https://example.com", undefined);
+    it("deve ignorar quando não houver tokens", async () => {
+        const sender = new EmissorNotificacaoPush("https://example.com", undefined);
 
         await sender.sendPush([], { title: "titulo", body: "corpo" });
 
         expect(mockFetch).not.toHaveBeenCalled();
     });
 
-    it("deve enviar notificacao para edge function", async () => {
+    it("deve enviar notificação para edge function", async () => {
         mockFetch.mockResolvedValue({ ok: true, text: async () => "" });
-        const sender = new PushNotificationSender("https://example.com", "anon");
+        const sender = new EmissorNotificacaoPush("https://example.com", "anon");
 
         await sender.sendPush(["token-1"], { title: "titulo", body: "corpo" });
 
@@ -48,7 +48,7 @@ describe("PushNotificationSender", () => {
 
     it("deve lançar erro quando edge responder com falha", async () => {
         mockFetch.mockResolvedValue({ ok: false, text: async () => "erro" });
-        const sender = new PushNotificationSender("https://example.com", undefined);
+        const sender = new EmissorNotificacaoPush("https://example.com", undefined);
 
         await expect(
             sender.sendPush(["token-1"], { title: "titulo", body: "corpo" })

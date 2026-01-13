@@ -1,16 +1,16 @@
 import { renderHook, act } from '@testing-library/react';
 import useLoginViewModel from '@/viewmodel/auth/useLoginViewModel';
 import { IAuthUseCases } from '@/usecase/auth/iAuthUseCases';
-import AuthError from '@/model/errors/authError';
-import ValidationError from '@/model/errors/validationError';
-import RepositoryError from '@/model/errors/repositoryError';
+import ErroAuth from '@/model/errors/authError';
+import ErroValidacao from '@/model/errors/validationError';
+import ErroRepositorio from '@/model/errors/repositoryError';
 import User from '@/model/entities/user';
 
-describe('useLoginViewModel', () => {
-    let mockAuthUseCases: IAuthUseCases;
+describe('ViewModel de Login', () => {
+    let mockCasosDeUsoAuth: IAuthUseCases;
 
     beforeEach(() => {
-        mockAuthUseCases = {
+        mockCasosDeUsoAuth = {
             login: jest.fn(),
             signUp: jest.fn(),
             logout: jest.fn(),
@@ -28,7 +28,7 @@ describe('useLoginViewModel', () => {
     };
 
     it('deve inicializar com estado padrão', () => {
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         expect(result.current.user).toBeNull();
         expect(result.current.error).toBeNull();
@@ -40,9 +40,9 @@ describe('useLoginViewModel', () => {
     });
 
     it('deve fazer login com sucesso', async () => {
-        (mockAuthUseCases.login as jest.Mock).mockResolvedValue(mockUser);
+        (mockCasosDeUsoAuth.login as jest.Mock).mockResolvedValue(mockUser);
 
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.login('john@email.com', 'password123');
@@ -55,11 +55,11 @@ describe('useLoginViewModel', () => {
 
     it('deve setar loading durante login', async () => {
         let resolveLogin: (value: User) => void;
-        (mockAuthUseCases.login as jest.Mock).mockImplementation(() => new Promise((resolve) => {
+        (mockCasosDeUsoAuth.login as jest.Mock).mockImplementation(() => new Promise((resolve) => {
             resolveLogin = resolve;
         }));
 
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         act(() => {
             result.current.login('john@email.com', 'password123');
@@ -74,10 +74,10 @@ describe('useLoginViewModel', () => {
         expect(result.current.loading).toBe(false);
     });
 
-    it('deve tratar ValidationError', async () => {
-        (mockAuthUseCases.login as jest.Mock).mockRejectedValue(new ValidationError('Email inválido'));
+    it('deve tratar ErroValidacao', async () => {
+        (mockCasosDeUsoAuth.login as jest.Mock).mockRejectedValue(new ErroValidacao('Email inválido'));
 
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.login('invalid', 'password123');
@@ -87,10 +87,10 @@ describe('useLoginViewModel', () => {
         expect(result.current.user).toBeNull();
     });
 
-    it('deve tratar AuthError', async () => {
-        (mockAuthUseCases.login as jest.Mock).mockRejectedValue(new AuthError('Credenciais inválidas'));
+    it('deve tratar ErroAuth', async () => {
+        (mockCasosDeUsoAuth.login as jest.Mock).mockRejectedValue(new ErroAuth('Credenciais inválidas'));
 
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.login('john@email.com', 'wrong');
@@ -99,10 +99,10 @@ describe('useLoginViewModel', () => {
         expect(result.current.error).toBe('Credenciais inválidas');
     });
 
-    it('deve tratar RepositoryError', async () => {
-        (mockAuthUseCases.login as jest.Mock).mockRejectedValue(new RepositoryError('Erro de conexão'));
+    it('deve tratar ErroRepositorio', async () => {
+        (mockCasosDeUsoAuth.login as jest.Mock).mockRejectedValue(new ErroRepositorio('Erro de conexão'));
 
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.login('john@email.com', 'password');
@@ -112,9 +112,9 @@ describe('useLoginViewModel', () => {
     });
 
     it('deve tratar erro desconhecido', async () => {
-        (mockAuthUseCases.login as jest.Mock).mockRejectedValue(new Error('Unknown'));
+        (mockCasosDeUsoAuth.login as jest.Mock).mockRejectedValue(new Error('Unknown'));
 
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.login('john@email.com', 'password');
@@ -124,9 +124,9 @@ describe('useLoginViewModel', () => {
     });
 
     it('deve limpar erro com clearError', async () => {
-        (mockAuthUseCases.login as jest.Mock).mockRejectedValue(new AuthError('Erro'));
+        (mockCasosDeUsoAuth.login as jest.Mock).mockRejectedValue(new ErroAuth('Erro'));
 
-        const { result } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.login('john@email.com', 'wrong');
@@ -145,14 +145,14 @@ describe('useLoginViewModel', () => {
         const mockUnsubscribe = jest.fn();
         let capturedCallback: ((user: User | null) => void) | null = null;
 
-        (mockAuthUseCases.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
+        (mockCasosDeUsoAuth.onAuthStateChanged as jest.Mock).mockImplementation((callback) => {
             capturedCallback = callback;
             return mockUnsubscribe;
         });
 
-        const { result, unmount } = renderHook(() => useLoginViewModel(mockAuthUseCases));
+        const { result, unmount } = renderHook(() => useLoginViewModel(mockCasosDeUsoAuth));
 
-        expect(mockAuthUseCases.onAuthStateChanged).toHaveBeenCalled();
+        expect(mockCasosDeUsoAuth.onAuthStateChanged).toHaveBeenCalled();
 
         act(() => {
             capturedCallback!(mockUser);

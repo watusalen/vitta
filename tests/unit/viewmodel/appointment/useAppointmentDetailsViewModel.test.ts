@@ -1,14 +1,14 @@
 import { renderHook, act } from '@testing-library/react';
 import useAppointmentDetailsViewModel from '@/viewmodel/appointment/useAppointmentDetailsViewModel';
 import { IGetAppointmentDetailsUseCase } from '@/usecase/appointment/details/iGetAppointmentDetailsUseCase';
-import RepositoryError from '@/model/errors/repositoryError';
+import ErroRepositorio from '@/model/errors/repositoryError';
 import Appointment from '@/model/entities/appointment';
 
-describe('useAppointmentDetailsViewModel', () => {
-    let mockGetAppointmentDetailsUseCase: IGetAppointmentDetailsUseCase;
+describe('ViewModel de Detalhes da Consulta - Paciente', () => {
+    let mockCasoDeUsoDetalhesDaConsulta: IGetAppointmentDetailsUseCase;
 
     beforeEach(() => {
-        mockGetAppointmentDetailsUseCase = {
+        mockCasoDeUsoDetalhesDaConsulta = {
             getById: jest.fn(),
         };
     });
@@ -27,7 +27,7 @@ describe('useAppointmentDetailsViewModel', () => {
 
     it('deve inicializar com estado padrão', () => {
         const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
+            useAppointmentDetailsViewModel(mockCasoDeUsoDetalhesDaConsulta)
         );
 
         expect(result.current.appointment).toBeNull();
@@ -37,10 +37,10 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve carregar detalhes da consulta', async () => {
-        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockResolvedValue(mockAppointment);
+        (mockCasoDeUsoDetalhesDaConsulta.getById as jest.Mock).mockResolvedValue(mockAppointment);
 
         const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
+            useAppointmentDetailsViewModel(mockCasoDeUsoDetalhesDaConsulta)
         );
 
         await act(async () => {
@@ -54,14 +54,14 @@ describe('useAppointmentDetailsViewModel', () => {
 
     it('deve setar loading durante carregamento', async () => {
         let resolveLoad: (value: Appointment) => void;
-        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockImplementation(() =>
+        (mockCasoDeUsoDetalhesDaConsulta.getById as jest.Mock).mockImplementation(() =>
             new Promise((resolve) => {
                 resolveLoad = resolve;
             })
         );
 
         const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
+            useAppointmentDetailsViewModel(mockCasoDeUsoDetalhesDaConsulta)
         );
 
         act(() => {
@@ -78,10 +78,10 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve setar notFound quando consulta não existe', async () => {
-        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockResolvedValue(null);
+        (mockCasoDeUsoDetalhesDaConsulta.getById as jest.Mock).mockResolvedValue(null);
 
         const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
+            useAppointmentDetailsViewModel(mockCasoDeUsoDetalhesDaConsulta)
         );
 
         await act(async () => {
@@ -92,13 +92,13 @@ describe('useAppointmentDetailsViewModel', () => {
         expect(result.current.notFound).toBe(true);
     });
 
-    it('deve tratar RepositoryError', async () => {
-        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockRejectedValue(
-            new RepositoryError('Erro ao carregar')
+    it('deve tratar ErroRepositorio', async () => {
+        (mockCasoDeUsoDetalhesDaConsulta.getById as jest.Mock).mockRejectedValue(
+            new ErroRepositorio('Erro ao carregar')
         );
 
         const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
+            useAppointmentDetailsViewModel(mockCasoDeUsoDetalhesDaConsulta)
         );
 
         await act(async () => {
@@ -110,10 +110,10 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve tratar erro genérico', async () => {
-        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockRejectedValue(new Error('Unknown'));
+        (mockCasoDeUsoDetalhesDaConsulta.getById as jest.Mock).mockRejectedValue(new Error('Unknown'));
 
         const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
+            useAppointmentDetailsViewModel(mockCasoDeUsoDetalhesDaConsulta)
         );
 
         await act(async () => {
@@ -124,12 +124,12 @@ describe('useAppointmentDetailsViewModel', () => {
     });
 
     it('deve limpar erro', async () => {
-        (mockGetAppointmentDetailsUseCase.getById as jest.Mock).mockRejectedValue(
-            new RepositoryError('Erro')
+        (mockCasoDeUsoDetalhesDaConsulta.getById as jest.Mock).mockRejectedValue(
+            new ErroRepositorio('Erro')
         );
 
         const { result } = renderHook(() =>
-            useAppointmentDetailsViewModel(mockGetAppointmentDetailsUseCase)
+            useAppointmentDetailsViewModel(mockCasoDeUsoDetalhesDaConsulta)
         );
 
         await act(async () => {

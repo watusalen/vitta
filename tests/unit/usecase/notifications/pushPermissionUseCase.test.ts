@@ -1,7 +1,7 @@
-import PushPermissionUseCase from "@/usecase/notifications/pushPermissionUseCase";
+import CasoDeUsoPermissaoPush from "@/usecase/notifications/pushPermissionUseCase";
 import { IPushNotificationService } from "@/model/services/iPushNotificationService";
 
-describe("PushPermissionUseCase", () => {
+describe("Caso de Uso: Permissão de Notificação Push", () => {
     let service: jest.Mocked<IPushNotificationService>;
 
     beforeEach(() => {
@@ -16,7 +16,7 @@ describe("PushPermissionUseCase", () => {
 
     it("deve consultar o status da permissão", async () => {
         service.getPermissionStatus.mockResolvedValue("granted");
-        const useCase = new PushPermissionUseCase(service);
+        const useCase = new CasoDeUsoPermissaoPush(service);
 
         await expect(useCase.checkPermission()).resolves.toBe("granted");
         expect(service.getPermissionStatus).toHaveBeenCalled();
@@ -24,7 +24,7 @@ describe("PushPermissionUseCase", () => {
 
     it("deve solicitar permissão e configurar canal", async () => {
         service.requestPermissions.mockResolvedValue("granted");
-        const useCase = new PushPermissionUseCase(service);
+        const useCase = new CasoDeUsoPermissaoPush(service);
 
         const result = await useCase.requestPermission();
 
@@ -34,7 +34,7 @@ describe("PushPermissionUseCase", () => {
     });
 
     it("deve abrir os ajustes", async () => {
-        const useCase = new PushPermissionUseCase(service);
+        const useCase = new CasoDeUsoPermissaoPush(service);
 
         await useCase.openSettings();
 

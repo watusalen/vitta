@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Vitta.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>A89458761CB9DA4803C8B968C060582D1712C8A7</string>
+				<key>dateExpires</key>
+				<string>12/01/27</string>
+				<key>type</key>
+				<string>Apple Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A89458761CB9DA4803C8B968C060582D1712C8A7</string>
+						<key>dateExpires</key>
+						<string>12/01/27</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>React.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>5RZ8SQWW5T</string>
+						<key>name</key>
+						<string>INSTITUTO FEDERAL DE EDUCACAO, CIENCIA E TECNOLOGIA DO PIAUI</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>1.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A89458761CB9DA4803C8B968C060582D1712C8A7</string>
+						<key>dateExpires</key>
+						<string>12/01/27</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>ReactNativeDependencies.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>5RZ8SQWW5T</string>
+						<key>name</key>
+						<string>INSTITUTO FEDERAL DE EDUCACAO, CIENCIA E TECNOLOGIA DO PIAUI</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>1.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>0.12.0</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>A89458761CB9DA4803C8B968C060582D1712C8A7</string>
+						<key>dateExpires</key>
+						<string>12/01/27</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>hermes.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>5RZ8SQWW5T</string>
+						<key>name</key>
+						<string>INSTITUTO FEDERAL DE EDUCACAO, CIENCIA E TECNOLOGIA DO PIAUI</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.12.0</string>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>5RZ8SQWW5T.com.watusalen.vitta</string>
+				<key>aps-environment</key>
+				<string>production</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>5RZ8SQWW5T</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>Vitta.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>28449761-a324-4e11-953a-404e44a41589</string>
+				<key>dateExpires</key>
+				<string>12/01/27</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.watusalen.vitta</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>5RZ8SQWW5T</string>
+				<key>name</key>
+				<string>INSTITUTO FEDERAL DE EDUCACAO, CIENCIA E TECNOLOGIA DO PIAUI</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.0.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -1,5 +1,5 @@
 import FirebaseAuthService from '@/infra/firebase/service/firebaseAuthService';
-import AuthError from '@/model/errors/authError';
+import ErroAuth from '@/model/errors/authError';
 import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
@@ -56,10 +56,10 @@ describe('FirebaseAuthService', () => {
             expect(result.email).toBe('');
         });
 
-        it('deve lançar AuthError quando login falha', async () => {
+        it('deve lançar ErroAuth quando login falha', async () => {
             mockSignIn.mockRejectedValue(new Error('Firebase error'));
 
-            await expect(service.login('test@email.com', 'wrong')).rejects.toThrow(AuthError);
+            await expect(service.login('test@email.com', 'wrong')).rejects.toThrow(ErroAuth);
             await expect(service.login('test@email.com', 'wrong')).rejects.toThrow('Credenciais inválidas.');
         });
 
@@ -67,7 +67,7 @@ describe('FirebaseAuthService', () => {
             const error = Object.assign(new Error('User not found'), { code: 'auth/user-not-found' });
             mockSignIn.mockRejectedValue(error);
 
-            await expect(service.login('naoexiste@email.com', 'senha')).rejects.toThrow(AuthError);
+            await expect(service.login('naoexiste@email.com', 'senha')).rejects.toThrow(ErroAuth);
             await expect(service.login('naoexiste@email.com', 'senha')).rejects.toThrow('Email não cadastrado.');
         });
     });
@@ -103,10 +103,10 @@ describe('FirebaseAuthService', () => {
             expect(result.email).toBe('');
         });
 
-        it('deve lançar AuthError quando signup falha', async () => {
+        it('deve lançar ErroAuth quando signup falha', async () => {
             mockCreateUser.mockRejectedValue(new Error('Email already exists'));
 
-            await expect(service.signup('existing@email.com', 'password')).rejects.toThrow(AuthError);
+            await expect(service.signup('existing@email.com', 'password')).rejects.toThrow(ErroAuth);
             await expect(service.signup('existing@email.com', 'password')).rejects.toThrow(
                 'Essa conta já existe.'
             );
@@ -121,10 +121,10 @@ describe('FirebaseAuthService', () => {
             expect(mockSignOut).toHaveBeenCalledWith({});
         });
 
-        it('deve lançar AuthError quando logout falha', async () => {
+        it('deve lançar ErroAuth quando logout falha', async () => {
             mockSignOut.mockRejectedValue(new Error('Network error'));
 
-            await expect(service.logout()).rejects.toThrow(AuthError);
+            await expect(service.logout()).rejects.toThrow(ErroAuth);
             await expect(service.logout()).rejects.toThrow('Não foi possível fazer logout.');
         });
     });

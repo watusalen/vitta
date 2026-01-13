@@ -98,7 +98,7 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             if (appt.timeStart !== timeStart || appt.timeEnd !== timeEnd) {
                 return false;
             }
-            return appt.status === 'accepted' || appt.status === 'pending' || !appt.status;
+            return appt.status === 'accepted';
         });
     }
 
@@ -109,8 +109,16 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
         timeEnd: string
     ): Promise<boolean> {
         const patientAppointments = await this.appointmentRepository.listByPatient(patientId);
-        const normalizeDate = (value: string): string =>
-            new Date(value).toISOString().split('T')[0];
+        const normalizeDate = (value: string): string => {
+            if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+                return value;
+            }
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) {
+                return value;
+            }
+            return parsed.toISOString().split("T")[0];
+        };
 
         const targetDate = normalizeDate(date);
 
@@ -123,7 +131,7 @@ export default class RequestAppointmentUseCase implements IRequestAppointmentUse
             ) {
                 return false;
             }
-            return appt.status === 'pending' || !appt.status;
+            return appt.status === "pending" || appt.status === "cancelled";
         });
     }
 }

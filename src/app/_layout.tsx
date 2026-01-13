@@ -1,6 +1,6 @@
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
@@ -23,8 +23,11 @@ Notifications.setNotificationHandler({
 export default function RootLayout() {
   const fontsLoaded = useLoadFonts();
   const [boundaryKey, setBoundaryKey] = useState(0);
+  const missingFirebaseConfig = getMissingFirebaseConfig();
+  const missingDependencies = getMissingDependencies();
+  const canNavigateFromNotification = fontsLoaded && !missingFirebaseConfig.length && !missingDependencies.length;
 
-  useNotificationObserver();
+  useNotificationObserver(canNavigateFromNotification);
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -36,7 +39,7 @@ export default function RootLayout() {
     return null;
   }
 
-  if (getMissingFirebaseConfig().length > 0 || getMissingDependencies().length > 0) {
+  if (!canNavigateFromNotification) {
     return (
       <SafeAreaProvider>
         <ErrorScreen message="Falha ao inicializar o aplicativo." />
@@ -68,29 +71,52 @@ export default function RootLayout() {
   );
 }
 
-function useNotificationObserver() {
+function useNotificationObserver(canNavigate: boolean) {
+  const pendingResponse = useRef<Notifications.NotificationResponse | null>(null);
+  const canNavigateRef = useRef(canNavigate);
+
   useEffect(() => {
-    function redirect(notification: Notifications.Notification) {
-      const url = notification.request.content.data?.url;
-      if (typeof url === 'string') {
-        handleNotificationUrl(url);
+    canNavigateRef.current = canNavigate;
+    if (canNavigate && pendingResponse.current?.notification) {
+      redirectNotification(pendingResponse.current.notification);
+      pendingResponse.current = null;
+    }
+  }, [canNavigate]);
+
+  useEffect(() => {
+    function handleResponse(response: Notifications.NotificationResponse) {
+      if (!canNavigateRef.current) {
+        pendingResponse.current = response;
+        return;
       }
+      redirectNotification(response.notification);
     }
 
     Notifications.getLastNotificationResponseAsync().then((response) => {
       if (response?.notification) {
-        redirect(response.notification);
+        handleResponse(response);
       }
     });
 
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      redirect(response.notification);
+      handleResponse(response);
     });
 
     return () => {
       subscription.remove();
     };
   }, []);
+}
+
+function redirectNotification(notification: Notifications.Notification) {
+  const data = notification.request.content.data;
+  console.log("push-data", data);
+  const url = data?.url;
+  if (typeof url === 'string') {
+    handleNotificationUrl(url);
+    return;
+  }
+  console.log('push-data-sem-rota', data);
 }
 
 const staticNotificationRoutes = [

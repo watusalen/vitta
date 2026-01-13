@@ -1,16 +1,16 @@
 import { renderHook, act } from '@testing-library/react';
 import useSignUpViewModel from '@/viewmodel/auth/useSignUpViewModel';
 import { IAuthUseCases } from '@/usecase/auth/iAuthUseCases';
-import AuthError from '@/model/errors/authError';
-import ValidationError from '@/model/errors/validationError';
-import RepositoryError from '@/model/errors/repositoryError';
+import ErroAuth from '@/model/errors/authError';
+import ErroValidacao from '@/model/errors/validationError';
+import ErroRepositorio from '@/model/errors/repositoryError';
 import User from '@/model/entities/user';
 
-describe('useSignUpViewModel', () => {
-    let mockAuthUseCases: IAuthUseCases;
+describe('ViewModel de Cadastro', () => {
+    let mockCasosDeUsoAuth: IAuthUseCases;
 
     beforeEach(() => {
-        mockAuthUseCases = {
+        mockCasosDeUsoAuth = {
             login: jest.fn(),
             signUp: jest.fn(),
             logout: jest.fn(),
@@ -28,7 +28,7 @@ describe('useSignUpViewModel', () => {
     };
 
     it('deve inicializar com estado padrão', () => {
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         expect(result.current.user).toBeNull();
         expect(result.current.error).toBeNull();
@@ -40,9 +40,9 @@ describe('useSignUpViewModel', () => {
     });
 
     it('deve fazer signup com sucesso', async () => {
-        (mockAuthUseCases.signUp as jest.Mock).mockResolvedValue(mockUser);
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockResolvedValue(mockUser);
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.signUp('John Doe', 'john@email.com', 'password123', 'password123');
@@ -51,16 +51,16 @@ describe('useSignUpViewModel', () => {
         expect(result.current.user).toEqual(mockUser);
         expect(result.current.error).toBeNull();
         expect(result.current.loading).toBe(false);
-        expect(mockAuthUseCases.signUp).toHaveBeenCalledWith('John Doe', 'john@email.com', 'password123');
+        expect(mockCasosDeUsoAuth.signUp).toHaveBeenCalledWith('John Doe', 'john@email.com', 'password123');
     });
 
     it('deve setar loading durante signup', async () => {
         let resolveSignUp: (value: User) => void;
-        (mockAuthUseCases.signUp as jest.Mock).mockImplementation(() => new Promise((resolve) => {
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockImplementation(() => new Promise((resolve) => {
             resolveSignUp = resolve;
         }));
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         act(() => {
             result.current.signUp('John Doe', 'john@email.com', 'password123', 'password123');
@@ -75,10 +75,10 @@ describe('useSignUpViewModel', () => {
         expect(result.current.loading).toBe(false);
     });
 
-    it('deve tratar ValidationError', async () => {
-        (mockAuthUseCases.signUp as jest.Mock).mockRejectedValue(new ValidationError('Email inválido'));
+    it('deve tratar ErroValidacao', async () => {
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockRejectedValue(new ErroValidacao('Email inválido'));
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.signUp('John', 'invalid', 'password123', 'password123');
@@ -88,10 +88,10 @@ describe('useSignUpViewModel', () => {
         expect(result.current.user).toBeNull();
     });
 
-    it('deve tratar AuthError', async () => {
-        (mockAuthUseCases.signUp as jest.Mock).mockRejectedValue(new AuthError('Conta já existe'));
+    it('deve tratar ErroAuth', async () => {
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockRejectedValue(new ErroAuth('Conta já existe'));
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.signUp('John', 'existing@email.com', 'password', 'password');
@@ -100,10 +100,10 @@ describe('useSignUpViewModel', () => {
         expect(result.current.emailError).toBe('Conta já existe');
     });
 
-    it('deve tratar RepositoryError', async () => {
-        (mockAuthUseCases.signUp as jest.Mock).mockRejectedValue(new RepositoryError('Erro ao salvar'));
+    it('deve tratar ErroRepositorio', async () => {
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockRejectedValue(new ErroRepositorio('Erro ao salvar'));
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.signUp('John', 'john@email.com', 'password', 'password');
@@ -113,9 +113,9 @@ describe('useSignUpViewModel', () => {
     });
 
     it('deve tratar Error genérico', async () => {
-        (mockAuthUseCases.signUp as jest.Mock).mockRejectedValue(new Error('Algo deu errado'));
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockRejectedValue(new Error('Algo deu errado'));
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.signUp('John', 'john@email.com', 'password', 'password');
@@ -125,9 +125,9 @@ describe('useSignUpViewModel', () => {
     });
 
     it('deve tratar erro desconhecido', async () => {
-        (mockAuthUseCases.signUp as jest.Mock).mockRejectedValue('string error');
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockRejectedValue('string error');
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.signUp('John', 'john@email.com', 'password', 'password');
@@ -137,9 +137,9 @@ describe('useSignUpViewModel', () => {
     });
 
     it('deve limpar erro com clearError', async () => {
-        (mockAuthUseCases.signUp as jest.Mock).mockRejectedValue(new AuthError('Erro'));
+        (mockCasosDeUsoAuth.signUp as jest.Mock).mockRejectedValue(new ErroAuth('Erro'));
 
-        const { result } = renderHook(() => useSignUpViewModel(mockAuthUseCases));
+        const { result } = renderHook(() => useSignUpViewModel(mockCasosDeUsoAuth));
 
         await act(async () => {
             await result.current.signUp('John', 'john@email.com', 'password', 'password');

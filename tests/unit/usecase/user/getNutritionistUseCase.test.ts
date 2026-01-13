@@ -1,11 +1,11 @@
-import GetNutritionistUseCase from '@/usecase/user/getNutritionistUseCase';
+import CasoDeUsoObterNutricionista from '@/usecase/user/getNutritionistUseCase';
 import { IUserRepository } from '@/model/repositories/iUserRepository';
 import User from '@/model/entities/user';
-import RepositoryError from '@/model/errors/repositoryError';
-import ValidationError from '@/model/errors/validationError';
+import ErroRepositorio from '@/model/errors/repositoryError';
+import ErroValidacao from '@/model/errors/validationError';
 
-describe('GetNutritionistUseCase', () => {
-    let getNutritionistUseCase: GetNutritionistUseCase;
+describe('Caso de Uso: Obter Nutricionista', () => {
+    let getNutritionistUseCase: CasoDeUsoObterNutricionista;
     let mockUserRepository: jest.Mocked<IUserRepository>;
 
     const mockNutritionist: User = {
@@ -26,10 +26,10 @@ describe('GetNutritionistUseCase', () => {
             getPushTokens: jest.fn(),
         };
 
-        getNutritionistUseCase = new GetNutritionistUseCase(mockUserRepository);
+        getNutritionistUseCase = new CasoDeUsoObterNutricionista(mockUserRepository);
     });
 
-    it('should return the nutritionist when found', async () => {
+    it('deve retornar o nutricionista quando encontrado', async () => {
         mockUserRepository.getByRole.mockResolvedValueOnce([mockNutritionist]);
 
         const result = await getNutritionistUseCase.getNutritionist();
@@ -38,16 +38,16 @@ describe('GetNutritionistUseCase', () => {
         expect(mockUserRepository.getByRole).toHaveBeenCalledWith('nutritionist');
     });
 
-    it('should throw ValidationError when no nutritionist is found', async () => {
+    it('deve lançar ErroValidacao quando nenhum nutricionista é encontrado', async () => {
         mockUserRepository.getByRole.mockResolvedValueOnce([]);
 
         const promise = getNutritionistUseCase.getNutritionist();
 
-        await expect(promise).rejects.toThrow(ValidationError);
+        await expect(promise).rejects.toThrow(ErroValidacao);
         await expect(promise).rejects.toThrow('Nenhuma nutricionista cadastrada.');
     });
 
-    it('should throw ValidationError when multiple nutritionists exist', async () => {
+    it('deve lançar ErroValidacao quando existem múltiplos nutricionistas', async () => {
         const secondNutritionist: User = {
             ...mockNutritionist,
             id: 'nutri-456',
@@ -58,22 +58,22 @@ describe('GetNutritionistUseCase', () => {
 
         const promise = getNutritionistUseCase.getNutritionist();
 
-        await expect(promise).rejects.toThrow(ValidationError);
+        await expect(promise).rejects.toThrow(ErroValidacao);
         await expect(promise).rejects.toThrow('Existem múltiplas nutricionistas cadastradas.');
     });
 
-    it('should throw RepositoryError when repository fails', async () => {
+    it('deve lançar ErroRepositorio quando o repositório falha', async () => {
         mockUserRepository.getByRole.mockRejectedValueOnce(
-            new RepositoryError('Database connection failed')
+            new ErroRepositorio('Database connection failed')
         );
 
-        await expect(getNutritionistUseCase.getNutritionist()).rejects.toThrow(RepositoryError);
+        await expect(getNutritionistUseCase.getNutritionist()).rejects.toThrow(ErroRepositorio);
     });
 
-    it('should throw RepositoryError for unexpected errors', async () => {
+    it('deve lançar ErroRepositorio quando ocorre erro inesperado', async () => {
         mockUserRepository.getByRole.mockRejectedValueOnce(new Error('Unexpected'));
 
-        await expect(getNutritionistUseCase.getNutritionist()).rejects.toThrow(RepositoryError);
+        await expect(getNutritionistUseCase.getNutritionist()).rejects.toThrow(ErroRepositorio);
         await expect(getNutritionistUseCase.getNutritionist()).rejects.toThrow('Erro ao buscar nutricionista.');
     });
 });

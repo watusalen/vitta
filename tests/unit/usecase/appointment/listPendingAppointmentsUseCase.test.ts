@@ -1,9 +1,8 @@
-import ListPendingAppointmentsUseCase from '@/usecase/appointment/list/listPendingAppointmentsUseCase';
+import CasoDeUsoListarConsultasPendentes from '@/usecase/appointment/list/listPendingAppointmentsUseCase';
 import { IListPendingAppointmentsUseCase } from '@/usecase/appointment/list/iListPendingAppointmentsUseCase';
 import { IAppointmentRepository } from '@/model/repositories/iAppointmentRepository';
 import Appointment from '@/model/entities/appointment';
 
-// Helper para criar appointment mock
 const createMockAppointment = (
     id: string,
     date: string,
@@ -21,7 +20,7 @@ const createMockAppointment = (
     updatedAt: new Date(),
 });
 
-describe('ListPendingAppointmentsUseCase', () => {
+describe('Caso de Uso: Listar Consultas Pendentes', () => {
     let mockRepository: IAppointmentRepository;
     let useCase: IListPendingAppointmentsUseCase;
 
@@ -41,11 +40,11 @@ describe('ListPendingAppointmentsUseCase', () => {
             onNutritionistAppointmentsChange: jest.fn(),
         };
 
-        useCase = new ListPendingAppointmentsUseCase(mockRepository);
+        useCase = new CasoDeUsoListarConsultasPendentes(mockRepository);
     });
 
     describe('listPendingByNutritionist', () => {
-        it('should return pending appointments for nutritionist', async () => {
+        it('deve retornar pending appointments for nutritionist', async () => {
             const pendingAppointments = [
                 createMockAppointment('appt-1', '2025-01-20', '09:00'),
                 createMockAppointment('appt-2', '2025-01-21', '11:00'),
@@ -59,7 +58,7 @@ describe('ListPendingAppointmentsUseCase', () => {
             expect(result).toHaveLength(2);
         });
 
-        it('should return empty array when no pending appointments', async () => {
+        it('deve retornar array vazio quando não há consultas pendentes', async () => {
             (mockRepository.listByStatus as jest.Mock).mockResolvedValue([]);
 
             const result = await useCase.listPendingByNutritionist('nutri-1');
@@ -67,7 +66,7 @@ describe('ListPendingAppointmentsUseCase', () => {
             expect(result).toHaveLength(0);
         });
 
-        it('should sort appointments by date ascending', async () => {
+        it('deve ordenar appointments by date ascending', async () => {
             const pendingAppointments = [
                 createMockAppointment('appt-1', '2025-01-25', '09:00'),
                 createMockAppointment('appt-2', '2025-01-20', '09:00'),
@@ -83,7 +82,7 @@ describe('ListPendingAppointmentsUseCase', () => {
             expect(result[2].date).toBe('2025-01-25');
         });
 
-        it('should sort by time when dates are equal', async () => {
+        it('deve ordenar por horário quando as datas são iguais', async () => {
             const pendingAppointments = [
                 createMockAppointment('appt-1', '2025-01-20', '14:00'),
                 createMockAppointment('appt-2', '2025-01-20', '09:00'),

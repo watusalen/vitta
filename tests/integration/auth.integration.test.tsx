@@ -1,15 +1,15 @@
 import { act, renderHook } from "@testing-library/react";
-import AuthUseCases from "@/usecase/auth/authUseCases";
+import CasosDeUsoAuth from "@/usecase/auth/authUseCases";
 import useLoginViewModel from "@/viewmodel/auth/useLoginViewModel";
 import useSignUpViewModel from "@/viewmodel/auth/useSignUpViewModel";
 import useHomeViewModel from "@/viewmodel/auth/useHomeViewModel";
 import { InMemoryAuthService, InMemoryUserRepository, flushPromises } from "./helpers/inMemoryStores";
 
-describe("Auth integration", () => {
-    it("signs up, logs in, and logs out with redirects", async () => {
+describe("Integração de autenticação", () => {
+    it("faz cadastro, login e logout com redirecionamentos", async () => {
         const authService = new InMemoryAuthService();
         const userRepository = new InMemoryUserRepository();
-        const authUseCases = new AuthUseCases(authService, userRepository);
+        const authUseCases = new CasosDeUsoAuth(authService, userRepository);
 
         const { result: signUpResult } = renderHook(() => useSignUpViewModel(authUseCases));
 
@@ -66,10 +66,10 @@ describe("Auth integration", () => {
         expect(homeResult.current.unauthenticatedRedirect).toBe("/login");
     });
 
-    it("handles reset password success and error", async () => {
+    it("trata sucesso e erro na redefinição de senha", async () => {
         const authService = new InMemoryAuthService();
         const userRepository = new InMemoryUserRepository();
-        const authUseCases = new AuthUseCases(authService, userRepository);
+        const authUseCases = new CasosDeUsoAuth(authService, userRepository);
 
         const { result: signUpResult } = renderHook(() => useSignUpViewModel(authUseCases));
         await act(async () => {

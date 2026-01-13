@@ -1,12 +1,12 @@
-import AppointmentPushNotificationUseCase from "@/usecase/notifications/appointmentPushNotificationUseCase";
+import CasoDeUsoNotificacaoConsulta from "@/usecase/notifications/appointmentPushNotificationUseCase";
 import { IUserRepository } from "@/model/repositories/iUserRepository";
 import { IPushNotificationSender } from "@/model/services/iPushNotificationSender";
 import Appointment from "@/model/entities/appointment";
 
-describe("AppointmentPushNotificationUseCase", () => {
+describe("Caso de Uso: Notificação de Consulta", () => {
     let repository: jest.Mocked<IUserRepository>;
     let sender: jest.Mocked<IPushNotificationSender>;
-    let useCase: AppointmentPushNotificationUseCase;
+    let useCase: CasoDeUsoNotificacaoConsulta;
 
     const appointment: Appointment = {
         id: "appt-1",
@@ -32,10 +32,10 @@ describe("AppointmentPushNotificationUseCase", () => {
         sender = {
             sendPush: jest.fn(),
         };
-        useCase = new AppointmentPushNotificationUseCase(repository, sender);
+        useCase = new CasoDeUsoNotificacaoConsulta(repository, sender);
     });
 
-    it("deve ignorar quando nao existir token", async () => {
+    it("deve ignorar quando não existir token", async () => {
         repository.getPushTokens.mockResolvedValueOnce([]);
 
         await useCase.notify(appointment, "requested", "nutritionist");
@@ -43,7 +43,7 @@ describe("AppointmentPushNotificationUseCase", () => {
         expect(sender.sendPush).not.toHaveBeenCalled();
     });
 
-    it("deve enviar notificacao para o paciente", async () => {
+    it("deve enviar notificação para o paciente", async () => {
         repository.getUserByID.mockResolvedValue({
             id: "nutri-1",
             name: "Nutri",
@@ -65,7 +65,7 @@ describe("AppointmentPushNotificationUseCase", () => {
         });
     });
 
-    it("deve enviar notificacao para a nutricionista", async () => {
+    it("deve enviar notificação para a nutricionista", async () => {
         repository.getUserByID.mockResolvedValue({
             id: "patient-1",
             name: "Paciente",

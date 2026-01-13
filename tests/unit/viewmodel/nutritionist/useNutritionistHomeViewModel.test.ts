@@ -3,28 +3,28 @@ import useNutritionistHomeViewModel from '@/viewmodel/nutritionist/useNutritioni
 import { IListPendingAppointmentsUseCase } from '@/usecase/appointment/list/iListPendingAppointmentsUseCase';
 import { IListNutritionistAgendaUseCase } from '@/usecase/appointment/list/iListNutritionistAgendaUseCase';
 import { IGetUserByIdUseCase } from '@/usecase/user/iGetUserByIdUseCase';
-import RepositoryError from '@/model/errors/repositoryError';
+import ErroRepositorio from '@/model/errors/repositoryError';
 import Appointment from '@/model/entities/appointment';
 import User from '@/model/entities/user';
 
-describe('useNutritionistHomeViewModel', () => {
-    let mockListPendingAppointmentsUseCase: IListPendingAppointmentsUseCase;
-    let mockListNutritionistAgendaUseCase: IListNutritionistAgendaUseCase;
-    let mockGetUserByIdUseCase: IGetUserByIdUseCase;
+describe('ViewModel de Home da Nutricionista', () => {
+    let mockCasoDeUsoListarConsultasPendentes: IListPendingAppointmentsUseCase;
+    let mockCasoDeUsoListarAgendaDaNutricionista: IListNutritionistAgendaUseCase;
+    let mockCasoDeUsoObterUsuarioPorId: IGetUserByIdUseCase;
 
     beforeEach(() => {
-        mockListPendingAppointmentsUseCase = {
+        mockCasoDeUsoListarConsultasPendentes = {
             listPendingByNutritionist: jest.fn(),
             subscribePendingByNutritionist: jest.fn(() => jest.fn()),
         };
 
-        mockListNutritionistAgendaUseCase = {
+        mockCasoDeUsoListarAgendaDaNutricionista = {
             listAgenda: jest.fn(),
             listAcceptedByDate: jest.fn(),
             subscribeToNutritionistAppointments: jest.fn(() => () => {}),
         };
 
-        mockGetUserByIdUseCase = {
+        mockCasoDeUsoObterUsuarioPorId = {
             getById: jest.fn(),
         };
     });
@@ -66,14 +66,14 @@ describe('useNutritionistHomeViewModel', () => {
     };
 
     it('deve inicializar com loading true', () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -82,15 +82,15 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve carregar dados na inicialização', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue(mockPendingAppointments);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue(mockAcceptedAppointments);
-        (mockGetUserByIdUseCase.getById as jest.Mock).mockResolvedValue(mockPatient);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue(mockPendingAppointments);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue(mockAcceptedAppointments);
+        (mockCasoDeUsoObterUsuarioPorId.getById as jest.Mock).mockResolvedValue(mockPatient);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -106,15 +106,15 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve usar "Paciente" quando não encontrar nome', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue(mockAcceptedAppointments);
-        (mockGetUserByIdUseCase.getById as jest.Mock).mockResolvedValue(null);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue(mockAcceptedAppointments);
+        (mockCasoDeUsoObterUsuarioPorId.getById as jest.Mock).mockResolvedValue(null);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -127,15 +127,15 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve tratar erro ao buscar nome do paciente', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue(mockAcceptedAppointments);
-        (mockGetUserByIdUseCase.getById as jest.Mock).mockRejectedValue(new Error('Erro'));
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue(mockAcceptedAppointments);
+        (mockCasoDeUsoObterUsuarioPorId.getById as jest.Mock).mockRejectedValue(new Error('Erro'));
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -147,15 +147,15 @@ describe('useNutritionistHomeViewModel', () => {
         expect(result.current.todayAppointments[0].patientName).toBe('Paciente');
     });
 
-    it('deve tratar RepositoryError', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockRejectedValue(new RepositoryError('Erro ao carregar'));
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+    it('deve tratar ErroRepositorio', async () => {
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockRejectedValue(new ErroRepositorio('Erro ao carregar'));
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -168,14 +168,14 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve tratar erro genérico', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockRejectedValue(new Error('Unknown'));
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockRejectedValue(new Error('Unknown'));
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -188,14 +188,14 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve fazer refresh', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -204,7 +204,7 @@ describe('useNutritionistHomeViewModel', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue(mockPendingAppointments);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue(mockPendingAppointments);
 
         await act(async () => {
             await result.current.refresh();
@@ -214,14 +214,14 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve limpar erro', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockRejectedValue(new RepositoryError('Erro'));
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockRejectedValue(new ErroRepositorio('Erro'));
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -240,14 +240,14 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve calcular hasAppointmentsToday corretamente', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -260,14 +260,14 @@ describe('useNutritionistHomeViewModel', () => {
     });
 
     it('deve mostrar empty state quando não há consultas', async () => {
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
@@ -282,19 +282,18 @@ describe('useNutritionistHomeViewModel', () => {
     it('deve esconder empty state após 3 segundos', async () => {
         jest.useFakeTimers();
         
-        (mockListPendingAppointmentsUseCase.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
-        (mockListNutritionistAgendaUseCase.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist as jest.Mock).mockResolvedValue([]);
+        (mockCasoDeUsoListarAgendaDaNutricionista.listAcceptedByDate as jest.Mock).mockResolvedValue([]);
 
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 'nutri-1'
             )
         );
 
-        // Await the initial loading
         await act(async () => {
             jest.runAllTimers();
         });
@@ -313,9 +312,9 @@ describe('useNutritionistHomeViewModel', () => {
     it('não deve carregar se nutritionistId estiver vazio', async () => {
         const { result } = renderHook(() =>
             useNutritionistHomeViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockListNutritionistAgendaUseCase,
-                mockGetUserByIdUseCase,
+                mockCasoDeUsoListarConsultasPendentes,
+                mockCasoDeUsoListarAgendaDaNutricionista,
+                mockCasoDeUsoObterUsuarioPorId,
                 ''
             )
         );
@@ -324,6 +323,6 @@ describe('useNutritionistHomeViewModel', () => {
             await new Promise(resolve => setTimeout(resolve, 0));
         });
 
-        expect(mockListPendingAppointmentsUseCase.listPendingByNutritionist).not.toHaveBeenCalled();
+        expect(mockCasoDeUsoListarConsultasPendentes.listPendingByNutritionist).not.toHaveBeenCalled();
     });
 });

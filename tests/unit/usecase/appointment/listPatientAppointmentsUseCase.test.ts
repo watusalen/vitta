@@ -1,8 +1,7 @@
-import ListPatientAppointmentsUseCase from '../../../../src/usecase/appointment/list/listPatientAppointmentsUseCase';
+import CasoDeUsoListarConsultasDoPaciente from '../../../../src/usecase/appointment/list/listPatientAppointmentsUseCase';
 import { IAppointmentRepository } from '../../../../src/model/repositories/iAppointmentRepository';
 import Appointment from '../../../../src/model/entities/appointment';
 
-// Helper para criar appointment mock
 const createMockAppointment = (
     id: string,
     date: string,
@@ -19,7 +18,6 @@ const createMockAppointment = (
     updatedAt: new Date(),
 });
 
-// Mock do repositório
 const createMockRepository = (appointments: Appointment[] = []): IAppointmentRepository => ({
     create: jest.fn(),
     getById: jest.fn(),
@@ -31,7 +29,6 @@ const createMockRepository = (appointments: Appointment[] = []): IAppointmentRep
     updateStatus: jest.fn(),
     updateCalendarEventIds: jest.fn(),
     onPatientAppointmentsChange: jest.fn((_, callback) => {
-        // Simula chamada inicial com os appointments
         callback(appointments);
         return () => {};
     }),
@@ -39,17 +36,17 @@ const createMockRepository = (appointments: Appointment[] = []): IAppointmentRep
     onNutritionistAppointmentsChange: jest.fn(() => () => {}),
 });
 
-describe('ListPatientAppointmentsUseCase', () => {
+describe('CasoDeUsoListarConsultasDoPaciente', () => {
     const patientId = 'patient-1';
 
     describe('execute - Basic Functionality', () => {
-        it('should return all appointments for a patient', async () => {
+        it('deve retornar all appointments for a patient', async () => {
             const appointments = [
                 createMockAppointment('1', '2025-12-20'),
                 createMockAppointment('2', '2025-12-21'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId);
 
@@ -57,9 +54,9 @@ describe('ListPatientAppointmentsUseCase', () => {
             expect(mockRepo.listByPatient).toHaveBeenCalledWith(patientId);
         });
 
-        it('should return empty array when patient has no appointments', async () => {
+        it('deve retornar array vazio quando o paciente não tem consultas', async () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId);
 
@@ -68,14 +65,14 @@ describe('ListPatientAppointmentsUseCase', () => {
     });
 
     describe('execute - Status Filter', () => {
-        it('should filter by pending status', async () => {
+        it('deve filtrar by pending status', async () => {
             const appointments = [
                 createMockAppointment('1', '2025-12-20', 'pending'),
                 createMockAppointment('2', '2025-12-21', 'accepted'),
                 createMockAppointment('3', '2025-12-22', 'pending'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'pending' });
 
@@ -83,14 +80,14 @@ describe('ListPatientAppointmentsUseCase', () => {
             result.forEach((appt: Appointment) => expect(appt.status).toBe('pending'));
         });
 
-        it('should filter by accepted status', async () => {
+        it('deve filtrar by accepted status', async () => {
             const appointments = [
                 createMockAppointment('1', '2025-12-20', 'pending'),
                 createMockAppointment('2', '2025-12-21', 'accepted'),
                 createMockAppointment('3', '2025-12-22', 'accepted'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'accepted' });
 
@@ -98,13 +95,13 @@ describe('ListPatientAppointmentsUseCase', () => {
             result.forEach((appt: Appointment) => expect(appt.status).toBe('accepted'));
         });
 
-        it('should filter by rejected status', async () => {
+        it('deve filtrar by rejected status', async () => {
             const appointments = [
                 createMockAppointment('1', '2025-12-20', 'pending'),
                 createMockAppointment('2', '2025-12-21', 'rejected'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'rejected' });
 
@@ -112,13 +109,13 @@ describe('ListPatientAppointmentsUseCase', () => {
             expect(result[0].status).toBe('rejected');
         });
 
-        it('should filter by cancelled status', async () => {
+        it('deve filtrar by cancelled status', async () => {
             const appointments = [
                 createMockAppointment('1', '2025-12-20', 'cancelled'),
                 createMockAppointment('2', '2025-12-21', 'accepted'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { status: 'cancelled' });
 
@@ -128,7 +125,7 @@ describe('ListPatientAppointmentsUseCase', () => {
     });
 
     describe('execute - Future Only Filter', () => {
-        it('should filter only future appointments', async () => {
+        it('deve filtrar only future appointments', async () => {
             const today = new Date();
             const futureDate = new Date();
             futureDate.setDate(today.getDate() + 7);
@@ -140,10 +137,10 @@ describe('ListPatientAppointmentsUseCase', () => {
             const appointments = [
                 createMockAppointment('1', formatDate(futureDate), 'pending'),
                 createMockAppointment('2', formatDate(pastDate), 'accepted'),
-                createMockAppointment('3', formatDate(today), 'pending'), // Today counts as future
+                createMockAppointment('3', formatDate(today), 'pending'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { futureOnly: true });
 
@@ -153,7 +150,7 @@ describe('ListPatientAppointmentsUseCase', () => {
             });
         });
 
-        it('should return all when futureOnly is false', async () => {
+        it('deve retornar todas quando futureOnly é false', async () => {
             const today = new Date();
             const futureDate = new Date();
             futureDate.setDate(today.getDate() + 7);
@@ -167,7 +164,7 @@ describe('ListPatientAppointmentsUseCase', () => {
                 createMockAppointment('2', formatDate(pastDate), 'accepted'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { futureOnly: false });
 
@@ -176,7 +173,7 @@ describe('ListPatientAppointmentsUseCase', () => {
     });
 
     describe('execute - Combined Filters', () => {
-        it('should apply both status and futureOnly filters', async () => {
+        it('deve apply both status and futureOnly filters', async () => {
             const today = new Date();
             const futureDate = new Date();
             futureDate.setDate(today.getDate() + 7);
@@ -191,7 +188,7 @@ describe('ListPatientAppointmentsUseCase', () => {
                 createMockAppointment('3', formatDate(pastDate), 'pending'),
             ];
             const mockRepo = createMockRepository(appointments);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
 
             const result = await useCase.listByPatient(patientId, { 
                 status: 'pending', 
@@ -204,9 +201,9 @@ describe('ListPatientAppointmentsUseCase', () => {
     });
 
     describe('subscribe', () => {
-        it('should call repository.onPatientAppointmentsChange', () => {
+        it('deve chamar repository.onPatientAppointmentsChange', () => {
             const mockRepo = createMockRepository([]);
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
             const callback = jest.fn();
 
             useCase.subscribeToPatientAppointments(patientId, callback);
@@ -217,14 +214,14 @@ describe('ListPatientAppointmentsUseCase', () => {
             );
         });
 
-        it('should return unsubscribe function', () => {
+        it('deve retornar unsubscribe function', () => {
             const mockUnsubscribe = jest.fn();
             const mockRepo = {
                 ...createMockRepository([]),
     updateCalendarEventIds: jest.fn(),
                 onPatientAppointmentsChange: jest.fn(() => mockUnsubscribe),
             };
-            const useCase = new ListPatientAppointmentsUseCase(mockRepo);
+            const useCase = new CasoDeUsoListarConsultasDoPaciente(mockRepo);
             const callback = jest.fn();
 
             const unsubscribe = useCase.subscribeToPatientAppointments(patientId, callback);

@@ -1,91 +1,91 @@
-import AuthValidator from '../../../../src/usecase/auth/validator/authValidator';
-import ValidationError from '../../../../src/model/errors/validationError';
+import ValidadorAuth from '../../../../src/usecase/auth/validator/authValidator';
+import ErroValidacao from '../../../../src/model/errors/validationError';
 
-describe('AuthValidator', () => {
+describe('ValidadorAuth', () => {
   describe('validateLogin', () => {
-    it('should validate correct login data', () => {
+    it('deve validar correct login data', () => {
       expect(() => {
-        AuthValidator.validateLogin('joao@example.com', 'password123');
+        ValidadorAuth.validateLogin('joao@example.com', 'password123');
       }).not.toThrow();
     });
 
-    it('should reject empty email', () => {
+    it('deve rejeitar empty email', () => {
       expect(() => {
-        AuthValidator.validateLogin('', 'password123');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateLogin('', 'password123');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject whitespace-only email', () => {
+    it('deve rejeitar whitespace-only email', () => {
       expect(() => {
-        AuthValidator.validateLogin('   ', 'password123');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateLogin('   ', 'password123');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject empty password', () => {
+    it('deve rejeitar empty password', () => {
       expect(() => {
-        AuthValidator.validateLogin('joao@example.com', '');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateLogin('joao@example.com', '');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject whitespace-only password', () => {
+    it('deve rejeitar whitespace-only password', () => {
       expect(() => {
-        AuthValidator.validateLogin('joao@example.com', '   ');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateLogin('joao@example.com', '   ');
+      }).toThrow(ErroValidacao);
     });
   });
 
   describe('validateSignUp', () => {
-    it('should validate correct signup data', () => {
+    it('deve validar correct signup data', () => {
       expect(() => {
-        AuthValidator.validateSignUp('João Silva', 'joao@example.com', 'password123');
+        ValidadorAuth.validateSignUp('João Silva', 'joao@example.com', 'password123');
       }).not.toThrow();
     });
 
-    it('should reject empty name', () => {
+    it('deve rejeitar empty name', () => {
       expect(() => {
-        AuthValidator.validateSignUp('', 'joao@example.com', 'password123');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateSignUp('', 'joao@example.com', 'password123');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject whitespace-only name', () => {
+    it('deve rejeitar whitespace-only name', () => {
       expect(() => {
-        AuthValidator.validateSignUp('   ', 'joao@example.com', 'password123');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateSignUp('   ', 'joao@example.com', 'password123');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject empty email', () => {
+    it('deve rejeitar empty email', () => {
       expect(() => {
-        AuthValidator.validateSignUp('João', '', 'password123');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateSignUp('João', '', 'password123');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject invalid email format', () => {
+    it('deve rejeitar invalid email format', () => {
       expect(() => {
-        AuthValidator.validateSignUp('João', 'invalid-email', 'password123');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateSignUp('João', 'invalid-email', 'password123');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject short password (< 6 characters)', () => {
+    it('deve rejeitar short password (< 6 characters)', () => {
       expect(() => {
-        AuthValidator.validateSignUp('João', 'joao@example.com', '12345');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateSignUp('João', 'joao@example.com', '12345');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should reject empty password', () => {
+    it('deve rejeitar empty password', () => {
       expect(() => {
-        AuthValidator.validateSignUp('João', 'joao@example.com', '');
-      }).toThrow(ValidationError);
+        ValidadorAuth.validateSignUp('João', 'joao@example.com', '');
+      }).toThrow(ErroValidacao);
     });
 
-    it('should accept exactly 6 character password', () => {
+    it('deve aceitar exactly 6 character password', () => {
       expect(() => {
-        AuthValidator.validateSignUp('João', 'joao@example.com', '123456');
+        ValidadorAuth.validateSignUp('João', 'joao@example.com', '123456');
       }).not.toThrow();
     });
   });
 
   describe('isValidEmail', () => {
-    it('should accept valid emails', () => {
+    it('deve aceitar valid emails', () => {
       const validEmails = [
         'user@example.com',
         'test.email@domain.co.uk',
@@ -94,45 +94,45 @@ describe('AuthValidator', () => {
 
       validEmails.forEach((email) => {
         expect(() => {
-          AuthValidator.validateSignUp('Test', email, 'password123');
+          ValidadorAuth.validateSignUp('Test', email, 'password123');
         }).not.toThrow();
       });
     });
 
-    it('should reject invalid email formats', () => {
+    it('deve rejeitar invalid email formats', () => {
       const invalidEmails = ['notanemail', 'missing@domain', '@example.com', 'user@'];
 
       invalidEmails.forEach((email) => {
         expect(() => {
-          AuthValidator.validateSignUp('Test', email, 'password123');
-        }).toThrow(ValidationError);
+          ValidadorAuth.validateSignUp('Test', email, 'password123');
+        }).toThrow(ErroValidacao);
       });
     });
   });
 
-  describe('Edge Cases', () => {
-    it('should handle unicode characters in name', () => {
+  describe('Casos de Borda', () => {
+    it('deve tratar unicode characters in name', () => {
       expect(() => {
-        AuthValidator.validateSignUp('João José', 'test@example.com', 'password123');
+        ValidadorAuth.validateSignUp('João José', 'test@example.com', 'password123');
       }).not.toThrow();
     });
 
-    it('should handle very long passwords', () => {
+    it('deve tratar very long passwords', () => {
       const longPassword = 'a'.repeat(100);
       expect(() => {
-        AuthValidator.validateSignUp('Test', 'test@example.com', longPassword);
+        ValidadorAuth.validateSignUp('Test', 'test@example.com', longPassword);
       }).not.toThrow();
     });
 
-    it('should reject null values', () => {
+    it('deve rejeitar null values', () => {
       expect(() => {
-        AuthValidator.validateLogin(null as any, 'password');
+        ValidadorAuth.validateLogin(null as any, 'password');
       }).toThrow();
     });
 
-    it('should reject undefined values', () => {
+    it('deve rejeitar undefined values', () => {
       expect(() => {
-        AuthValidator.validateLogin(undefined as any, 'password');
+        ValidadorAuth.validateLogin(undefined as any, 'password');
       }).toThrow();
     });
   });

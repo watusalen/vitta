@@ -1,8 +1,8 @@
 import User from '../../../../src/model/entities/user';
 
-describe('User Entity Interface', () => {
+describe('Entidade User Interface', () => {
   describe('Structure', () => {
-    it('should have required properties', () => {
+    it('deve ter required properties', () => {
       const user: User = {
         id: 'user-1',
         name: 'João Silva',
@@ -18,7 +18,7 @@ describe('User Entity Interface', () => {
       expect(user.createdAt).toBeDefined();
     });
 
-    it('should support nutritionist role', () => {
+    it('deve suportar nutritionist role', () => {
       const user: User = {
         id: 'nutri-1',
         name: 'Dra. Maria',
@@ -30,7 +30,7 @@ describe('User Entity Interface', () => {
       expect(user.role).toBe('nutritionist');
     });
 
-    it('should support patient role', () => {
+    it('deve suportar patient role', () => {
       const user: User = {
         id: 'patient-1',
         name: 'João',
@@ -44,7 +44,7 @@ describe('User Entity Interface', () => {
   });
 
   describe('Type Safety', () => {
-    it('should only accept valid roles', () => {
+    it('deve apenas accept valid roles', () => {
       const roles: ('patient' | 'nutritionist')[] = ['patient', 'nutritionist'];
       
       roles.forEach((role) => {
@@ -59,7 +59,7 @@ describe('User Entity Interface', () => {
       });
     });
 
-    it('should have required fields', () => {
+    it('deve ter required fields', () => {
       const user: User = {
         id: 'user-1',
         name: 'João',
