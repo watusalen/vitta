@@ -82,8 +82,6 @@ src/
   npx expo run:android
   ```
 
-> **Importante:** notificações push **não funcionam no Expo Go**. É necessário build nativo (dev ou release).
-
 ## Documentação
 
 Toda a documentação do projeto está em `/docs`:
@@ -101,7 +99,7 @@ Toda a documentação do projeto está em `/docs`:
 
 ```bash
 npm test              # Rodar testes
-npm run test:watch    # Modo watch
+npm run test:verbose  # Suítes
 npm run test:coverage # Cobertura
 ```
 
@@ -134,7 +132,3 @@ npm run test:coverage # Cobertura
 
 - **Paciente**: Pode se auto-registrar, visualizar disponibilidade, solicitar consultas
 - **Nutricionista**: Gerencia solicitações, confirma/recusa consultas, visualiza agenda
-
-## Licença
-
-Este projeto é privado e destinado a uso acadêmico/profissional.
