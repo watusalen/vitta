@@ -1,7 +1,6 @@
 import GetAppointmentDetailsUseCase from '../../../../src/usecase/appointment/details/getAppointmentDetailsUseCase';
 import { IAppointmentRepository } from '../../../../src/model/repositories/iAppointmentRepository';
 import Appointment from '../../../../src/model/entities/appointment';
-import RepositoryError from '../../../../src/model/errors/repositoryError';
 import ValidationError from '../../../../src/model/errors/validationError';
 
 const createMockAppointment = (id: string): Appointment => ({

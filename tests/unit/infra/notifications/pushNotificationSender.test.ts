@@ -1,15 +1,15 @@
-import EmissorNotificacaoPush from "@/infra/notifications/pushNotificationSender";
+import pushNotificationSender from "@/infra/notifications/pushNotificationSender";
 
 const mockFetch = jest.fn();
 
-describe("EmissorNotificacaoPush", () => {
+describe("pushNotificationSender", () => {
     beforeEach(() => {
         mockFetch.mockReset();
         (global as any).fetch = mockFetch;
     });
 
     it("deve ignorar quando não houver baseUrl", async () => {
-        const sender = new EmissorNotificacaoPush(undefined, undefined);
+        const sender = new pushNotificationSender(undefined, undefined);
 
         await sender.sendPush(["token-1"], { title: "titulo", body: "corpo" });
 
@@ -17,7 +17,7 @@ describe("EmissorNotificacaoPush", () => {
     });
 
     it("deve ignorar quando não houver tokens", async () => {
-        const sender = new EmissorNotificacaoPush("https://example.com", undefined);
+        const sender = new pushNotificationSender("https://example.com", undefined);
 
         await sender.sendPush([], { title: "titulo", body: "corpo" });
 
@@ -26,7 +26,7 @@ describe("EmissorNotificacaoPush", () => {
 
     it("deve enviar notificação para edge function", async () => {
         mockFetch.mockResolvedValue({ ok: true, text: async () => "" });
-        const sender = new EmissorNotificacaoPush("https://example.com", "anon");
+        const sender = new pushNotificationSender("https://example.com", "anon");
 
         await sender.sendPush(["token-1"], { title: "titulo", body: "corpo" });
 
@@ -48,7 +48,7 @@ describe("EmissorNotificacaoPush", () => {
 
     it("deve lançar erro quando edge responder com falha", async () => {
         mockFetch.mockResolvedValue({ ok: false, text: async () => "erro" });
-        const sender = new EmissorNotificacaoPush("https://example.com", undefined);
+        const sender = new pushNotificationSender("https://example.com", undefined);
 
         await expect(
             sender.sendPush(["token-1"], { title: "titulo", body: "corpo" })
