@@ -26,7 +26,6 @@ export default function PatientHomeScreen() {
     async function confirmLogout() {
         setLogoutConfirmOpen(false);
         await logout();
-        router.replace("/login");
     }
 
     useRedirectEffect(unauthenticatedRedirect);

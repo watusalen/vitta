@@ -43,7 +43,6 @@ export default function NutritionistHomeScreen() {
     async function confirmLogout() {
         setLogoutConfirmOpen(false);
         await logout();
-        router.replace("/login");
     }
 
     useRedirectEffect(unauthenticatedRedirect);
