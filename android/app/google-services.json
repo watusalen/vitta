@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "267463791942",
+    "project_id": "vitta-nutritional",
+    "storage_bucket": "vitta-nutritional.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:267463791942:android:72c69e3084cf5f0c72c147",
+        "android_client_info": {
+          "package_name": "com.watusalen.vitta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcQAsf46yUboPA_re1NN4xjtT8FnGv0OI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -149,7 +149,11 @@ export default function useHomeViewModel(
         const currentUserId = user?.id;
         try {
             if (currentUserId) {
-                await pushTokenUseCase.unregister(currentUserId);
+                try {
+                    await pushTokenUseCase.unregister(currentUserId);
+                } catch {
+                    setError("Não foi possível remover o token de notificações.");
+                }
             }
             await authUseCases.logout();
             setUser(null);

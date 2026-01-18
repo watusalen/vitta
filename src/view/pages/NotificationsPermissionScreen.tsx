@@ -79,26 +79,40 @@ export default function NotificationsPermissionScreen() {
                         </View>
                     ) : (
                         <>
-                            <TouchableOpacity
-                                style={styles.primaryButton}
-                                onPress={requestPermission}
-                                activeOpacity={0.9}
-                            >
-                                <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Permitir notificações</Text>
-                            </TouchableOpacity>
+                            {status === "denied" ? (
+                                <TouchableOpacity
+                                    style={styles.primaryButton}
+                                    onPress={openSettings}
+                                    activeOpacity={0.9}
+                                >
+                                    <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Abrir ajustes</Text>
+                                </TouchableOpacity>
+                            ) : (
+                                <>
+                                    <TouchableOpacity
+                                        style={styles.primaryButton}
+                                        onPress={requestPermission}
+                                        activeOpacity={0.9}
+                                    >
+                                        <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Permitir notificações</Text>
+                                    </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={styles.secondaryButton}
-                                onPress={openSettings}
-                                activeOpacity={0.9}
-                            >
-                                <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>Abrir ajustes</Text>
-                            </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.secondaryButton}
+                                        onPress={openSettings}
+                                        activeOpacity={0.9}
+                                    >
+                                        <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>Abrir ajustes</Text>
+                                    </TouchableOpacity>
+                                </>
+                            )}
                         </>
                     )}
 
                     <Text style={styles.hint}>
-                        Sem essa permissão o app não funciona. Você pode alterar isso em Ajustes.
+                        {status === "denied"
+                            ? "Permissão negada. Ative em Ajustes para continuar."
+                            : "Sem essa permissão o app não funciona. Você pode alterar isso em Ajustes."}
                     </Text>
                 </View>
             </View>
