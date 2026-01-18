@@ -5,14 +5,11 @@ import {
     Image,
     TouchableOpacity,
     ActivityIndicator,
-    Keyboard,
-    TouchableWithoutFeedback,
-    KeyboardAvoidingView,
     Platform,
-    ScrollView,
     StyleSheet,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { colors, fonts, spacing, fontSizes } from "@/view/themes/theme";
 import TextInputField from "@/view/pages/auth/components/TextInputField";
 import { useAuthLoginViewModel } from "@/di/container";
@@ -54,19 +51,29 @@ export default function LoginScreen() {
         clearError();
     }
 
+    const bottomSafe = Math.max(insets.bottom, 48);
+
     return (
-        <KeyboardAvoidingView
-            style={styles.keyboardAvoid}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+        <KeyboardAwareScrollView
+            style={styles.container}
+            contentContainerStyle={[
+                styles.scrollContent,
+                { 
+                    paddingTop: insets.top + spacing.lg, 
+                    paddingBottom: bottomSafe + spacing.lg + 24,
+                },
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+            enableOnAndroid
+            enableAutomaticScroll
+            extraScrollHeight={Platform.OS === "android" ? 150 : 50}
+            extraHeight={Platform.OS === "android" ? 100 : 50}
+            enableResetScrollToCoords={false}
+            keyboardOpeningTime={0}
         >
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-                    <ScrollView
-                        contentContainerStyle={styles.scrollContent}
-                        showsVerticalScrollIndicator={false}
-                        keyboardShouldPersistTaps="handled"
-                    >
-                        <View style={styles.logoWrapper}>
+            <View style={styles.logoWrapper}>
                             <Image
                                 source={require("../../assets/images/image.png")}
                                 style={styles.logo}
@@ -119,45 +126,37 @@ export default function LoginScreen() {
                             )}
                         </TouchableOpacity>
 
-                        <View style={styles.footer}>
-                            <Text style={styles.footerText}>
-                                Não tem uma conta?
-                                <Text style={styles.footerHighlight} onPress={goToRegister}> Cadastre-se</Text>
-                            </Text>
-                        </View>
-                    </ScrollView>
-                </View>
-            </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
+            <View style={[styles.footer, { marginBottom: spacing.xl * 2 }]}>
+                <Text style={styles.footerText}>
+                    Não tem uma conta?
+                    <Text style={styles.footerHighlight} onPress={goToRegister}> Cadastre-se</Text>
+                </Text>
+            </View>
+        </KeyboardAwareScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    keyboardAvoid: {
-        flex: 1,
-    },
     container: {
         flex: 1,
         backgroundColor: colors.surface,
-        flexDirection: "column",
     },
     scrollContent: {
         flexGrow: 1,
         paddingHorizontal: spacing.lg,
-        justifyContent: "center",
     },
     logoWrapper: {
         alignSelf: "center",
-        width: 100,
-        height: 100,
-        borderRadius: 60,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         backgroundColor: colors.primaryLight,
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: spacing.xl,
+        marginBottom: spacing.lg,
     },
     logo: {
-        width: 70,
+        width: 56,
         resizeMode: "contain",
     },
     title: {
@@ -172,7 +171,7 @@ const styles = StyleSheet.create({
         color: colors.textSecondary,
         textAlign: "center",
         fontFamily: fonts.regular,
-        marginBottom: 40,
+        marginBottom: spacing.md,
     },
     forgotButton: {
         alignSelf: "flex-end",
@@ -186,9 +185,9 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         backgroundColor: colors.primary,
-        minHeight: 64,
-        paddingVertical: spacing.md,
-        borderRadius: 32,
+        height: 56,
+        paddingVertical: spacing.sm,
+        borderRadius: 28,
         alignItems: "center",
         justifyContent: "center",
     },
@@ -202,7 +201,7 @@ const styles = StyleSheet.create({
     },
     footer: {
         alignItems: "center",
-        marginTop: spacing.lg,
+        marginTop: spacing.xl,
     },
     footerText: {
         fontSize: fontSizes.smMd,
