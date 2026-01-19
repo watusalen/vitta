@@ -25,3 +25,4 @@ firestore*
 expo-env.d.ts
 *firebase-adminsdk*.json
 supabase/.temp/
+.idea/
