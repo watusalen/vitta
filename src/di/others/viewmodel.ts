@@ -79,7 +79,6 @@ export function usePatientScheduleViewModel() {
 export function usePatientAppointmentsViewModel(patientId: string) {
     return useMyAppointmentsViewModel(
         getListPatientAppointmentsUseCase(),
-        getAppointmentCalendarSyncUseCase(),
         patientId
     );
 }
@@ -123,7 +122,6 @@ export function useNutritionistPendingRequestsViewModel(nutritionistId: string) 
         getAcceptAppointmentUseCase(),
         getRejectAppointmentUseCase(),
         getUserByIdUseCase(),
-        getAppointmentCalendarSyncUseCase(),
         getAppointmentPushNotificationUseCase(),
         nutritionistId
     );
@@ -146,7 +144,6 @@ export function useNutritionistAppointmentDetailsViewModel() {
         getCancelAppointmentUseCase(),
         getReactivateAppointmentUseCase(),
         getUserByIdUseCase(),
-        getAppointmentCalendarSyncUseCase(),
         getAppointmentPushNotificationUseCase()
     );
 }
@@ -157,7 +154,6 @@ export function useNutritionistConflictResolutionViewModel() {
         getListAppointmentConflictsUseCase(),
         getResolveAppointmentConflictUseCase(),
         getUserByIdUseCase(),
-        getAppointmentCalendarSyncUseCase(),
         getAppointmentPushNotificationUseCase()
     );
 }

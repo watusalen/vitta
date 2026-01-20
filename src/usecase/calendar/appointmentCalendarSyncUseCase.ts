@@ -14,8 +14,14 @@ export default class AppointmentCalendarSyncUseCase implements IAppointmentCalen
     async syncAccepted(appointment: Appointment, owner: CalendarOwner): Promise<void> {
         const field = this.getCalendarField(owner);
         const currentEventId = appointment[field];
+        const latest = await this.appointmentRepository.getById(appointment.id);
+        const latestEventId = latest?.[field];
 
         const input = this.buildEventInput(appointment);
+        if (latestEventId) {
+            await this.calendarService.updateEvent(latestEventId, input);
+            return;
+        }
         if (currentEventId) {
             await this.calendarService.updateEvent(currentEventId, input);
             return;
@@ -26,16 +32,25 @@ export default class AppointmentCalendarSyncUseCase implements IAppointmentCalen
         await this.appointmentRepository.updateCalendarEventIds(appointment.id, {
             [field]: eventId,
         });
+
+        const afterUpdate = await this.appointmentRepository.getById(appointment.id);
+        const storedEventId = afterUpdate?.[field];
+        if (storedEventId && storedEventId !== eventId) {
+            await this.calendarService.removeEvent(eventId);
+        }
     }
 
     async syncCancelledOrRejected(appointment: Appointment, owner: CalendarOwner): Promise<void> {
         const field = this.getCalendarField(owner);
         const currentEventId = appointment[field];
-        if (!currentEventId) {
+        const latest = await this.appointmentRepository.getById(appointment.id);
+        const latestEventId = latest?.[field];
+        const eventIdToRemove = latestEventId ?? currentEventId;
+        if (!eventIdToRemove) {
             return;
         }
 
-        await this.calendarService.removeEvent(currentEventId);
+        await this.calendarService.removeEvent(eventIdToRemove);
         await this.appointmentRepository.updateCalendarEventIds(appointment.id, {
             [field]: null,
         });

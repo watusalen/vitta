@@ -14,7 +14,7 @@ import NutritionistAgendaCard from "@/view/pages/nutritionist/components/Nutriti
 
 export default function NutritionistHomeScreen() {
     const insets = useSafeAreaInsets();
-    const { user, error: authError, clearError: clearAuthError, logout, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+    const { user, error: authError, clearError: clearAuthError, logout, unauthenticatedRedirect } = useAuthHomeViewModel();
     const nutritionistId = user?.id || "";
     const [logoutErrorOpen, setLogoutErrorOpen] = useState(false);
     const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
@@ -46,7 +46,6 @@ export default function NutritionistHomeScreen() {
     }
 
     useRedirectEffect(unauthenticatedRedirect);
-    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
     const fadeAnim = useFadeInOnToggle(showEmptyState);
 

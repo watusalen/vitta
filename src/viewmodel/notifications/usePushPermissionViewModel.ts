@@ -10,7 +10,7 @@ export type PushPermissionState = {
 
 export type PushPermissionActions = {
     refreshStatus: () => Promise<void>;
-    requestPermission: () => Promise<void>;
+    requestPermission: () => Promise<PushPermissionStatus>;
     openSettings: () => Promise<void>;
     clearError: () => void;
 };
@@ -35,14 +35,16 @@ export default function usePushPermissionViewModel(
         }
     }, [pushPermissionUseCase]);
 
-    const requestPermission = useCallback(async (): Promise<void> => {
+    const requestPermission = useCallback(async (): Promise<PushPermissionStatus> => {
         setLoading(true);
         setError(null);
         try {
             const permission = await pushPermissionUseCase.requestPermission();
             setStatus(permission);
+            return permission;
         } catch {
             setError("Não foi possível solicitar a permissão de notificações.");
+            return "denied";
         } finally {
             setLoading(false);
         }

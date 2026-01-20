@@ -15,7 +15,7 @@ import AgendaAppointments from "@/view/pages/nutritionist/components/AgendaAppoi
 
 export default function AgendaScreen() {
     const insets = useSafeAreaInsets();
-    const { user, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+    const { user, unauthenticatedRedirect } = useAuthHomeViewModel();
     const nutritionistId = user?.id || "";
 
     const {
@@ -46,7 +46,6 @@ export default function AgendaScreen() {
     }
 
     useRedirectEffect(unauthenticatedRedirect);
-    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     useFocusEffect(

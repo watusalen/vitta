@@ -6,7 +6,6 @@ import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectA
 import { ICancelAppointmentUseCase } from "@/usecase/appointment/status/iCancelAppointmentUseCase";
 import { IReactivateAppointmentUseCase } from "@/usecase/appointment/status/iReactivateAppointmentUseCase";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
-import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import RepositoryError from "@/model/errors/repositoryError";
 import ValidationError from "@/model/errors/validationError";
@@ -21,7 +20,6 @@ export default function useNutritionistAppointmentDetailsViewModel(
     cancelAppointmentUseCase: ICancelAppointmentUseCase,
     reactivateAppointmentUseCase: IReactivateAppointmentUseCase,
     getUserByIdUseCase: IGetUserByIdUseCase,
-    calendarSyncUseCase: IAppointmentCalendarSyncUseCase,
     appointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase
 ): NutritionistAppointmentDetailsState & NutritionistAppointmentDetailsActions {
     const [appointment, setAppointment] = useState<Appointment | null>(null);
@@ -76,7 +74,6 @@ export default function useNutritionistAppointmentDetailsViewModel(
             const updated = await acceptAppointmentUseCase.acceptAppointment(appointmentId);
             setAppointment(updated);
             setSuccessMessage("Consulta aceita com sucesso!");
-            await calendarSyncUseCase.syncAccepted(updated, "nutritionist");
             try {
                 await appointmentPushNotificationUseCase.notify(updated, "accepted", "patient");
             } catch (error) {
@@ -93,7 +90,7 @@ export default function useNutritionistAppointmentDetailsViewModel(
         } finally {
             setProcessing(false);
         }
-    }, [acceptAppointmentUseCase, calendarSyncUseCase, appointmentPushNotificationUseCase]);
+    }, [acceptAppointmentUseCase, appointmentPushNotificationUseCase]);
     const rejectAppointment = useCallback(async (appointmentId: string): Promise<void> => {
         setProcessing(true);
         setError(null);
@@ -129,7 +126,6 @@ export default function useNutritionistAppointmentDetailsViewModel(
             const updated = await cancelAppointmentUseCase.cancelAppointment(appointmentId);
             setAppointment(updated);
             setSuccessMessage("Consulta cancelada.");
-            await calendarSyncUseCase.syncCancelledOrRejected(updated, "nutritionist");
             try {
                 await appointmentPushNotificationUseCase.notify(updated, "cancelled", "patient");
             } catch (error) {
@@ -146,7 +142,7 @@ export default function useNutritionistAppointmentDetailsViewModel(
         } finally {
             setProcessing(false);
         }
-    }, [cancelAppointmentUseCase, calendarSyncUseCase, appointmentPushNotificationUseCase]);
+    }, [cancelAppointmentUseCase, appointmentPushNotificationUseCase]);
     const reactivateAppointment = useCallback(async (appointmentId: string): Promise<void> => {
         setProcessing(true);
         setError(null);
@@ -157,7 +153,6 @@ export default function useNutritionistAppointmentDetailsViewModel(
             const updated = await reactivateAppointmentUseCase.reactivateAppointment(appointmentId);
             setAppointment(updated);
             setSuccessMessage("Consulta reativada.");
-            await calendarSyncUseCase.syncAccepted(updated, "nutritionist");
             try {
                 await appointmentPushNotificationUseCase.notify(updated, "reactivated", "patient");
             } catch (error) {
@@ -183,7 +178,7 @@ export default function useNutritionistAppointmentDetailsViewModel(
         } finally {
             setProcessing(false);
         }
-    }, [reactivateAppointmentUseCase, calendarSyncUseCase, appointmentPushNotificationUseCase]);
+    }, [reactivateAppointmentUseCase, appointmentPushNotificationUseCase]);
     const clearError = useCallback((): void => {
         setError(null);
     }, []);

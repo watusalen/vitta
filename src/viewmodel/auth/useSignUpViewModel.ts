@@ -95,7 +95,7 @@ export default function useSignUpViewModel(authUseCases: IAuthUseCases): SignUpS
         setNavigationRoute(null);
     }, []);
 
-    const redirectRoute = user ? "/patient-home" : null;
+    const redirectRoute = user ? "/" : null;
 
     return {
         user,

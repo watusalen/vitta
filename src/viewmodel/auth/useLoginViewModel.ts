@@ -117,11 +117,7 @@ export default function useLoginViewModel(authUseCases: IAuthUseCases): LoginSta
         setNavigationRoute(null);
     }, []);
 
-    const redirectRoute = user
-        ? user.role === "nutritionist"
-            ? "/nutritionist-home"
-            : "/patient-home"
-        : null;
+    const redirectRoute = user ? "/" : null;
 
     return {
         user,

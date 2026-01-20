@@ -16,7 +16,7 @@ import { colors, spacing } from "@/view/themes/theme";
 export default function NutritionistAppointmentDetailsScreen() {
     const insets = useSafeAreaInsets();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const { unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+    const { unauthenticatedRedirect } = useAuthHomeViewModel();
 
     const {
         appointment,
@@ -59,7 +59,6 @@ export default function NutritionistAppointmentDetailsScreen() {
     }, [id, loadAppointment]);
 
     useRedirectEffect(unauthenticatedRedirect);
-    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     const alertState = useAppointmentDetailsAlerts({

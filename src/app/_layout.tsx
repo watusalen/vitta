@@ -111,13 +111,11 @@ function useNotificationObserver(canNavigate: boolean) {
 
 function redirectNotification(notification: Notifications.Notification) {
   const data = notification.request.content.data;
-  console.log("push-data", data);
   const url = data?.url;
   if (typeof url === 'string') {
     handleNotificationUrl(url);
     return;
   }
-  console.log('push-data-sem-rota', data);
 }
 
 const staticNotificationRoutes = [

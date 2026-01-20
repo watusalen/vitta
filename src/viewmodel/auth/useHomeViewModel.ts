@@ -14,6 +14,7 @@ export type HomeState = {
     error: string | null;
     unauthenticatedRedirect: string | null;
     calendarPermissionRedirect: string | null;
+    pushPermissionRedirect: string | null;
     startupRedirect: string | null;
 };
 
@@ -54,13 +55,6 @@ export default function useHomeViewModel(
             try {
                 const status = await calendarPermissionUseCase.checkPermission();
                 if (cancelled) return;
-                if (status === "undetermined") {
-                    const requested = await calendarPermissionUseCase.requestPermission();
-                    if (!cancelled) {
-                        setCalendarPermission(requested);
-                    }
-                    return;
-                }
                 setCalendarPermission(status);
             } catch {
                 if (!cancelled) {
@@ -85,25 +79,9 @@ export default function useHomeViewModel(
                 return;
             }
 
-            if (!calendarPermission || calendarPermission === "undetermined") {
-                return;
-            }
-
-            if (calendarPermission === "denied" || calendarPermission === "restricted") {
-                setPushPermission(null);
-                return;
-            }
-
             try {
                 const status = await pushPermissionUseCase.checkPermission();
                 if (cancelled) return;
-                if (status === "undetermined") {
-                    const requested = await pushPermissionUseCase.requestPermission();
-                    if (!cancelled) {
-                        setPushPermission(requested);
-                    }
-                    return;
-                }
                 setPushPermission(status);
             } catch {
                 if (!cancelled) {
@@ -175,18 +153,24 @@ export default function useHomeViewModel(
     const unauthenticatedRedirect = !loading && !user ? "/login" : null;
     const calendarPermissionRedirect =
         !loading && user
-            ? pushPermission === "denied"
-                ? "/notifications-permission"
-                : calendarPermission === "denied" || calendarPermission === "restricted"
-                    ? "/calendar-permission"
-                    : null
+            ? calendarPermission === "authorized"
+                ? null
+                : "/calendar-permission"
             : null;
+
+    const pushPermissionRedirect =
+        !loading && user
+            ? pushPermission === "granted"
+                ? null
+                : "/notifications-permission"
+            : null;
+
     const startupRedirect = !loading
         ? user
-            ? pushPermission === "denied"
-                ? "/notifications-permission"
-                : calendarPermission === "denied" || calendarPermission === "restricted"
-                    ? "/calendar-permission"
+            ? calendarPermission !== "authorized"
+                ? "/calendar-permission"
+                : pushPermission !== "granted"
+                    ? "/notifications-permission"
                     : user.role === "nutritionist"
                         ? "/nutritionist-home"
                         : "/patient-home"
@@ -199,6 +183,7 @@ export default function useHomeViewModel(
         error,
         unauthenticatedRedirect,
         calendarPermissionRedirect,
+        pushPermissionRedirect,
         startupRedirect,
         logout,
         clearError,

@@ -5,7 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { colors, fonts, fontSizes, spacing, borderRadius } from "@/view/themes/theme";
 import { useAuthHomeViewModel, usePushPermissionViewModel } from "@/di/container";
 import AlertModal from "@/view/components/AlertModal";
-import useRedirectEffect from "@/view/hooks/useRedirectEffect";
+import { router } from "expo-router";
 
 export default function NotificationsPermissionScreen() {
     const insets = useSafeAreaInsets();
@@ -25,8 +25,6 @@ export default function NotificationsPermissionScreen() {
         if (!user) return "/login";
         return user.role === "nutritionist" ? "/nutritionist-home" : "/patient-home";
     }, [user]);
-
-    useRedirectEffect(status === "granted" ? successRedirect : null);
 
     useEffect(() => {
         if (!error) return;
@@ -50,19 +48,15 @@ export default function NotificationsPermissionScreen() {
                     </Text>
 
                     <View style={styles.card}>
-                        <Text style={styles.cardTitle} maxFontSizeMultiplier={1.2}>O que você recebe</Text>
+                        <Text style={styles.cardTitle} maxFontSizeMultiplier={1.2}>O que você recebe?</Text>
+
                         <View style={styles.cardRow}>
                             <View style={styles.cardIcon}>
                                 <Feather name="check-circle" size={16} color={colors.primary} />
                             </View>
                             <Text style={styles.cardText}>Confirmações e atualizações de consultas.</Text>
                         </View>
-                        <View style={styles.cardRow}>
-                            <View style={styles.cardIcon}>
-                                <Feather name="bell" size={16} color={colors.primary} />
-                            </View>
-                            <Text style={styles.cardText}>Lembrete com 24h de antecedência.</Text>
-                        </View>
+
                         <View style={styles.cardRowLast}>
                             <View style={styles.cardIcon}>
                                 <Feather name="link" size={16} color={colors.primary} />
@@ -79,40 +73,35 @@ export default function NotificationsPermissionScreen() {
                         </View>
                     ) : (
                         <>
-                            {status === "denied" ? (
-                                <TouchableOpacity
-                                    style={styles.primaryButton}
-                                    onPress={openSettings}
-                                    activeOpacity={0.9}
-                                >
-                                    <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Abrir ajustes</Text>
-                                </TouchableOpacity>
-                            ) : (
-                                <>
-                                    <TouchableOpacity
-                                        style={styles.primaryButton}
-                                        onPress={requestPermission}
-                                        activeOpacity={0.9}
-                                    >
-                                        <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Permitir notificações</Text>
-                                    </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.primaryButton}
+                                onPress={async () => {
+                                    if (status === "denied") {
+                                        await openSettings();
+                                    } else {
+                                        await requestPermission();
+                                    }
+                                    router.replace(successRedirect);
+                                }}
+                                activeOpacity={0.9}
+                            >
+                                <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Permitir notificações</Text>
+                            </TouchableOpacity>
 
-                                    <TouchableOpacity
-                                        style={styles.secondaryButton}
-                                        onPress={openSettings}
-                                        activeOpacity={0.9}
-                                    >
-                                        <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>Abrir ajustes</Text>
-                                    </TouchableOpacity>
-                                </>
-                            )}
+                            <TouchableOpacity
+                                style={styles.secondaryButton}
+                                onPress={() => router.replace(successRedirect)}
+                                activeOpacity={0.9}
+                            >
+                                <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>
+                                    Continuar sem notificações
+                                </Text>
+                            </TouchableOpacity>
                         </>
                     )}
 
                     <Text style={styles.hint}>
-                        {status === "denied"
-                            ? "Permissão negada. Ative em Ajustes para continuar."
-                            : "Sem essa permissão o app não funciona. Você pode alterar isso em Ajustes."}
+                        Sem essa permissão, você não receberá lembretes e avisos no celular.
                     </Text>
                 </View>
             </View>
@@ -182,16 +171,20 @@ const styles = StyleSheet.create({
         fontFamily: fonts.bold,
         color: colors.text,
         marginBottom: spacing.md,
+        textAlign: "left",
     },
+
+    // ✅ AQUI: manter todas as linhas com o mesmo alinhamento (center)
     cardRow: {
         flexDirection: "row",
-        alignItems: "flex-start",
+        alignItems: "center",
         marginBottom: spacing.sm,
     },
     cardRowLast: {
         flexDirection: "row",
-        alignItems: "flex-start",
+        alignItems: "center",
     },
+
     cardIcon: {
         width: 32,
         height: 32,
@@ -201,13 +194,17 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginRight: spacing.md,
     },
+
+    // ✅ AQUI: garantir “texto à esquerda” e evitar deslocamento estranho
     cardText: {
         flex: 1,
         fontSize: fontSizes.smMd,
         fontFamily: fonts.regular,
         color: colors.text,
-        lineHeight: 20,
+        textAlign: "left",
+        // lineHeight: 20, // deixe sem lineHeight fixo (ou use proporcional se precisar)
     },
+
     centered: {
         alignItems: "center",
         justifyContent: "center",

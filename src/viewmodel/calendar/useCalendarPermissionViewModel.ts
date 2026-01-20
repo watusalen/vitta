@@ -10,7 +10,7 @@ export type CalendarPermissionState = {
 
 export type CalendarPermissionActions = {
     refreshStatus: () => Promise<void>;
-    requestPermission: () => Promise<void>;
+    requestPermission: () => Promise<CalendarPermissionStatus>;
     openSettings: () => Promise<void>;
     clearError: () => void;
 };
@@ -35,14 +35,16 @@ export default function useCalendarPermissionViewModel(
         }
     }, [calendarPermissionUseCase]);
 
-    const requestPermission = useCallback(async (): Promise<void> => {
+    const requestPermission = useCallback(async (): Promise<CalendarPermissionStatus> => {
         setLoading(true);
         setError(null);
         try {
             const permission = await calendarPermissionUseCase.requestPermission();
             setStatus(permission);
+            return permission;
         } catch {
             setError("Não foi possível solicitar a permissão do calendário.");
+            return "denied";
         } finally {
             setLoading(false);
         }

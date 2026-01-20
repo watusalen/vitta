@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { colors, fontSizes, fonts, spacing, borderRadius } from "@/view/themes/theme";
 import { useAuthHomeViewModel, usePatientHomeViewModel, usePatientCalendarSyncViewModel } from "@/di/container";
-import LogoutButton from "@/view/components/LogoutButton";
+import HomeHeader from "@/view/components/HomeHeader";
 import HomeCard from "@/view/components/HomeCard";
 import AlertModal from "@/view/components/AlertModal";
 import ConfirmActionModal from "@/view/components/ConfirmActionModal";
@@ -12,7 +13,7 @@ import useRedirectEffect from "@/view/hooks/useRedirectEffect";
 
 export default function PatientHomeScreen() {
     const insets = useSafeAreaInsets();
-    const { user, error, logout, clearError, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+    const { user, error, logout, clearError, unauthenticatedRedirect } = useAuthHomeViewModel();
     const [logoutErrorOpen, setLogoutErrorOpen] = useState(false);
     const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
     const { navigationRoute, navigationMethod, goToSchedule, goToAppointments, clearNavigation } = usePatientHomeViewModel();
@@ -28,7 +29,6 @@ export default function PatientHomeScreen() {
     }
 
     useRedirectEffect(unauthenticatedRedirect);
-    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     useEffect(() => {
@@ -38,14 +38,11 @@ export default function PatientHomeScreen() {
 
     return (
         <View style={[styles.container, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom }]}>
-            <View style={styles.header}>
-                <Image
-                    source={require("../../assets/images/image.png")}
-                    style={styles.avatar}
-                />
-                <Text style={styles.headerText} maxFontSizeMultiplier={1.2}>Olá, {user?.name || user?.email || "Paciente"}!</Text>
-                <LogoutButton onPress={handleLogout} />
-            </View>
+            <HomeHeader
+                name={user?.name || user?.email || "Paciente"}
+                onLogout={handleLogout}
+                onProfilePress={() => router.push("/profile")}
+            />
 
             <View style={styles.cardsWrapper}>
                 <HomeCard backgroundColor={colors.primaryLight} onPress={goToSchedule}>
@@ -115,25 +112,6 @@ const styles = StyleSheet.create({
         backgroundColor: colors.surface,
         paddingHorizontal: spacing.lg,
         paddingBottom: spacing.xl,
-    },
-    header: {
-        flexDirection: "row",
-        alignItems: "center",
-        marginBottom: spacing.xl,
-        justifyContent: "space-between",
-    },
-    avatar: {
-        width: 52,
-        height: 52,
-        borderRadius: 26,
-        marginRight: spacing.md,
-        backgroundColor: colors.primaryLight,
-    },
-    headerText: {
-        flex: 1,
-        fontSize: fontSizes.lg,
-        color: colors.text,
-        fontFamily: fonts.bold,
     },
     cardsWrapper: {
         gap: spacing.md,

@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         marginBottom: spacing.xl,
+        justifyContent: "space-between",
     },
     avatar: {
         width: 52,
@@ -49,7 +50,6 @@ const styles = StyleSheet.create({
     },
     nameWrapper: {
         flex: 1,
-        marginLeft: spacing.sm,
     },
     logoutButton: {
         marginLeft: spacing.md,

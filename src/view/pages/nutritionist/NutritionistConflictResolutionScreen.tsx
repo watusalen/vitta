@@ -14,7 +14,7 @@ import useRedirectEffect from "@/view/hooks/useRedirectEffect";
 export default function NutritionistConflictResolutionScreen() {
     const insets = useSafeAreaInsets();
     const { id } = useLocalSearchParams<{ id: string }>();
-    const { unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+    const { unauthenticatedRedirect } = useAuthHomeViewModel();
 
     const {
         appointments,
@@ -39,7 +39,6 @@ export default function NutritionistConflictResolutionScreen() {
     }, [id, loadConflict]);
 
     useRedirectEffect(unauthenticatedRedirect);
-    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     if (loading) {

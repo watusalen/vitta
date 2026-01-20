@@ -17,7 +17,7 @@ const SCREEN_W = Dimensions.get("window").width;
 
 export default function ScheduleScreen() {
   const insets = useSafeAreaInsets();
-  const { user, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+  const { user, unauthenticatedRedirect } = useAuthHomeViewModel();
   const patientId = user?.id || "";
 
   const {
@@ -54,7 +54,6 @@ export default function ScheduleScreen() {
   });
 
   useRedirectEffect(unauthenticatedRedirect);
-  useRedirectEffect(calendarPermissionRedirect);
   useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
   const alertState = useScheduleAlertState({
@@ -148,6 +147,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.surface },
   calendarCard: {
     marginHorizontal: spacing.lg,
+    marginTop: spacing.lg,
     marginBottom: spacing.md,
     padding: spacing.md,
     borderRadius: borderRadius.xl + 6,

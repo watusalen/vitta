@@ -4,7 +4,6 @@ import { IAcceptAppointmentUseCase } from "@/usecase/appointment/status/iAcceptA
 import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectAppointmentUseCase";
 import { IListPendingAppointmentsUseCase } from "@/usecase/appointment/list/iListPendingAppointmentsUseCase";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
-import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import ValidationError from "@/model/errors/validationError";
 import RepositoryError from "@/model/errors/repositoryError";
@@ -21,7 +20,6 @@ export default function usePendingRequestsViewModel(
     acceptAppointmentUseCase: IAcceptAppointmentUseCase,
     rejectAppointmentUseCase: IRejectAppointmentUseCase,
     getUserByIdUseCase: IGetUserByIdUseCase,
-    calendarSyncUseCase: IAppointmentCalendarSyncUseCase,
     appointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase,
     nutritionistId: string
 ): PendingRequestsState & PendingRequestsActions {
@@ -74,10 +72,6 @@ export default function usePendingRequestsViewModel(
         try {
             const appointment = await acceptAppointmentUseCase.acceptAppointment(appointmentId);
             try {
-                await calendarSyncUseCase.syncAccepted(appointment, "nutritionist");
-            } catch {
-            }
-            try {
                 await appointmentPushNotificationUseCase.notify(appointment, "accepted", "patient");
             } catch (error) {
                 console.warn("Falha ao enviar notificacao de aceite:", error);
@@ -96,7 +90,7 @@ export default function usePendingRequestsViewModel(
         } finally {
             setProcessing(false);
         }
-    }, [acceptAppointmentUseCase, appointmentPushNotificationUseCase, calendarSyncUseCase]);
+    }, [acceptAppointmentUseCase, appointmentPushNotificationUseCase]);
 
     const rejectAppointment = useCallback(async (appointmentId: string): Promise<boolean> => {
         setProcessing(true);

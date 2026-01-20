@@ -5,7 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { colors, fonts, fontSizes, spacing, borderRadius } from "@/view/themes/theme";
 import { useAuthHomeViewModel, useCalendarPermissionViewModel } from "@/di/container";
 import AlertModal from "@/view/components/AlertModal";
-import useRedirectEffect from "@/view/hooks/useRedirectEffect";
+import { router } from "expo-router";
 
 export default function CalendarPermissionScreen() {
     const insets = useSafeAreaInsets();
@@ -21,12 +21,10 @@ export default function CalendarPermissionScreen() {
         clearError,
     } = useCalendarPermissionViewModel();
 
-    const successRedirect = useMemo(() => {
+    const nextRedirect = useMemo(() => {
         if (!user) return "/login";
-        return user.role === "nutritionist" ? "/nutritionist-home" : "/patient-home";
+        return "/notifications-permission";
     }, [user]);
-
-    useRedirectEffect(status === "authorized" ? successRedirect : null);
 
     useEffect(() => {
         if (!error) return;
@@ -50,24 +48,27 @@ export default function CalendarPermissionScreen() {
                     </Text>
 
                     <View style={styles.card}>
-                        <Text style={styles.cardTitle} maxFontSizeMultiplier={1.2}>O que fazemos com isso</Text>
+                        <Text style={styles.cardTitle} maxFontSizeMultiplier={1.2}>O que fazemos com isso?</Text>
+
                         <View style={styles.cardRow}>
                             <View style={styles.cardIcon}>
                                 <Feather name="calendar" size={16} color={colors.primary} />
                             </View>
-                            <Text style={styles.cardText}>Salvar consultas confirmadas no calendário.</Text>
+                            <Text style={styles.cardText}>Salvamos consultas confirmadas no calendário.</Text>
                         </View>
+
                         <View style={styles.cardRow}>
                             <View style={styles.cardIcon}>
                                 <Feather name="bell" size={16} color={colors.primary} />
                             </View>
-                            <Text style={styles.cardText}>Ativar lembretes no horário correto.</Text>
+                            <Text style={styles.cardText}>Ativamos lembretes no horário correto.</Text>
                         </View>
+
                         <View style={styles.cardRowLast}>
                             <View style={styles.cardIcon}>
                                 <Feather name="shield" size={16} color={colors.primary} />
                             </View>
-                            <Text style={styles.cardText}>Evitar conflitos entre consultas.</Text>
+                            <Text style={styles.cardText}>Evitamos conflitos entre consultas.</Text>
                         </View>
                     </View>
                 </View>
@@ -81,7 +82,14 @@ export default function CalendarPermissionScreen() {
                         <>
                             <TouchableOpacity
                                 style={styles.primaryButton}
-                                onPress={requestPermission}
+                                onPress={async () => {
+                                    if (status === "denied") {
+                                        await openSettings();
+                                    } else {
+                                        await requestPermission();
+                                    }
+                                    router.replace(nextRedirect);
+                                }}
                                 activeOpacity={0.9}
                             >
                                 <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Permitir acesso</Text>
@@ -89,16 +97,18 @@ export default function CalendarPermissionScreen() {
 
                             <TouchableOpacity
                                 style={styles.secondaryButton}
-                                onPress={openSettings}
+                                onPress={() => router.replace(nextRedirect)}
                                 activeOpacity={0.9}
                             >
-                                <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>Abrir ajustes</Text>
+                                <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>
+                                    Continuar sem calendário
+                                </Text>
                             </TouchableOpacity>
                         </>
                     )}
 
                     <Text style={styles.hint}>
-                        Se negar a permissão, o app não funciona. Você pode alterar isso em Ajustes.
+                        Sem essa permissão, o app continua funcionando, mas não cria eventos no calendário.
                     </Text>
                 </View>
             </View>
@@ -168,16 +178,20 @@ const styles = StyleSheet.create({
         fontFamily: fonts.bold,
         color: colors.text,
         marginBottom: spacing.md,
+        textAlign: "left",
     },
+
+    // ✅ AQUI: centraliza verticalmente ícone + bloco de texto
     cardRow: {
         flexDirection: "row",
-        alignItems: "flex-start",
+        alignItems: "center",
         marginBottom: spacing.sm,
     },
     cardRowLast: {
         flexDirection: "row",
-        alignItems: "flex-start",
+        alignItems: "center",
     },
+
     cardIcon: {
         width: 32,
         height: 32,
@@ -187,13 +201,17 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginRight: spacing.md,
     },
+
+    // ✅ AQUI: remove lineHeight fixo que “derruba” o texto
     cardText: {
         flex: 1,
         fontSize: fontSizes.smMd,
         fontFamily: fonts.regular,
         color: colors.text,
-        lineHeight: 20,
+        textAlign: "left",
+        // lineHeight: 20, // REMOVIDO
     },
+
     centered: {
         alignItems: "center",
         justifyContent: "center",

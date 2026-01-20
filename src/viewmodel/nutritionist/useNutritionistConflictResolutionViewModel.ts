@@ -6,7 +6,6 @@ import { IGetAppointmentDetailsUseCase } from "@/usecase/appointment/details/iGe
 import { IListAppointmentConflictsUseCase } from "@/usecase/appointment/list/iListAppointmentConflictsUseCase";
 import { IResolveAppointmentConflictUseCase } from "@/usecase/appointment/status/iResolveAppointmentConflictUseCase";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
-import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import usePatientNameCache from "@/viewmodel/nutritionist/usePatientNameCache";
 import {
@@ -21,7 +20,6 @@ export default function useNutritionistConflictResolutionViewModel(
     listAppointmentConflictsUseCase: IListAppointmentConflictsUseCase,
     resolveAppointmentConflictUseCase: IResolveAppointmentConflictUseCase,
     getUserByIdUseCase: IGetUserByIdUseCase,
-    calendarSyncUseCase: IAppointmentCalendarSyncUseCase,
     appointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase
 ): NutritionistConflictResolutionState & NutritionistConflictResolutionActions {
     const [appointments, setAppointments] = useState<ConflictAppointmentItem[]>([]);
@@ -112,15 +110,6 @@ export default function useNutritionistConflictResolutionViewModel(
                 appt => appt.id !== selectedAppointmentId && appt.status === "accepted"
             );
             await resolveAppointmentConflictUseCase.resolveConflict(selectedAppointmentId);
-            await Promise.all(
-                rawAppointments.map(async (appt) => {
-                    if (appt.id === selectedAppointmentId) {
-                        await calendarSyncUseCase.syncAccepted(appt, "nutritionist");
-                        return;
-                    }
-                    await calendarSyncUseCase.syncCancelledOrRejected(appt, "nutritionist");
-                })
-            );
             if (selectedBefore && selectedBefore.status !== "accepted") {
                 try {
                     await appointmentPushNotificationUseCase.notify(selectedBefore, "accepted", "patient");
@@ -162,7 +151,6 @@ export default function useNutritionistConflictResolutionViewModel(
         rawAppointments,
         appointments,
         resolveAppointmentConflictUseCase,
-        calendarSyncUseCase,
         appointmentPushNotificationUseCase,
     ]);
 

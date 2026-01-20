@@ -13,7 +13,7 @@ import usePendingRequestsUiState from "@/view/pages/nutritionist/hooks/usePendin
 
 export default function PendingRequestsScreen() {
     const insets = useSafeAreaInsets();
-    const { user, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+    const { user, unauthenticatedRedirect } = useAuthHomeViewModel();
     const nutritionistId = user?.id || "";
 
     const {
@@ -40,7 +40,6 @@ export default function PendingRequestsScreen() {
     } = usePendingRequestsUiState(error, successMessage, clearSuccess);
 
     useRedirectEffect(unauthenticatedRedirect);
-    useRedirectEffect(calendarPermissionRedirect);
 
     if (loading) {
         return (

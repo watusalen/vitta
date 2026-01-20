@@ -11,7 +11,7 @@ import useRedirectEffect from "@/view/hooks/useRedirectEffect";
 
 export default function MyAppointmentsScreen() {
     const insets = useSafeAreaInsets();
-    const { user, unauthenticatedRedirect, calendarPermissionRedirect } = useAuthHomeViewModel();
+    const { user, unauthenticatedRedirect } = useAuthHomeViewModel();
     const patientId = user?.id || "";
 
     const {
@@ -30,7 +30,6 @@ export default function MyAppointmentsScreen() {
     } = usePatientAppointmentsViewModel(patientId);
 
     useRedirectEffect(unauthenticatedRedirect);
-    useRedirectEffect(calendarPermissionRedirect);
     useRedirectEffect(navigationRoute, { method: navigationMethod, onComplete: clearNavigation });
 
     return (
