@@ -7,7 +7,6 @@ import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectA
 import { ICancelAppointmentUseCase } from "@/usecase/appointment/status/iCancelAppointmentUseCase";
 import { IReactivateAppointmentUseCase } from "@/usecase/appointment/status/iReactivateAppointmentUseCase";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
-import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import useNutritionistAppointmentDetailsViewModel from "@/viewmodel/nutritionist/useNutritionistAppointmentDetailsViewModel";
 import useAppointmentDetailsViewModel from "@/viewmodel/appointment/useAppointmentDetailsViewModel";
@@ -72,10 +71,6 @@ describe("Integração dos detalhes da consulta", () => {
         const getUserById: IGetUserByIdUseCase = {
             getById: jest.fn(async (id) => userRepository.getUserByID(id)),
         };
-        const calendarSyncUseCase: jest.Mocked<IAppointmentCalendarSyncUseCase> = {
-            syncAccepted: jest.fn(),
-            syncCancelledOrRejected: jest.fn(),
-        };
         const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };
@@ -88,7 +83,6 @@ describe("Integração dos detalhes da consulta", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserById,
-                calendarSyncUseCase,
                 appointmentPushNotification
             )
         );

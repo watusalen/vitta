@@ -4,7 +4,6 @@ import { IListPendingAppointmentsUseCase } from '@/usecase/appointment/list/iLis
 import { IAcceptAppointmentUseCase } from '@/usecase/appointment/status/iAcceptAppointmentUseCase';
 import { IRejectAppointmentUseCase } from '@/usecase/appointment/status/iRejectAppointmentUseCase';
 import { IGetUserByIdUseCase } from '@/usecase/user/iGetUserByIdUseCase';
-import { IAppointmentCalendarSyncUseCase } from '@/usecase/calendar/iAppointmentCalendarSyncUseCase';
 import { IAppointmentPushNotificationUseCase } from '@/usecase/notifications/iAppointmentPushNotificationUseCase';
 import Appointment from '@/model/entities/appointment';
 import ValidationError from '@/model/errors/validationError';
@@ -27,7 +26,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
     let mockAcceptUseCase: IAcceptAppointmentUseCase;
     let mockRejectUseCase: IRejectAppointmentUseCase;
     let mockGetUserByIdUseCase: IGetUserByIdUseCase;
-    let mockCalendarSyncUseCase: IAppointmentCalendarSyncUseCase;
     let mockAppointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase;
     let unsubscribeMock: jest.Mock;
 
@@ -55,10 +53,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
         mockGetUserByIdUseCase = {
             getById: jest.fn().mockResolvedValue({ id: 'patient-1', name: 'João Silva', email: 'joao@test.com', role: 'patient', createdAt: new Date() }),
         };
-        mockCalendarSyncUseCase = {
-            syncAccepted: jest.fn(),
-            syncCancelledOrRejected: jest.fn(),
-        };
         mockAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };
@@ -77,7 +71,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -100,7 +93,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -127,7 +119,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -143,10 +134,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
         expect(success).toBe(true);
         expect(result.current.successMessage).toBe('Consulta aceita com sucesso!');
         expect(mockAcceptUseCase.acceptAppointment).toHaveBeenCalledWith('appt-1');
-        expect(mockCalendarSyncUseCase.syncAccepted).toHaveBeenCalledWith(
-            { ...appointment, status: 'accepted' },
-            'nutritionist'
-        );
     });
 
     it('deve tratar erro ao aceitar consulta', async () => {
@@ -162,7 +149,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -193,7 +179,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -224,7 +209,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -252,7 +236,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -287,7 +270,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -320,7 +302,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -343,7 +324,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 ''
             )
@@ -351,38 +331,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
 
         expect(result.current.loading).toBe(false);
         expect(mockListPendingAppointmentsUseCase.subscribePendingByNutritionist).not.toHaveBeenCalled();
-    });
-
-    it('deve ignorar erro ao sincronizar calendário no accept', async () => {
-        const appointment = createMockAppointment('appt-1');
-        (mockListPendingAppointmentsUseCase.subscribePendingByNutritionist as jest.Mock).mockImplementation((id, callback) => {
-            callback([appointment]);
-            return unsubscribeMock;
-        });
-        (mockAcceptUseCase.acceptAppointment as jest.Mock).mockResolvedValue({ ...appointment, status: 'accepted' });
-        (mockCalendarSyncUseCase.syncAccepted as jest.Mock).mockRejectedValue(new Error('Sync failed'));
-
-        const { result } = renderHook(() =>
-            usePendingRequestsViewModel(
-                mockListPendingAppointmentsUseCase,
-                mockAcceptUseCase,
-                mockRejectUseCase,
-                mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
-                mockAppointmentPushNotificationUseCase,
-                'nutri-1'
-            )
-        );
-
-        await waitFor(() => expect(result.current.loading).toBe(false));
-
-        let success: boolean = false;
-        await act(async () => {
-            success = await result.current.acceptAppointment('appt-1');
-        });
-
-        expect(success).toBe(true);
-        expect(result.current.successMessage).toBe('Consulta aceita com sucesso!');
     });
 
     it('deve ignorar erro ao enviar notificação no accept', async () => {
@@ -402,7 +350,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -438,7 +385,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -470,7 +416,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )
@@ -500,7 +445,6 @@ describe('ViewModel de Solicitações Pendentes', () => {
                 mockAcceptUseCase,
                 mockRejectUseCase,
                 mockGetUserByIdUseCase,
-                mockCalendarSyncUseCase,
                 mockAppointmentPushNotificationUseCase,
                 'nutri-1'
             )

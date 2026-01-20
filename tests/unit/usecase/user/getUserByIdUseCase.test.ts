@@ -6,14 +6,15 @@ describe("Get User By ID Use Case", () => {
     let repository: jest.Mocked<IUserRepository>;
 
     beforeEach(() => {
-        repository = {
-            getUserByID: jest.fn(),
-            createUser: jest.fn(),
-            getByRole: jest.fn(),
-            addPushToken: jest.fn(),
-            removePushToken: jest.fn(),
-            getPushTokens: jest.fn(),
-        };
+    repository = {
+        getUserByID: jest.fn(),
+        createUser: jest.fn(),
+        getByRole: jest.fn(),
+        addPushToken: jest.fn(),
+        removePushToken: jest.fn(),
+        getPushTokens: jest.fn(),
+        deleteUser: jest.fn(),
+    };
     });
 
     it("deve lançar erro quando id é vazio", async () => {

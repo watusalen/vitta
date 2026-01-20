@@ -9,7 +9,6 @@ import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectA
 import { ICancelAppointmentUseCase } from "@/usecase/appointment/status/iCancelAppointmentUseCase";
 import { IReactivateAppointmentUseCase } from "@/usecase/appointment/status/iReactivateAppointmentUseCase";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
-import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 
 const baseAppointment: Appointment = {
@@ -31,7 +30,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
     let cancelUseCase: jest.Mocked<ICancelAppointmentUseCase>;
     let reactivateUseCase: jest.Mocked<IReactivateAppointmentUseCase>;
     let getUserByIdUseCase: jest.Mocked<IGetUserByIdUseCase>;
-    let calendarSyncUseCase: jest.Mocked<IAppointmentCalendarSyncUseCase>;
     let appointmentPushNotificationUseCase: jest.Mocked<IAppointmentPushNotificationUseCase>;
 
     beforeEach(() => {
@@ -41,7 +39,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
         cancelUseCase = { cancelAppointment: jest.fn(), prepareCancel: jest.fn() };
         reactivateUseCase = { reactivateAppointment: jest.fn() };
         getUserByIdUseCase = { getById: jest.fn() };
-        calendarSyncUseCase = { syncAccepted: jest.fn(), syncCancelledOrRejected: jest.fn() };
         appointmentPushNotificationUseCase = { notify: jest.fn() };
     });
 
@@ -56,7 +53,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -87,7 +83,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -113,7 +108,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -136,7 +130,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -160,7 +153,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -184,7 +176,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -207,7 +198,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -230,7 +220,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -251,7 +240,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -274,7 +262,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -298,7 +285,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -324,7 +310,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -350,7 +335,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -373,7 +357,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -398,7 +381,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -421,7 +403,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -444,7 +425,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -467,7 +447,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -492,7 +471,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -516,7 +494,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );
@@ -529,7 +506,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
 
         const acceptedAppointment = { ...baseAppointment, status: "accepted" as const };
         acceptUseCase.acceptAppointment.mockResolvedValueOnce(acceptedAppointment);
-        (calendarSyncUseCase.syncAccepted as jest.Mock).mockResolvedValue(undefined);
         (appointmentPushNotificationUseCase.notify as jest.Mock).mockResolvedValue(undefined);
 
         await act(async () => {
@@ -552,7 +528,6 @@ describe("ViewModel de Detalhes da Consulta - Nutricionista", () => {
                 cancelUseCase,
                 reactivateUseCase,
                 getUserByIdUseCase,
-                calendarSyncUseCase,
                 appointmentPushNotificationUseCase
             )
         );

@@ -28,6 +28,7 @@ describe("Appointment Push Notification Use Case", () => {
             addPushToken: jest.fn(),
             removePushToken: jest.fn(),
             getPushTokens: jest.fn().mockResolvedValue(["token-1"]),
+            deleteUser: jest.fn(),
         };
         sender = {
             sendPush: jest.fn(),

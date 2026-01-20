@@ -17,14 +17,15 @@ describe('Get Nutritionist Use Case', () => {
     };
 
     beforeEach(() => {
-        mockUserRepository = {
-            getUserByID: jest.fn(),
-            createUser: jest.fn(),
-            getByRole: jest.fn(),
-            addPushToken: jest.fn(),
-            removePushToken: jest.fn(),
-            getPushTokens: jest.fn(),
-        };
+    mockUserRepository = {
+        getUserByID: jest.fn(),
+        createUser: jest.fn(),
+        getByRole: jest.fn(),
+        addPushToken: jest.fn(),
+        removePushToken: jest.fn(),
+        getPushTokens: jest.fn(),
+        deleteUser: jest.fn(),
+    };
 
         getNutritionistUseCase = new GetNutritionistUseCase(mockUserRepository);
     });

@@ -32,6 +32,7 @@ describe("AppointmentCalendarSyncUseCase", () => {
         } as unknown as jest.Mocked<ICalendarService>;
 
         repositorio = {
+            getById: jest.fn().mockResolvedValue(null),
             updateCalendarEventIds: jest.fn().mockResolvedValue(undefined),
         } as unknown as jest.Mocked<IAppointmentRepository>;
 
@@ -40,6 +41,7 @@ describe("AppointmentCalendarSyncUseCase", () => {
 
     it("deve criar evento e salvar id no repositório ao aceitar para o paciente", async () => {
         const consulta = criarConsulta();
+        (repositorio.getById as jest.Mock).mockResolvedValue(null);
 
         await sut.syncAccepted(consulta, "patient");
 
@@ -58,6 +60,7 @@ describe("AppointmentCalendarSyncUseCase", () => {
 
     it("deve apenas atualizar evento existente ao aceitar para a nutricionista", async () => {
         const consulta = criarConsulta({ calendarEventIdNutritionist: "event-nutri" });
+        (repositorio.getById as jest.Mock).mockResolvedValue(consulta);
 
         await sut.syncAccepted(consulta, "nutritionist");
 
@@ -68,6 +71,7 @@ describe("AppointmentCalendarSyncUseCase", () => {
 
     it("deve remover evento e limpar id ao cancelar ou rejeitar quando existir evento", async () => {
         const consulta = criarConsulta({ calendarEventIdPatient: "evt-paciente" });
+        (repositorio.getById as jest.Mock).mockResolvedValue(consulta);
 
         await sut.syncCancelledOrRejected(consulta, "patient");
 
@@ -79,6 +83,7 @@ describe("AppointmentCalendarSyncUseCase", () => {
 
     it("não deve chamar serviço ou repositório ao cancelar sem evento associado", async () => {
         const consulta = criarConsulta();
+        (repositorio.getById as jest.Mock).mockResolvedValue(null);
 
         await sut.syncCancelledOrRejected(consulta, "nutritionist");
 
@@ -86,4 +91,3 @@ describe("AppointmentCalendarSyncUseCase", () => {
         expect(repositorio.updateCalendarEventIds).not.toHaveBeenCalled();
     });
 });
-

@@ -28,7 +28,7 @@ describe("Integração de autenticação", () => {
         });
 
         expect(loginResult.current.user?.id).toBe(users[0].id);
-        expect(loginResult.current.redirectRoute).toBe("/patient-home");
+        expect(loginResult.current.redirectRoute).toBe("/");
 
         const calendarPermissionUseCase = {
             checkPermission: jest.fn().mockResolvedValue("authorized"),

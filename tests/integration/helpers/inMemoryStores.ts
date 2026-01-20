@@ -46,6 +46,11 @@ export class InMemoryAuthService implements IAuthService {
         this.notify();
     }
 
+    async deleteAccount(): Promise<void> {
+        this.currentUser = null;
+        this.notify();
+    }
+
     async resetPassword(email: string): Promise<void> {
         if (!this.usersByEmail.has(email)) {
             throw new AuthError("Email não encontrado");
@@ -99,6 +104,11 @@ export class InMemoryUserRepository implements IUserRepository {
         const current = this.pushTokensByUser.get(userId);
         if (!current) return [];
         return Array.from(current);
+    }
+
+    async deleteUser(userId: string): Promise<void> {
+        this.usersById.delete(userId);
+        this.pushTokensByUser.delete(userId);
     }
 }
 

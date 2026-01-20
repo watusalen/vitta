@@ -16,6 +16,7 @@ describe('Auth Use Cases', () => {
       login: jest.fn(),
       signup: jest.fn(),
       logout: jest.fn(),
+      deleteAccount: jest.fn(),
       resetPassword: jest.fn(),
       onAuthStateChanged: jest.fn(),
     };
@@ -27,6 +28,7 @@ describe('Auth Use Cases', () => {
       addPushToken: jest.fn(),
       removePushToken: jest.fn(),
       getPushTokens: jest.fn(),
+      deleteUser: jest.fn(),
     };
 
     authUseCases = new AuthUseCases(mockAuthService, mockUserRepository);

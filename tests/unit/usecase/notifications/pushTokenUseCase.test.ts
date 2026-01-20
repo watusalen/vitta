@@ -21,6 +21,7 @@ describe("Push Token Use Case", () => {
             addPushToken: jest.fn(),
             removePushToken: jest.fn(),
             getPushTokens: jest.fn(),
+            deleteUser: jest.fn(),
         };
     });
 

@@ -5,7 +5,6 @@ import { IAcceptAppointmentUseCase } from "@/usecase/appointment/status/iAcceptA
 import { IRejectAppointmentUseCase } from "@/usecase/appointment/status/iRejectAppointmentUseCase";
 import { IListPendingAppointmentsUseCase } from "@/usecase/appointment/list/iListPendingAppointmentsUseCase";
 import { IGetUserByIdUseCase } from "@/usecase/user/iGetUserByIdUseCase";
-import { IAppointmentCalendarSyncUseCase } from "@/usecase/calendar/iAppointmentCalendarSyncUseCase";
 import { IAppointmentPushNotificationUseCase } from "@/usecase/notifications/iAppointmentPushNotificationUseCase";
 import usePendingRequestsViewModel from "@/viewmodel/nutritionist/usePendingRequestsViewModel";
 import { InMemoryAppointmentRepository, InMemoryUserRepository, flushPromises } from "./helpers/inMemoryStores";
@@ -81,10 +80,6 @@ describe("Integração de solicitações pendentes", () => {
         const getUserById: IGetUserByIdUseCase = {
             getById: jest.fn(async (id) => userRepository.getUserByID(id)),
         };
-        const calendarSyncUseCase: jest.Mocked<IAppointmentCalendarSyncUseCase> = {
-            syncAccepted: jest.fn(),
-            syncCancelledOrRejected: jest.fn(),
-        };
         const appointmentPushNotification: IAppointmentPushNotificationUseCase = {
             notify: jest.fn(),
         };
@@ -95,7 +90,6 @@ describe("Integração de solicitações pendentes", () => {
                 acceptUseCase,
                 rejectUseCase,
                 getUserById,
-                calendarSyncUseCase,
                 appointmentPushNotification,
                 nutritionistId
             )
