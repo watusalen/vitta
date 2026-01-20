@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, FlatList, RefreshControl, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, FlatList, RefreshControl, StyleSheet } from "react-native";
 import EmptyStateCard from "@/view/components/EmptyStateCard";
 import AppointmentCard from "@/view/components/AppointmentCard";
 import { colors, fontSizes, fonts, spacing } from "@/view/themes/theme";
@@ -78,11 +78,6 @@ export default function AgendaAppointments({
 }
 
 const styles = StyleSheet.create({
-    centered: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
     sectionTitle: {
         fontSize: fontSizes.lgMd,
         fontFamily: fonts.bold,

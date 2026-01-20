@@ -64,6 +64,7 @@ export default class AuthUseCases implements IAuthUseCases {
         }
     }
 
+
     async resetPassword(email: string): Promise<void> {
         AuthValidator.validateResetPassword(email);
 

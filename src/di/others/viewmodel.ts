@@ -1,4 +1,5 @@
 import useHomeViewModel from "@/viewmodel/auth/useHomeViewModel";
+import useProfileViewModelHook from "@/viewmodel/auth/useProfileViewModel";
 import useCalendarPermissionViewModelHook from "@/viewmodel/calendar/useCalendarPermissionViewModel";
 import usePushPermissionViewModelHook from "@/viewmodel/notifications/usePushPermissionViewModel";
 import useLoginViewModel from "@/viewmodel/auth/useLoginViewModel";
@@ -14,7 +15,7 @@ import useNutritionistHomeViewModelHook from "@/viewmodel/nutritionist/useNutrit
 import usePendingRequestsViewModelHook from "@/viewmodel/nutritionist/usePendingRequestsViewModel";
 import usePatientHomeViewModelHook from "@/viewmodel/patient/usePatientHomeViewModel";
 import usePatientCalendarSyncViewModelHook from "@/viewmodel/patient/usePatientCalendarSyncViewModel";
-import { getAuthUseCases } from "@/di/others/auth";
+import { getAuthUseCases, getDeleteAccountUseCase } from "@/di/others/auth";
 import { getAppointmentCalendarSyncUseCase, getCalendarPermissionUseCase } from "@/di/others/calendar";
 import { getAppointmentPushNotificationUseCase, getPushPermissionUseCase, getPushTokenUseCase } from "@/di/others/notifications";
 import {
@@ -38,6 +39,14 @@ export function useAuthHomeViewModel() {
         getAuthUseCases(),
         getCalendarPermissionUseCase(),
         getPushPermissionUseCase(),
+        getPushTokenUseCase()
+    );
+}
+
+export function useProfileViewModel() {
+    return useProfileViewModelHook(
+        getAuthUseCases(),
+        getDeleteAccountUseCase(),
         getPushTokenUseCase()
     );
 }

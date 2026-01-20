@@ -7,6 +7,7 @@ import {
     signOut,
     onAuthStateChanged,
     sendPasswordResetEmail,
+    deleteUser,
     User as FirebaseUser
 } from "firebase/auth";
 import { getAuthInstance } from "@/infra/firebase/config";
@@ -47,6 +48,23 @@ export default class FirebaseAuthService implements IAuthService {
             await signOut(getAuthInstance());
         } catch {
             throw new AuthError('Não foi possível fazer logout.');
+        }
+    }
+
+    async deleteAccount(): Promise<void> {
+        const auth = getAuthInstance();
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+            throw new AuthError("Usuário não autenticado.");
+        }
+        try {
+            await deleteUser(currentUser);
+        } catch (err) {
+            const code = (err as { code?: string }).code;
+            if (code === "auth/requires-recent-login") {
+                throw new AuthError("Sessão expirada. Faça login novamente para excluir a conta.");
+            }
+            throw new AuthError("Não foi possível excluir a conta.");
         }
     }
 

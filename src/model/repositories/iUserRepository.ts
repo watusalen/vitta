@@ -7,4 +7,5 @@ export interface IUserRepository {
     addPushToken(userId: string, token: string): Promise<void>;
     removePushToken(userId: string, token: string): Promise<void>;
     getPushTokens(userId: string): Promise<string[]>;
+    deleteUser(userId: string): Promise<void>;
 }

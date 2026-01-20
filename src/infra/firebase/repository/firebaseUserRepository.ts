@@ -2,7 +2,7 @@ import User from "@/model/entities/user";
 import { IUserRepository } from "@/model/repositories/iUserRepository";
 import RepositoryError from "@/model/errors/repositoryError";
 import { getDbInstance } from "../config";
-import { doc, getDoc, setDoc, Timestamp, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, getDoc, setDoc, Timestamp, collection, query, where, getDocs, updateDoc, arrayUnion, arrayRemove, deleteDoc } from "firebase/firestore";
 
 export default class FirebaseUserRepository implements IUserRepository {
     private readonly collectionName = 'users';
@@ -107,6 +107,16 @@ export default class FirebaseUserRepository implements IUserRepository {
             return data.pushTokens.filter((token: unknown) => typeof token === "string");
         } catch {
             throw new RepositoryError('Erro ao buscar tokens de notificação.');
+        }
+    }
+
+    async deleteUser(userId: string): Promise<void> {
+        try {
+            const db = getDbInstance();
+            const userRef = doc(db, this.collectionName, userId);
+            await deleteDoc(userRef);
+        } catch {
+            throw new RepositoryError("Erro ao excluir usuário no Firestore.");
         }
     }
 }

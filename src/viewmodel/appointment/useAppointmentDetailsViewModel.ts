@@ -106,7 +106,7 @@ export default function useAppointmentDetailsViewModel(
         } finally {
             setProcessing(false);
         }
-    }, [cancelAppointmentUseCase]);
+    }, [cancelAppointmentUseCase, appointmentPushNotificationUseCase]);
 
     useEffect(() => {
         const nutritionistId = appointment?.nutritionistId;

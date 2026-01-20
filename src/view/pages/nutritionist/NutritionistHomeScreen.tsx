@@ -7,10 +7,10 @@ import AlertModal from "@/view/components/AlertModal";
 import ConfirmActionModal from "@/view/components/ConfirmActionModal";
 import useRedirectEffect from "@/view/hooks/useRedirectEffect";
 import useFadeInOnToggle from "@/view/pages/nutritionist/hooks/useFadeInOnToggle";
-import NutritionistHomeHeader from "@/view/pages/nutritionist/components/NutritionistHomeHeader";
+import HomeHeader from "@/view/components/HomeHeader";
+import { router } from "expo-router";
 import NutritionistPendingRequestsCard from "@/view/pages/nutritionist/components/NutritionistPendingRequestsCard";
 import NutritionistAgendaCard from "@/view/pages/nutritionist/components/NutritionistAgendaCard";
-import { router } from "expo-router";
 
 export default function NutritionistHomeScreen() {
     const insets = useSafeAreaInsets();
@@ -68,9 +68,10 @@ export default function NutritionistHomeScreen() {
     return (
         <View style={[styles.container, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom }]}>
             {/* HEADER */}
-            <NutritionistHomeHeader
+            <HomeHeader
                 name={user?.name || user?.email || "Nutricionista"}
                 onLogout={handleLogout}
+                onProfilePress={() => router.push("/profile")}
             />
 
             {/* Cards */}

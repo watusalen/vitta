@@ -63,6 +63,7 @@ export default function RootLayout() {
           <Stack.Screen name="(nutritionist)/pending-requests" />
           <Stack.Screen name="(nutritionist)/agenda" />
           <Stack.Screen name="(nutritionist)/nutritionist-appointment/[id]" />
+          <Stack.Screen name="profile" />
           <Stack.Screen name="calendar-permission" />
           <Stack.Screen name="notifications-permission" />
         </Stack>

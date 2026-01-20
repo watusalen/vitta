@@ -9,7 +9,6 @@ import HomeCard from "@/view/components/HomeCard";
 import AlertModal from "@/view/components/AlertModal";
 import ConfirmActionModal from "@/view/components/ConfirmActionModal";
 import useRedirectEffect from "@/view/hooks/useRedirectEffect";
-import { router } from "expo-router";
 
 export default function PatientHomeScreen() {
     const insets = useSafeAreaInsets();
