@@ -11,7 +11,7 @@ let userByIdUseCase: IGetUserByIdUseCase | null = null;
 let deleteUserUseCase: IDeleteUserUseCase | null = null;
 let initError: Error | null = null;
 
-function initUserUseCases() {
+function initUserUseCases(): void {
   if ((nutritionistUseCase && userByIdUseCase && deleteUserUseCase) || initError) {
     return;
   }
@@ -32,7 +32,7 @@ function initUserUseCases() {
   }
 }
 
-function getNutritionistUseCase() {
+function getNutritionistUseCase(): IGetNutritionistUseCase {
   initUserUseCases();
   if (!nutritionistUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de usuário");
@@ -40,7 +40,7 @@ function getNutritionistUseCase() {
   return nutritionistUseCase;
 }
 
-function getUserByIdUseCase() {
+function getUserByIdUseCase(): IGetUserByIdUseCase {
   initUserUseCases();
   if (!userByIdUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de usuário");
@@ -48,7 +48,7 @@ function getUserByIdUseCase() {
   return userByIdUseCase;
 }
 
-function getDeleteUserUseCase() {
+function getDeleteUserUseCase(): IDeleteUserUseCase {
   initUserUseCases();
   if (!deleteUserUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de usuário");

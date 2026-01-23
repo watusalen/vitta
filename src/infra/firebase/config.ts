@@ -40,7 +40,7 @@ function getFirebaseConfig(): FirebaseConfig {
   return config as FirebaseConfig;
 }
 
-function getAppInstance() {
+function getAppInstance(): FirebaseApp {
   if (app) {
     return app;
   }
@@ -78,7 +78,7 @@ function buildAuth(appInstance: FirebaseApp) {
   }
 }
 
-function getAuthInstance() {
+function getAuthInstance(): Auth {
   if (authInstance) {
     return authInstance;
   }
@@ -96,7 +96,7 @@ function getAuthInstance() {
   }
 }
 
-function getDbInstance() {
+function getDbInstance(): Firestore {
   if (dbInstance) {
     return dbInstance;
   }
@@ -114,7 +114,7 @@ function getDbInstance() {
   }
 }
 
-function getFirebaseInitError() {
+function getFirebaseInitError(): Error | null {
   return initError;
 }
 

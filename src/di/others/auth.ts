@@ -9,7 +9,7 @@ let authUseCases: IAuthUseCases | null = null;
 let deleteAccountUseCase: IDeleteAccountUseCase | null = null;
 let initError: Error | null = null;
 
-function initAuthUseCases() {
+function initAuthUseCases(): void {
   if ((authUseCases && deleteAccountUseCase) || initError) {
     return;
   }
@@ -28,7 +28,7 @@ function initAuthUseCases() {
   }
 }
 
-function getAuthUseCases() {
+function getAuthUseCases(): IAuthUseCases {
   initAuthUseCases();
   if (!authUseCases) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de autenticação");
@@ -36,7 +36,7 @@ function getAuthUseCases() {
   return authUseCases;
 }
 
-function getDeleteAccountUseCase() {
+function getDeleteAccountUseCase(): IDeleteAccountUseCase {
   initAuthUseCases();
   if (!deleteAccountUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de autenticação");
