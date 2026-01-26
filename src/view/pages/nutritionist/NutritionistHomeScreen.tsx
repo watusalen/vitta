@@ -65,7 +65,10 @@ export default function NutritionistHomeScreen() {
     }
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom }]}>
+        <View
+            testID="nutritionist-home-screen"
+            style={[styles.container, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom }]}
+        >
             {/* HEADER */}
             <HomeHeader
                 name={user?.name || user?.email || "Nutricionista"}

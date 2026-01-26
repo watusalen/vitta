@@ -44,6 +44,7 @@ export default function PendingRequestRow({ item, processing, onAccept, onReject
                     onPress={() => onReject(item)}
                     disabled={processing}
                     activeOpacity={0.85}
+                    testID={`reject-btn-${item.id}`}
                 >
                     <Feather name="x" size={20} color={colors.error} />
                 </TouchableOpacity>
@@ -53,6 +54,7 @@ export default function PendingRequestRow({ item, processing, onAccept, onReject
                     onPress={() => onAccept(item)}
                     disabled={processing}
                     activeOpacity={0.85}
+                    testID={`accept-btn-${item.id}`}
                 >
                     <Feather name="check" size={20} color={colors.primary} />
                 </TouchableOpacity>

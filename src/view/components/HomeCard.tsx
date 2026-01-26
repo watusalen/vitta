@@ -7,6 +7,7 @@ type HomeCardProps = {
     backgroundColor?: string;
     style?: StyleProp<ViewStyle>;
     onPress?: () => void;
+    testID?: string;
 };
 
 export default function HomeCard({
@@ -14,11 +15,13 @@ export default function HomeCard({
     backgroundColor = colors.white,
     style,
     onPress,
+    testID,
 }: HomeCardProps) {
     return (
         <TouchableOpacity
             activeOpacity={0.9}
             onPress={onPress}
+            testID={testID}
             style={[styles.card, { backgroundColor }, style]}
         >
             {children}

@@ -16,6 +16,7 @@ export default function ScheduleBottomBar({
     return (
         <View style={styles.bottomBar}>
             <TouchableOpacity
+                testID="schedule-submit-btn"
                 style={[styles.submitButton, disabled && styles.submitDisabled]}
                 onPress={onSubmit}
                 disabled={disabled}

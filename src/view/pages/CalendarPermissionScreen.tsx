@@ -32,7 +32,10 @@ export default function CalendarPermissionScreen() {
     }, [error]);
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <View
+            testID="calendar-permission-screen"
+            style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
+        >
             <View style={styles.content}>
                 <View>
                     <View style={styles.logoWrapper}>
@@ -81,6 +84,7 @@ export default function CalendarPermissionScreen() {
                     ) : (
                         <>
                             <TouchableOpacity
+                                testID="calendar-permission-allow"
                                 style={styles.primaryButton}
                                 onPress={async () => {
                                     if (status === "denied") {
@@ -96,6 +100,7 @@ export default function CalendarPermissionScreen() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
+                                testID="calendar-permission-skip"
                                 style={styles.secondaryButton}
                                 onPress={() => router.replace(nextRedirect)}
                                 activeOpacity={0.9}

@@ -1,6 +1,7 @@
 import { Stack, router } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState, useRef } from 'react';
+import { Platform } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
@@ -11,14 +12,17 @@ import * as diContainer from '@/di/container';
 import { getPublicEnv } from '@/infra/env/publicEnv';
 
 SplashScreen.preventAutoHideAsync();
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+
+if (Platform.OS !== 'web') {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+}
 
 export default function RootLayout() {
   const fontsLoaded = useLoadFonts();
@@ -85,6 +89,10 @@ function useNotificationObserver(canNavigate: boolean) {
   }, [canNavigate]);
 
   useEffect(() => {
+    if (Platform.OS === 'web') {
+      return;
+    }
+
     function handleResponse(response: Notifications.NotificationResponse) {
       if (!canNavigateRef.current) {
         pendingResponse.current = response;

@@ -11,7 +11,11 @@ type NutritionistPendingRequestsCardProps = {
 
 export default function NutritionistPendingRequestsCard({ pendingCount, onPress }: NutritionistPendingRequestsCardProps) {
     return (
-        <HomeCard backgroundColor={colors.primaryLight} onPress={onPress}>
+        <HomeCard
+            testID="pending-requests-card-btn"
+            backgroundColor={colors.primaryLight}
+            onPress={onPress}
+        >
             <View style={styles.cardTopRow}>
                 <View style={styles.iconCircle}>
                     <Feather name="inbox" size={22} color={colors.primary} />
@@ -27,7 +31,7 @@ export default function NutritionistPendingRequestsCard({ pendingCount, onPress 
                 </View>
             </View>
 
-            <TouchableOpacity style={styles.primaryButton} onPress={onPress}>
+            <TouchableOpacity testID="pending-requests-card-cta" style={styles.primaryButton} onPress={onPress}>
                 <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Ver solicitações</Text>
             </TouchableOpacity>
         </HomeCard>

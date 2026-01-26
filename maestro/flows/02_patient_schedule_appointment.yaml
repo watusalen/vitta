@@ -1,0 +1,78 @@
+# Flow: Paciente agenda uma consulta
+# Testa o fluxo completo de agendamento
+
+appId: com.watusalen.vitta
+env:
+    PATIENT_EMAIL: "paciente@gmail.com"
+    PATIENT_PASSWORD: "paciente1234"
+---
+
+# Inicia o app
+- launchApp:
+    clearState: true
+
+# === LOGIN ===
+- assertVisible:
+    id: "login-screen"
+
+- tapOn:
+    id: "email-input"
+- inputText: ${PATIENT_EMAIL}
+
+- tapOn:
+    id: "password-input"
+- inputText: ${PATIENT_PASSWORD}
+
+- tapOn:
+    id: "login-button"
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+# Aguarda home carregar
+- assertVisible:
+    id: "patient-home-screen"
+
+# === AGENDAR CONSULTA ===
+
+# Vai para a tela de agendamento
+- tapOn:
+    id: "patient-home-schedule-button"
+
+# Aguarda a tela de agendamento carregar
+- assertVisible:
+    id: "patient-schedule-screen"
+
+# Verifica que o calendário está visível
+- assertVisible:
+    id: "calendar-component"
+
+# Aguarda slots carregarem (o calendário já vem com um dia selecionado)
+- extendedWaitUntil:
+    visible:
+      id: "time-slot-.*"
+
+# Seleciona o primeiro horário disponível
+- tapOn:
+    id: "time-slot-.*"
+    index: 0
+
+# Aguarda um momento para o estado atualizar
+- waitForAnimationToEnd
+
+# Toca no botão de solicitar consulta
+- tapOn:
+    id: "schedule-submit-btn"
+
+# Aguarda o modal de sucesso aparecer
+- assertVisible:
+    text: "Solicitação enviada"
+
+# Confirma o modal
+- tapOn:
+    text: "OK"

@@ -1,0 +1,54 @@
+# Flow: Nutricionista visualiza sua agenda
+# Testa o fluxo de visualização da agenda
+
+appId: com.watusalen.vitta
+env:
+    NUTRITIONIST_EMAIL: "nutricionista@gmail.com"
+    NUTRITIONIST_PASSWORD: "nutri1234"
+---
+
+# Inicia o app
+- launchApp:
+    clearState: true
+
+# === LOGIN NUTRICIONISTA ===
+- assertVisible:
+    id: "login-screen"
+
+- tapOn:
+    id: "email-input"
+- inputText: ${NUTRITIONIST_EMAIL}
+
+- tapOn:
+    id: "password-input"
+- inputText: ${NUTRITIONIST_PASSWORD}
+
+- tapOn:
+    id: "login-button"
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+# Aguarda home da nutricionista carregar
+- assertVisible:
+    id: "nutritionist-home-screen"
+
+# === ACESSAR AGENDA ===
+
+# Toca no card de agenda
+- tapOn:
+    id: "agenda-card-btn"
+
+# Aguarda a tela de agenda carregar
+- assertVisible:
+    text: "Agenda"
+
+# Verifica que o calendário está visível (se aplicável)
+- assertVisible:
+    id: "calendar-component"
+    optional: true

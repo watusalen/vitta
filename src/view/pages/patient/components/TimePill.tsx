@@ -12,6 +12,7 @@ type Props = {
 export default function TimePill({ time, selected, onPress, disabled }: Props) {
   return (
     <TouchableOpacity
+      testID={`time-slot-${time}`}
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.9}

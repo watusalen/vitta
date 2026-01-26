@@ -132,3 +132,10 @@ npm run test:coverage # Cobertura
 
 - **Paciente**: Pode se auto-registrar, visualizar disponibilidade, solicitar consultas
 - **Nutricionista**: Gerencia solicitações, confirma/recusa consultas, visualiza agenda
+
+## Desenvolvedores
+
+- Matusalen Alves
+- Fabrício de Carvalho Mota
+- Cícero Andrade
+- Cairon Ferreira Prado

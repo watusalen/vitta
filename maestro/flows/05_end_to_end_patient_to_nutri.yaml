@@ -1,0 +1,117 @@
+# Flow: Paciente agenda e Nutricionista aceita
+# Cenário ponta a ponta: paciente solicita, nutricionista aceita
+
+appId: com.watusalen.vitta
+env:
+    PATIENT_EMAIL: "paciente@gmail.com"
+    PATIENT_PASSWORD: "paciente1234"
+    NUTRITIONIST_EMAIL: "nutricionista@gmail.com"
+    NUTRITIONIST_PASSWORD: "nutri1234"
+---
+# ===== Fase 1: Paciente agenda =====
+- launchApp:
+    clearState: true
+
+- assertVisible:
+    id: "login-screen"
+
+- tapOn:
+    id: "email-input"
+- inputText: ${PATIENT_EMAIL}
+
+- tapOn:
+    id: "password-input"
+- inputText: ${PATIENT_PASSWORD}
+
+- tapOn:
+    id: "login-button"
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- assertVisible:
+    id: "patient-home-screen"
+
+- tapOn:
+    id: "patient-home-schedule-button"
+
+- assertVisible:
+    id: "patient-schedule-screen"
+
+- assertVisible:
+    id: "calendar-component"
+    optional: true
+
+- extendedWaitUntil:
+        visible:
+            id: "time-slot-.*"
+
+- tapOn:
+    id: "time-slot-.*"
+    index: 0
+
+- waitForAnimationToEnd
+
+- tapOn:
+    id: "schedule-submit-btn"
+
+- assertVisible:
+    text: "Solicitação enviada"
+
+- tapOn:
+    text: "OK"
+
+# Reinicia o app para limpar sessão e entrar como nutricionista
+- launchApp:
+    clearState: true
+
+# ===== Fase 2: Nutricionista aceita =====
+- assertVisible:
+    id: "login-screen"
+
+- tapOn:
+    id: "email-input"
+- inputText: ${NUTRITIONIST_EMAIL}
+
+- tapOn:
+    id: "password-input"
+- inputText: ${NUTRITIONIST_PASSWORD}
+
+- tapOn:
+    id: "login-button"
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- assertVisible:
+    id: "nutritionist-home-screen"
+
+- tapOn:
+    id: "pending-requests-card-btn"
+
+- assertVisible:
+    id: "pending-requests-screen"
+
+- extendedWaitUntil:
+        visible:
+            id: "accept-btn-.*"
+
+- tapOn:
+    id: "accept-btn-.*"
+    index: 0
+
+- assertVisible:
+    text: "Aceitar consulta?"
+
+- tapOn:
+    text: "Aceitar"

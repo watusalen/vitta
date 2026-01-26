@@ -1,0 +1,18 @@
+# Maestro Configuration for Vitta App
+# https://maestro.mobile.dev/
+
+# App identifiers
+appId:
+  android: com.watusalen.vitta
+  ios: com.watusalen.vitta
+
+# Default settings
+flows:
+  - .maestro/flows/
+
+# Environment variables for tests
+env:
+  PATIENT_EMAIL: "paciente@gmail.com"
+  PATIENT_PASSWORD: "paciente1234"
+  NUTRITIONIST_EMAIL: "nutricionista@gmail.com"
+  NUTRITIONIST_PASSWORD: "nutri1234"

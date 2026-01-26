@@ -7,6 +7,7 @@ type Props = {
     todayISO: string;
     onDayPress: (day: { dateString: string }) => void;
     onMonthChange: (month: { year: number; month: number }) => void;
+    testID?: string;
 };
 
 export default function ScheduleCalendar({
@@ -14,9 +15,11 @@ export default function ScheduleCalendar({
     todayISO,
     onDayPress,
     onMonthChange,
+    testID,
 }: Props) {
     return (
         <Calendar
+            testID={testID}
             onDayPress={onDayPress}
             onMonthChange={onMonthChange}
             hideExtraDays

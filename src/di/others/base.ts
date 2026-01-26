@@ -23,7 +23,6 @@ function initBase(): void {
     appointmentRepository = new FirebaseAppointmentRepository();
   } catch (error) {
     const errorMessage : string = error instanceof Error ? error.message : "Erro desconhecido ao inicializar base";
-    console.error("Erro fatal ao inicializar dependências:", errorMessage);
     initError = new Error(`Falha ao inicializar aplicação: ${errorMessage}`);
   }
 }

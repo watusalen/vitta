@@ -68,7 +68,10 @@ export default function PendingRequestsScreen() {
     }
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <View
+            testID="pending-requests-screen"
+            style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
+        >
             <ScreenHeader title="Solicitações Pendentes" />
 
             {pendingAppointments.length === 0 ? (
@@ -81,6 +84,7 @@ export default function PendingRequestsScreen() {
                 </View>
             ) : (
                 <FlatList
+                    testID="pending-requests-list"
                     data={pendingAppointments}
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (

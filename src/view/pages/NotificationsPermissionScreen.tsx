@@ -32,7 +32,10 @@ export default function NotificationsPermissionScreen() {
     }, [error]);
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+        <View
+            testID="notifications-permission-screen"
+            style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
+        >
             <View style={styles.content}>
                 <View>
                     <View style={styles.logoWrapper}>
@@ -74,6 +77,7 @@ export default function NotificationsPermissionScreen() {
                     ) : (
                         <>
                             <TouchableOpacity
+                                testID="notifications-permission-allow"
                                 style={styles.primaryButton}
                                 onPress={async () => {
                                     if (status === "denied") {
@@ -89,6 +93,7 @@ export default function NotificationsPermissionScreen() {
                             </TouchableOpacity>
 
                             <TouchableOpacity
+                                testID="notifications-permission-skip"
                                 style={styles.secondaryButton}
                                 onPress={() => router.replace(successRedirect)}
                                 activeOpacity={0.9}

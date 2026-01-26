@@ -37,7 +37,10 @@ export default function PatientHomeScreen() {
     }, [error]);
 
     return (
-        <View style={[styles.container, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom }]}>
+        <View
+            testID="patient-home-screen"
+            style={[styles.container, { paddingTop: insets.top + spacing.md, paddingBottom: insets.bottom }]}
+        >
             <HomeHeader
                 name={user?.name || user?.email || "Paciente"}
                 onLogout={handleLogout}
@@ -59,7 +62,11 @@ export default function PatientHomeScreen() {
                         </View>
                     </View>
 
-                    <TouchableOpacity style={styles.primaryButton} onPress={goToSchedule}>
+                    <TouchableOpacity
+                        testID="patient-home-schedule-button"
+                        style={styles.primaryButton}
+                        onPress={goToSchedule}
+                    >
                         <Text style={styles.primaryButtonText} maxFontSizeMultiplier={1.2}>Agendar agora</Text>
                     </TouchableOpacity>
                 </HomeCard>

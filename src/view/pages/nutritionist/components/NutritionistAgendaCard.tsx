@@ -24,7 +24,11 @@ export default function NutritionistAgendaCard({
     return (
         <Animated.View style={{ opacity: fadeAnim }}>
             {hasAppointmentsToday ? (
-                <HomeCard backgroundColor={colors.white} onPress={onPress}>
+                <HomeCard
+                    testID="agenda-card-btn"
+                    backgroundColor={colors.white}
+                    onPress={onPress}
+                >
                     <View style={styles.cardTopRow}>
                         <View style={styles.iconCircle}>
                             <Feather name="calendar" size={22} color={colors.primary} />
@@ -38,7 +42,7 @@ export default function NutritionistAgendaCard({
                         </View>
                     </View>
 
-                    <TouchableOpacity style={styles.secondaryButton} onPress={onPress}>
+                    <TouchableOpacity testID="agenda-card-cta" style={styles.secondaryButton} onPress={onPress}>
                         <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>Ver agenda completa</Text>
                     </TouchableOpacity>
                 </HomeCard>
@@ -49,7 +53,11 @@ export default function NutritionistAgendaCard({
                     icon="smile"
                 />
             ) : (
-                <HomeCard backgroundColor={colors.white} onPress={onPress}>
+                <HomeCard
+                    testID="agenda-card-btn"
+                    backgroundColor={colors.white}
+                    onPress={onPress}
+                >
                     <View style={styles.cardTopRow}>
                         <View style={styles.iconCircle}>
                             <Feather name="calendar" size={22} color={colors.primary} />
@@ -63,7 +71,7 @@ export default function NutritionistAgendaCard({
                         </View>
                     </View>
 
-                    <TouchableOpacity style={styles.secondaryButton} onPress={onPress}>
+                    <TouchableOpacity testID="agenda-card-cta" style={styles.secondaryButton} onPress={onPress}>
                         <Text style={styles.secondaryButtonText} maxFontSizeMultiplier={1.2}>Ver agenda completa</Text>
                     </TouchableOpacity>
                 </HomeCard>

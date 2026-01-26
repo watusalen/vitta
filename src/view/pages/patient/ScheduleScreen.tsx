@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Dimensions, ScrollView, StyleSheet } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, borderRadius, spacing } from "@/view/themes/theme";
@@ -45,6 +45,20 @@ export default function ScheduleScreen() {
     clearNavigation,
     confirmSuccessRedirect,
   } = usePatientScheduleViewModel();
+
+  useEffect(() => {
+    if (selectedDate || availabilityMap.size === 0 || !nutritionist?.id) return;
+
+    const firstAvailable = Array.from(availabilityMap.entries())
+      .filter(([, hasAvailability]) => hasAvailability)
+      .map(([dateStr]) => dateStr)
+      .sort()[0];
+
+    if (!firstAvailable) return;
+
+    const [y, m, d] = firstAvailable.split("-").map(Number);
+    selectDate(new Date(y, m - 1, d, 12, 0, 0), nutritionist.id, user?.id ?? undefined);
+  }, [availabilityMap, nutritionist?.id, selectDate, selectedDate, user?.id]);
 
   useScheduleLifecycle({
     loadNutritionist,
@@ -93,11 +107,15 @@ export default function ScheduleScreen() {
   });
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+    <View
+      testID="patient-schedule-screen"
+      style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}
+    >
       <ScreenHeader title="Agenda" onBack={goBack} />
 
       <View style={styles.calendarCard}>
         <ScheduleCalendar
+          testID="calendar-component"
           markedDates={markedDates}
           todayISO={todayISO}
           onDayPress={handleDayPress}

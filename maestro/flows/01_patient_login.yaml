@@ -1,0 +1,46 @@
+# Flow: Paciente faz login
+# Testa o fluxo de autenticação do paciente
+
+appId: com.watusalen.vitta
+env:
+    PATIENT_EMAIL: "paciente@gmail.com"
+    PATIENT_PASSWORD: "paciente1234"
+---
+
+# Inicia o app
+- launchApp:
+    clearState: true
+
+# Aguarda a tela de login carregar
+- assertVisible:
+    id: "login-screen"
+
+# Preenche o email
+- tapOn:
+    id: "email-input"
+- inputText: ${PATIENT_EMAIL}
+
+# Preenche a senha
+- tapOn:
+    id: "password-input"
+- inputText: ${PATIENT_PASSWORD}
+
+# Toca no botão de login
+- tapOn:
+    id: "login-button"
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+# Aguarda a home do paciente carregar
+- assertVisible:
+    id: "patient-home-screen"
+
+# Verifica que o botão de agendar está visível
+- assertVisible:
+    id: "patient-home-schedule-button"

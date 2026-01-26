@@ -55,11 +55,12 @@ export default function LoginScreen() {
 
     return (
         <KeyboardAwareScrollView
+            testID="login-screen"
             style={styles.container}
             contentContainerStyle={[
                 styles.scrollContent,
-                { 
-                    paddingTop: insets.top + spacing.lg, 
+                {
+                    paddingTop: insets.top + spacing.lg,
                     paddingBottom: bottomSafe + spacing.lg + 24,
                 },
             ]}
@@ -84,6 +85,7 @@ export default function LoginScreen() {
                         <Text style={styles.subtitle}>Faça login para continuar</Text>
 
                         <TextInputField
+                            testID="email-input"
                             label="E-mail"
                             placeholder="Digite seu e-mail"
                             value={email}
@@ -98,6 +100,7 @@ export default function LoginScreen() {
                         />
 
                         <TextInputField
+                            testID="password-input"
                             label="Senha"
                             placeholder="Digite sua senha"
                             value={password}
@@ -115,6 +118,7 @@ export default function LoginScreen() {
                         </TouchableOpacity>
 
                         <TouchableOpacity
+                            testID="login-button"
                             style={[styles.loginButton, loading && styles.loginButtonDisabled]}
                             onPress={handleLogin}
                             disabled={loading}

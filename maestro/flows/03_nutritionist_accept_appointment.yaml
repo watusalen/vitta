@@ -1,0 +1,65 @@
+# Flow: Nutricionista aceita consulta pendente
+# Testa o fluxo de aceitar uma solicitação de consulta
+
+appId: com.watusalen.vitta
+env:
+    NUTRITIONIST_EMAIL: "nutricionista@gmail.com"
+    NUTRITIONIST_PASSWORD: "nutri1234"
+---
+
+# Inicia o app
+- launchApp:
+    clearState: true
+
+# === LOGIN NUTRICIONISTA ===
+- assertVisible:
+    id: "login-screen"
+
+- tapOn:
+    id: "email-input"
+- inputText: ${NUTRITIONIST_EMAIL}
+
+- tapOn:
+    id: "password-input"
+- inputText: ${NUTRITIONIST_PASSWORD}
+
+- tapOn:
+    id: "login-button"
+
+# Permite acesso às permissões se aparecerem
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+- tapOn:
+    text: "Continuar sem.*"
+    optional: true
+
+# Aguarda home da nutricionista carregar
+- assertVisible:
+    id: "nutritionist-home-screen"
+
+# === ACESSAR SOLICITAÇÕES PENDENTES ===
+
+# Toca no card de solicitações pendentes
+- tapOn:
+    id: "pending-requests-card-btn"
+
+# Aguarda a tela de solicitações pendentes carregar
+- assertVisible:
+    id: "pending-requests-screen"
+
+# === ACEITAR CONSULTA ===
+
+# Toca no botão de aceitar da primeira solicitação
+- tapOn:
+    id: "accept-btn-.*"
+    index: 0
+
+# Aguarda o modal de confirmação
+- assertVisible:
+    text: "Aceitar consulta?"
+
+# Confirma a aceitação
+- tapOn:
+    text: "Aceitar"

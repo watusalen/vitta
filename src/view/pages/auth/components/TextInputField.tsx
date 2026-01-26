@@ -20,6 +20,9 @@ type TextInputFieldProps = {
   onChangeText: (text: string) => void;
   icon: FeatherIconName;
 
+  /** testID para automação/E2E */
+  testID?: string;
+
   secureTextEntry?: boolean;
   keyboardType?: KeyboardTypeOptions;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
@@ -46,6 +49,7 @@ const TextInputField = forwardRef<TextInput, TextInputFieldProps>(function TextI
     value,
     onChangeText,
     icon,
+    testID,
     secureTextEntry = false,
     keyboardType = "default",
     autoCapitalize = "sentences",
@@ -92,6 +96,7 @@ const TextInputField = forwardRef<TextInput, TextInputFieldProps>(function TextI
         <TextInput
           ref={ref}
           style={styles.input}
+          testID={testID}
           placeholder={placeholder}
           placeholderTextColor={colors.textSecondary}
           keyboardType={keyboardType}
