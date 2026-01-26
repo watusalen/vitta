@@ -7,21 +7,21 @@ let calendarService: CalendarService | null = null;
 let calendarPermissionUseCase: CalendarPermissionUseCase | null = null;
 let appointmentCalendarSyncUseCase: AppointmentCalendarSyncUseCase | null = null;
 
-export function getCalendarService() {
+export function getCalendarService(): CalendarService {
     if (!calendarService) {
         calendarService = new CalendarService();
     }
     return calendarService;
 }
 
-export function getCalendarPermissionUseCase() {
+export function getCalendarPermissionUseCase(): CalendarPermissionUseCase {
     if (!calendarPermissionUseCase) {
         calendarPermissionUseCase = new CalendarPermissionUseCase(getCalendarService());
     }
     return calendarPermissionUseCase;
 }
 
-export function getAppointmentCalendarSyncUseCase() {
+export function getAppointmentCalendarSyncUseCase(): AppointmentCalendarSyncUseCase {
     if (!appointmentCalendarSyncUseCase) {
         appointmentCalendarSyncUseCase = new AppointmentCalendarSyncUseCase(
             getCalendarService(),

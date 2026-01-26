@@ -15,7 +15,7 @@ let pushTokenUseCase: IPushTokenUseCase | null = null;
 let appointmentPushNotificationUseCase: IAppointmentPushNotificationUseCase | null = null;
 let initError: Error | null = null;
 
-function initPushNotifications() {
+function initPushNotifications(): void {
     if ((pushPermissionUseCase && pushTokenUseCase && appointmentPushNotificationUseCase) || initError) {
         return;
     }
@@ -44,7 +44,7 @@ function initPushNotifications() {
     }
 }
 
-export function getPushPermissionUseCase() {
+export function getPushPermissionUseCase(): IPushPermissionUseCase {
     initPushNotifications();
     if (!pushPermissionUseCase) {
         throw initError ?? new Error("Falha ao inicializar permissões de notificações");
@@ -52,7 +52,7 @@ export function getPushPermissionUseCase() {
     return pushPermissionUseCase;
 }
 
-export function getPushTokenUseCase() {
+export function getPushTokenUseCase(): IPushTokenUseCase {
     initPushNotifications();
     if (!pushTokenUseCase) {
         throw initError ?? new Error("Falha ao inicializar tokens de notificações");
@@ -60,7 +60,7 @@ export function getPushTokenUseCase() {
     return pushTokenUseCase;
 }
 
-export function getAppointmentPushNotificationUseCase() {
+export function getAppointmentPushNotificationUseCase(): IAppointmentPushNotificationUseCase {
     initPushNotifications();
     if (!appointmentPushNotificationUseCase) {
         throw initError ?? new Error("Falha ao inicializar notificações de consultas");

@@ -9,7 +9,7 @@ let userRepository: IUserRepository | null = null;
 let appointmentRepository: IAppointmentRepository | null = null;
 let initError: Error | null = null;
 
-function initBase() {
+function initBase(): void {
   if (authService && userRepository && appointmentRepository) {
     return;
   }
@@ -22,18 +22,18 @@ function initBase() {
     userRepository = new FirebaseUserRepository();
     appointmentRepository = new FirebaseAppointmentRepository();
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : "Erro desconhecido ao inicializar base";
+    const errorMessage : string = error instanceof Error ? error.message : "Erro desconhecido ao inicializar base";
     console.error("Erro fatal ao inicializar dependências:", errorMessage);
     initError = new Error(`Falha ao inicializar aplicação: ${errorMessage}`);
   }
 }
 
-function getInitError() {
+function getInitError(): Error | null {
   initBase();
   return initError;
 }
 
-function getAuthService() {
+function getAuthService(): FirebaseAuthService {
   initBase();
   if (!authService) {
     throw initError ?? new Error("Falha ao inicializar serviço de autenticação");
@@ -41,7 +41,7 @@ function getAuthService() {
   return authService;
 }
 
-function getUserRepository() {
+function getUserRepository(): IUserRepository {
   initBase();
   if (!userRepository) {
     throw initError ?? new Error("Falha ao inicializar repositório de usuários");
@@ -49,7 +49,7 @@ function getUserRepository() {
   return userRepository;
 }
 
-function getAppointmentRepository() {
+function getAppointmentRepository(): IAppointmentRepository {
   initBase();
   if (!appointmentRepository) {
     throw initError ?? new Error("Falha ao inicializar repositório de consultas");

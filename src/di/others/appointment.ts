@@ -38,7 +38,7 @@ let pendingAppointmentsUseCase: IListPendingAppointmentsUseCase | null = null;
 let listConflictsUseCase: IListAppointmentConflictsUseCase | null = null;
 let initError: Error | null = null;
 
-function initAppointmentUseCases() {
+function initAppointmentUseCases(): void {
   if (
     availableTimeSlotsUseCase &&
     requestUseCase &&
@@ -84,7 +84,7 @@ function initAppointmentUseCases() {
   }
 }
 
-function getAvailableTimeSlotsUseCase() {
+function getAvailableTimeSlotsUseCase(): IGetAvailableTimeSlotsUseCase {
   initAppointmentUseCases();
   if (!availableTimeSlotsUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -92,7 +92,7 @@ function getAvailableTimeSlotsUseCase() {
   return availableTimeSlotsUseCase;
 }
 
-function getRequestAppointmentUseCase() {
+function getRequestAppointmentUseCase(): IRequestAppointmentUseCase {
   initAppointmentUseCases();
   if (!requestUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -100,7 +100,7 @@ function getRequestAppointmentUseCase() {
   return requestUseCase;
 }
 
-function getListPatientAppointmentsUseCase() {
+function getListPatientAppointmentsUseCase(): IListPatientAppointmentsUseCase {
   initAppointmentUseCases();
   if (!patientAppointmentsUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -108,7 +108,7 @@ function getListPatientAppointmentsUseCase() {
   return patientAppointmentsUseCase;
 }
 
-function getAppointmentDetailsUseCase() {
+function getAppointmentDetailsUseCase(): IGetAppointmentDetailsUseCase {
   initAppointmentUseCases();
   if (!appointmentDetailsUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -116,7 +116,7 @@ function getAppointmentDetailsUseCase() {
   return appointmentDetailsUseCase;
 }
 
-function getAcceptAppointmentUseCase() {
+function getAcceptAppointmentUseCase(): IAcceptAppointmentUseCase {
   initAppointmentUseCases();
   if (!acceptUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -124,7 +124,7 @@ function getAcceptAppointmentUseCase() {
   return acceptUseCase;
 }
 
-function getRejectAppointmentUseCase() {
+function getRejectAppointmentUseCase(): IRejectAppointmentUseCase {
   initAppointmentUseCases();
   if (!rejectUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -132,7 +132,7 @@ function getRejectAppointmentUseCase() {
   return rejectUseCase;
 }
 
-function getCancelAppointmentUseCase() {
+function getCancelAppointmentUseCase(): ICancelAppointmentUseCase {
   initAppointmentUseCases();
   if (!cancelUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -140,7 +140,7 @@ function getCancelAppointmentUseCase() {
   return cancelUseCase;
 }
 
-function getListNutritionistAgendaUseCase() {
+function getListNutritionistAgendaUseCase(): IListNutritionistAgendaUseCase {
   initAppointmentUseCases();
   if (!nutritionistAgendaUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -148,7 +148,7 @@ function getListNutritionistAgendaUseCase() {
   return nutritionistAgendaUseCase;
 }
 
-function getListPendingAppointmentsUseCase() {
+function getListPendingAppointmentsUseCase(): IListPendingAppointmentsUseCase {
   initAppointmentUseCases();
   if (!pendingAppointmentsUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -156,7 +156,7 @@ function getListPendingAppointmentsUseCase() {
   return pendingAppointmentsUseCase;
 }
 
-function getReactivateAppointmentUseCase() {
+function getReactivateAppointmentUseCase(): IReactivateAppointmentUseCase {
   initAppointmentUseCases();
   if (!reactivateUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -164,7 +164,7 @@ function getReactivateAppointmentUseCase() {
   return reactivateUseCase;
 }
 
-function getResolveAppointmentConflictUseCase() {
+function getResolveAppointmentConflictUseCase(): IResolveAppointmentConflictUseCase {
   initAppointmentUseCases();
   if (!resolveConflictUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
@@ -172,7 +172,7 @@ function getResolveAppointmentConflictUseCase() {
   return resolveConflictUseCase;
 }
 
-function getListAppointmentConflictsUseCase() {
+function getListAppointmentConflictsUseCase(): IListAppointmentConflictsUseCase {
   initAppointmentUseCases();
   if (!listConflictsUseCase) {
     throw initError ?? new Error("Falha ao inicializar casos de uso de agendamento");
